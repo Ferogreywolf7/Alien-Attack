@@ -37,3 +37,10 @@
 /processorParam:TextureFormat=Color
 /build:playerPlaceholder.png
 
+#begin testFont.spritefont
+/importer:FontDescriptionImporter
+/processor:LocalizedFontProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:testFont.spritefont
+

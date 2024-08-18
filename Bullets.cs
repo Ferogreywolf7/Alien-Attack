@@ -15,12 +15,16 @@ namespace Alien_Attack
         string movementType;
         Vector2 position;
         Rectangle destiationRectangle;
+        SpriteFont testFont;
+        SpriteBatch spriteBatch;
 
-        public Bullets(int speed, Texture2D bulletTexture, string moveType, Vector2 startPos) {
+        public Bullets(int speed, Texture2D bulletTexture, string moveType, Vector2 startPos, SpriteFont font) {
             bulletSpeed = speed;
             texture = bulletTexture;
             movementType = moveType;
             position = startPos;
+            testFont = font;
+
         }
 
         public void updateBullets() {
@@ -29,11 +33,14 @@ namespace Alien_Attack
                 }
         }
 
-        public void drawBullet(SpriteBatch spriteBatch) {
-            destiationRectangle = new Rectangle( (int)position.X, (int)position.Y, 50, 50);
+        public void drawBullet(SpriteBatch _spriteBatch) {
+            spriteBatch = _spriteBatch;
+            destiationRectangle = new Rectangle( (int)position.X, (int)position.Y, 70, 50);
+
             spriteBatch.Begin();
             spriteBatch.Draw(texture, destiationRectangle, Color.White);
             spriteBatch.End();
+            
         }
     }
 }

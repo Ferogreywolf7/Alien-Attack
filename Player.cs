@@ -18,15 +18,21 @@ namespace Alien_Attack
         Rectangle destinationRectangle;
         SpriteBatch spriteBatch;
 
+        KeyboardState currentKeyboardState;
+        KeyboardState previousKeyboardState;
+
+        Keys moveLeft = Keys.A;
+
         public Player(Texture2D player1Texture, Vector2 player1StartPos) {
             steps = 5;
             position = player1StartPos;
             texture = player1Texture;
         }
 
-        public void playerUpdate() {
-            
-
+        public void playerUpdate(KeyboardState currentKeyState, KeyboardState previousKeyState) {
+            currentKeyboardState = currentKeyState;
+            previousKeyboardState = previousKeyState;
+            movePlayer();
         }
 
         public void DrawPlayer(SpriteBatch _spriteBatch) {
@@ -38,10 +44,26 @@ namespace Alien_Attack
         }
 
         public Vector2 getPosition() {
-            return this.position;
+            return position;
         }
 
-        
+        public void movePlayer() {
+            if (currentKeyboardState.IsKeyDown(moveLeft)) {
+                movePlayerLeft();
+            }
+
+            if (currentKeyboardState.IsKeyDown(Keys.D)) {
+                movePlayerRight();
+            }
+        }
+
+        private void movePlayerLeft() {
+            position.X -= steps;
+        }
+
+        private void movePlayerRight() {
+            position.X += steps;
+        }
         
 
     }

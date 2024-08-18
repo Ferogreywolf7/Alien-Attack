@@ -12,10 +12,12 @@ namespace Alien_Attack
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+        
         Player player1;
         Vector2 player1StartPos;
         Texture2D player1Texture;
         Texture2D playerBulletTexture;
+        SpriteFont font;
         Bullets playerBullet;
         KeyboardState currentKeyState;
         KeyboardState previousKeyState;
@@ -41,6 +43,8 @@ namespace Alien_Attack
             playerBulletTexture = Content.Load<Texture2D>("bulletPlaceholder");
             player1Texture = Content.Load<Texture2D>("playerPlaceholder");
             player1 = new Player(player1Texture, player1StartPos);
+
+            font = Content.Load<SpriteFont>("testFont");
             // TODO: use this.Content to load your game content here
         }
 
@@ -50,11 +54,12 @@ namespace Alien_Attack
                 Exit();
 
             // TODO: Add your update logic here
-            player1.playerUpdate();
+            
             firePlayerBullet();
             previousKeyState = currentKeyState;
             currentKeyState = Keyboard.GetState();
-
+            player1.playerUpdate(currentKeyState, previousKeyState);
+            
             //test
             if (bulletActive)
             {
@@ -75,11 +80,15 @@ namespace Alien_Attack
 
         public void firePlayerBullet()
         {
+            //Bullet will only be fired when there is no other bullet on screen and the player has pressed the key for firing
             if (currentKeyState.IsKeyDown(Keys.Space))
             {
-                playerBullet = new Bullets(5, playerBulletTexture, "up", player1.getPosition());
+                playerBullet = new Bullets(5, playerBulletTexture, "up", player1.getPosition(), font);
                 bulletActive = true;
+                playerBullet.drawBullet(_spriteBatch);
+                
             }
         }
+
     }
 }
