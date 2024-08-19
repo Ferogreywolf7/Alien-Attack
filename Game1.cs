@@ -3,9 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 
-/* Problems:
-    Need to update bullet but each is its own object which needs to be created before it can be called   
-*/
+
 namespace Alien_Attack
 {
     public class Game1 : Game
@@ -14,6 +12,7 @@ namespace Alien_Attack
         private SpriteBatch _spriteBatch;
         
         Player player1;
+        controlsMenu controls;
         Vector2 player1StartPos;
         Texture2D player1Texture;
         Texture2D playerBulletTexture;
@@ -21,19 +20,22 @@ namespace Alien_Attack
         Bullets playerBullet;
         KeyboardState currentKeyState;
         KeyboardState previousKeyState;
+        Keys shoot;
+
         bool bulletActive = false;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-        
+            
         }
 
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
             player1StartPos = new Vector2 (50, 300);
+            getControls();
             base.Initialize();
         }
 
@@ -58,7 +60,7 @@ namespace Alien_Attack
             firePlayerBullet();
             previousKeyState = currentKeyState;
             currentKeyState = Keyboard.GetState();
-            player1.playerUpdate(currentKeyState, previousKeyState);
+            player1.playerUpdate( currentKeyState, previousKeyState);
 
             if (bulletActive)
             {
@@ -85,10 +87,16 @@ namespace Alien_Attack
             base.Draw(gameTime);
         }
 
+        public void getControls()
+        {
+            controls = new controlsMenu();
+            shoot = controls.getFire();
+        }
+
         public void firePlayerBullet()
         {
             //Bullet will only be fired when there is no other bullet on screen and the player has pressed the key for firing
-            if (currentKeyState.IsKeyDown(Keys.Space) && !bulletActive)
+            if (currentKeyState.IsKeyDown(shoot) && !bulletActive)
             {
                 
                 playerBullet = new Bullets(5, playerBulletTexture, "up", player1.getPosition(), font);
