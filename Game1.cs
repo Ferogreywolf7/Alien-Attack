@@ -21,7 +21,7 @@ namespace Alien_Attack
         Bullets playerBullet;
         KeyboardState currentKeyState;
         KeyboardState previousKeyState;
-        bool bulletActive;
+        bool bulletActive = false;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -54,18 +54,20 @@ namespace Alien_Attack
                 Exit();
 
             // TODO: Add your update logic here
-            
+            // Calls updates  
             firePlayerBullet();
             previousKeyState = currentKeyState;
             currentKeyState = Keyboard.GetState();
             player1.playerUpdate(currentKeyState, previousKeyState);
-            
-            //test
+
             if (bulletActive)
             {
-                playerBullet.drawBullet(_spriteBatch);
-                playerBullet.updateBullets();
+                if (playerBullet.getBulletPos().Y <= -60) {
+                    bulletActive = false;
+                }
             }
+            //test
+            
             base.Update(gameTime);
         }
 
@@ -75,18 +77,22 @@ namespace Alien_Attack
 
             // TODO: Add your drawing code here
             player1.DrawPlayer(_spriteBatch);
+            if (bulletActive)
+            {
+                playerBullet.drawBullet(_spriteBatch);
+                playerBullet.updateBullets();
+            }
             base.Draw(gameTime);
         }
 
         public void firePlayerBullet()
         {
             //Bullet will only be fired when there is no other bullet on screen and the player has pressed the key for firing
-            if (currentKeyState.IsKeyDown(Keys.Space))
+            if (currentKeyState.IsKeyDown(Keys.Space) && !bulletActive)
             {
-                playerBullet = new Bullets(5, playerBulletTexture, "up", player1.getPosition(), font);
-                bulletActive = true;
-                playerBullet.drawBullet(_spriteBatch);
                 
+                playerBullet = new Bullets(5, playerBulletTexture, "up", player1.getPosition(), font);
+                bulletActive = true;                
             }
         }
 
