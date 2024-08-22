@@ -1,9 +1,9 @@
 ﻿using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
 using System.Text;
 using System.Threading.Tasks;
 using System.Security.Cryptography.X509Certificates;
@@ -23,7 +23,7 @@ namespace Alien_Attack
 
         private Keys moveLeft;
         private Keys moveRight;
-        controlsMenu controls;
+        Controls controls;
 
         public Player(Texture2D player1Texture, Vector2 player1StartPos) {
             steps = 5;
@@ -54,7 +54,7 @@ namespace Alien_Attack
 
         public void getControls()
         {
-            controls = new controlsMenu();
+            controls = new Controls();
             moveLeft = controls.getLeft();
             moveRight = controls.getRight();
         }

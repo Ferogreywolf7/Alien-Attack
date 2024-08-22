@@ -8,7 +8,7 @@ namespace Alien_Attack
     abstract class Enemies
     {
         //Instance variables
-        private Vector2 position = new Vector2(0, 0);
+        private Vector2 position = new Vector2(0, 50);
         public Enemies() {
         }
 
@@ -16,7 +16,7 @@ namespace Alien_Attack
             return position;
         }
 
-        protected abstract void movement();  
+        protected abstract void enemyUpdates();  
 
     }
 }
