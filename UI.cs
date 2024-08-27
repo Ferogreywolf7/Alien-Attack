@@ -19,15 +19,17 @@ public class UI
 	private Keys right;
 	private Keys fire;
 	private Keys pause;
-	private Controls controls;
+	
 	private MouseState mouseState;
     private MouseState previousMouseState;
 	private int x;
 	private int y;
+    Controls controls;
 
-    public UI(SpriteBatch _spriteBatch, SpriteFont testFont, Texture2D textBorder)
+    public UI(SpriteBatch _spriteBatch, SpriteFont testFont, Texture2D textBorder, Controls control)
 	{
-		spriteBatch = _spriteBatch;
+		controls = control;
+        spriteBatch = _spriteBatch;
 		font = testFont;
 		textBox = textBorder;
 		getCurrentControls();
@@ -39,7 +41,7 @@ public class UI
 	}
 
 	public void getCurrentControls() {
-		controls = new Controls();
+		
 		left = controls.getLeft();
 		right = controls.getRight();
 		fire = controls.getFire();
@@ -53,14 +55,22 @@ public class UI
 		y = mouseState.Y;
 
 		//draws the basic layout
-		box1 = new Rectangle(270, 97, 150, 150);
 		
-		spriteBatch.Begin();
-		spriteBatch.Draw(textBox, box1, Color.White);
-		spriteBatch.DrawString(font, "Move left: " + left, new Vector2(305, 150), Color.White);
+		box1 = new Rectangle(300, 140, 100, 40); //change this value to get box over text
 
+        spriteBatch.Begin();
+		spriteBatch.Draw(textBox, box1, Color.White);
+		spriteBatch.DrawString(font, "Move left - " + left, new Vector2(305, 150), Color.White);
+
+		//Changes color of text box to let the user know it is interactable and selected
 		if (box1.Intersects(new Rectangle(x, y, 1, 1))) {
             spriteBatch.Draw(textBox, box1, Color.Green);
+			//Calls getLeft in order for the left control to be updated
+			if (mouseState.LeftButton == ButtonState.Pressed) {
+				controls.setLeft();
+                spriteBatch.Draw(textBox, box1, Color.White);
+                getCurrentControls();
+			}
         }
 
 		spriteBatch.End();

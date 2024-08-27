@@ -18,14 +18,15 @@ namespace Alien_Attack
         private Rectangle destinationRectangle;
         SpriteFont testFont;
         SpriteBatch spriteBatch;
+        private int extraXCoord;
 
-        public Bullets(int speed, Texture2D bulletTexture, string moveType, Vector2 startPos, SpriteFont font) {
+        public Bullets(int speed, Texture2D bulletTexture, string moveType, Vector2 startPos, SpriteFont font, int extraX) {
             bulletSpeed = speed;
             texture = bulletTexture;
             movementType = moveType;
             position = startPos;
             testFont = font;
-
+            extraXCoord = extraX;
         }
 
         public void updateBullets() {
@@ -43,7 +44,7 @@ namespace Alien_Attack
             spriteBatch.End();*/
 
             spriteBatch = _spriteBatch;
-            destinationRectangle = new Rectangle((int)position.X, (int)position.Y, 100, 100);
+            destinationRectangle = new Rectangle((int)position.X+extraXCoord-5, (int)position.Y, 10, 30);
             spriteBatch.Begin();
             spriteBatch.Draw(texture, destinationRectangle, Color.White);
             spriteBatch.End();

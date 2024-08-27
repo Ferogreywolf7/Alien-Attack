@@ -14,6 +14,7 @@ namespace Alien_Attack
         private Keys left;
         private Keys right;
         private Keys pause;
+        private bool keyAccepted;
 
         KeyboardState keyboard;
 
@@ -49,8 +50,17 @@ namespace Alien_Attack
 
         //Mutators
         public void setLeft() {
-            getKeyboardState();
-            left = keyboard.GetPressedKeys()[0];
+            keyAccepted = false;
+            while (!keyAccepted) 
+            {
+
+                //Doesn't work apart from the exact instant it checks yet it get stuck in the while loop
+                getKeyboardState();
+                if (keyboard.GetPressedKeyCount() == 1) {
+                    left = keyboard.GetPressedKeys()[0];
+                    keyAccepted = true;
+                }
+            }
         }
 
         public void setRight()

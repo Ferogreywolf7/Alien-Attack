@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
-
+using System.Diagnostics;
 
 namespace Alien_Attack
 {
@@ -26,6 +26,7 @@ namespace Alien_Attack
         private Keys pause;
         private bool gamePaused;
         private bool bulletActive;
+        private int extraXCoord;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -37,9 +38,16 @@ namespace Alien_Attack
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            player1StartPos = new Vector2(50, 300);
+            player1StartPos = new Vector2(50, 800);
             gamePaused = false;
             bulletActive = false;
+
+            //Set window size
+            _graphics.PreferredBackBufferWidth = 800;
+            _graphics.PreferredBackBufferHeight = 1000;
+            _graphics.ApplyChanges();
+
+            controls = new Controls();
             getControls();
             base.Initialize();
         }
@@ -53,6 +61,8 @@ namespace Alien_Attack
             player1 = new Player(player1Texture, player1StartPos);
 
             font = Content.Load<SpriteFont>("testFont");
+            ui = new UI(_spriteBatch, font, textBorder, controls);
+
             // TODO: use this.Content to load your game content here
         }
 
@@ -106,7 +116,6 @@ namespace Alien_Attack
 
             if (gamePaused)
             {
-                ui = new UI(_spriteBatch, font, textBorder);
                 ui.drawPauseMenu();
                 
             }
@@ -115,7 +124,7 @@ namespace Alien_Attack
 
         public void getControls()
         {
-            controls = new Controls();
+            
             shoot = controls.getFire();
             pause = controls.getPause();
         }
@@ -125,8 +134,8 @@ namespace Alien_Attack
             //Bullet will only be fired when there is no other bullet on screen and the player has pressed the key for firing
             if (currentKeyState.IsKeyDown(shoot) && !bulletActive)
             {
-
-                playerBullet = new Bullets(5, playerBulletTexture, "up", player1.getPosition(), font);
+                extraXCoord = player1.getPLayerWidth()/2;
+                playerBullet = new Bullets(5, playerBulletTexture, "up", player1.getPosition(), font, extraXCoord);
                 bulletActive = true;
             }
         }

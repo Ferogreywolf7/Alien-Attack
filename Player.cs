@@ -24,11 +24,14 @@ namespace Alien_Attack
         private Keys moveLeft;
         private Keys moveRight;
         Controls controls;
+        private int playerWidth;
 
         public Player(Texture2D player1Texture, Vector2 player1StartPos) {
             steps = 5;
             position = player1StartPos;
             texture = player1Texture;
+            playerWidth = 100;
+            controls = new Controls();
             getControls();
         }
 
@@ -41,8 +44,9 @@ namespace Alien_Attack
         
         public void DrawPlayer(SpriteBatch _spriteBatch) {
             //
+            
             spriteBatch = _spriteBatch;
-            destinationRectangle = new Rectangle((int)position.X, (int)position.Y, 100, 100);
+            destinationRectangle = new Rectangle((int)position.X, (int)position.Y, 100, playerWidth);
             spriteBatch.Begin();
             spriteBatch.Draw(texture, destinationRectangle, Color.White);
             spriteBatch.End();
@@ -52,9 +56,13 @@ namespace Alien_Attack
             return position;
         }
 
+        public int getPLayerWidth() {
+            return playerWidth;
+        }
+
         public void getControls()
         {
-            controls = new Controls();
+            
             moveLeft = controls.getLeft();
             moveRight = controls.getRight();
         }
