@@ -58,7 +58,7 @@ namespace Alien_Attack
             textBorder = Content.Load<Texture2D>("textBorder"); 
             playerBulletTexture = Content.Load<Texture2D>("bulletPlaceholder");
             player1Texture = Content.Load<Texture2D>("playerPlaceholder");
-            player1 = new Player(player1Texture, player1StartPos);
+            player1 = new Player(player1Texture, player1StartPos, controls);
 
             font = Content.Load<SpriteFont>("testFont");
             ui = new UI(_spriteBatch, font, textBorder, controls);
@@ -92,7 +92,10 @@ namespace Alien_Attack
                     }
                 }
             }
-
+            if (gamePaused) {
+                getControls();
+                player1.getControls();
+            }
 
             base.Update(gameTime);
         }

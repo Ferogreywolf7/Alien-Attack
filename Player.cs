@@ -26,12 +26,12 @@ namespace Alien_Attack
         Controls controls;
         private int playerWidth;
 
-        public Player(Texture2D player1Texture, Vector2 player1StartPos) {
+        public Player(Texture2D player1Texture, Vector2 player1StartPos, Controls control) {
             steps = 5;
             position = player1StartPos;
             texture = player1Texture;
             playerWidth = 100;
-            controls = new Controls();
+            controls = control;
             getControls();
         }
 
@@ -62,7 +62,6 @@ namespace Alien_Attack
 
         public void getControls()
         {
-            
             moveLeft = controls.getLeft();
             moveRight = controls.getRight();
         }

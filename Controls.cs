@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Alien_Attack
 {
-    internal class Controls
+    public class Controls
     {
         //Instansiation variables
         private Keys fire;
