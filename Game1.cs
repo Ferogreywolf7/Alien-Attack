@@ -10,23 +10,25 @@ namespace Alien_Attack
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-        Player player1;
-        Controls controls;
-        UI ui;
-        Vector2 player1StartPos;
-        Texture2D player1Texture;
-        Texture2D playerBulletTexture;
-        Texture2D textBorder;
-        Texture2D bunker;
-        SpriteFont font;
-        Bullets playerBullet;
-        KeyboardState currentKeyState;
-        KeyboardState previousKeyState;
+        private Player player1;
+        public Controls controls;
+        private UI ui;
+        private Bullets playerBullet;
+        private Bunkers bunkers;
+        private Vector2 player1StartPos;
+        private Texture2D player1Texture;
+        private Texture2D playerBulletTexture;
+        private Texture2D textBorder;
+        private Texture2D bunker;
+        private SpriteFont font;
+        private KeyboardState currentKeyState;
+        private KeyboardState previousKeyState;
         private Keys shoot;
         private Keys pause;
         private bool gamePaused;
         private bool playerBulletActive;
         private int extraXCoord;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -64,7 +66,7 @@ namespace Alien_Attack
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             player1 = new Player(player1Texture, player1StartPos, controls);          
             ui = new UI(_spriteBatch, font, textBorder, controls);
-
+            bunkers = new Bunkers(bunker, 2);
             // TODO: use this.Content to load your game content here
         }
 
@@ -112,6 +114,7 @@ namespace Alien_Attack
 
             if (!gamePaused)
             {
+                bunkers.drawBunkers(_spriteBatch);
                 if (playerBulletActive)
                 {
                     playerBullet.drawBullets(_spriteBatch);
@@ -125,6 +128,10 @@ namespace Alien_Attack
                 
             }
             base.Draw(gameTime);
+        }
+
+        public SpriteBatch getSpriteBatch() {
+            return _spriteBatch;
         }
 
         public void getControls()
