@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0" version="24.7.7">
   <diagram name="Page-1" id="3UHZmM7Ke-vPty7Pjn6x">
-    <mxGraphModel dx="1434" dy="1922" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1195" dy="1797" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -101,7 +101,7 @@
         <mxCell id="jiuZyo9_bgGgw_j3xlU9-7" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" parent="jiuZyo9_bgGgw_j3xlU9-5" vertex="1">
           <mxGeometry y="120" width="190" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="jiuZyo9_bgGgw_j3xlU9-8" value="&lt;div&gt;+ Bullets(int speed, Texture2D texture, string moveType, Vector2 startPos,SpriteFont font, int extraX): void&lt;/div&gt;&lt;div&gt;+ updateBullets(): void&lt;br&gt;&lt;/div&gt;&lt;div&gt;+ drawBullet(SpriteBatch _spriteBatch): void&lt;/div&gt;&lt;div&gt;+ getBulletPos(): Vector2&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="jiuZyo9_bgGgw_j3xlU9-5" vertex="1">
+        <mxCell id="jiuZyo9_bgGgw_j3xlU9-8" value="&lt;div&gt;+ Bullets(int speed, Texture2D texture, string moveType, Vector2 startPos,SpriteFont font, int extraX): void&lt;/div&gt;&lt;div&gt;+ updateBullets(): void&lt;br&gt;&lt;/div&gt;&lt;div&gt;+ drawBullet(): SpriteBatch&amp;nbsp;&lt;/div&gt;&lt;div&gt;- spriteBatch(): void&lt;/div&gt;&lt;div&gt;+ getBulletPos(): Vector2&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="jiuZyo9_bgGgw_j3xlU9-5" vertex="1">
           <mxGeometry y="140" width="190" height="130" as="geometry" />
         </mxCell>
         <mxCell id="jiuZyo9_bgGgw_j3xlU9-9" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;flowAnimation=0;shadow=0;jumpStyle=none;edgeStyle=elbowEdgeStyle;entryX=-0.019;entryY=0.363;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="jiuZyo9_bgGgw_j3xlU9-4" target="jiuZyo9_bgGgw_j3xlU9-8" edge="1">
@@ -188,6 +188,18 @@
             </Array>
             <mxPoint as="offset" />
           </mxGeometry>
+        </mxCell>
+        <mxCell id="zVuvv38M6NZ8cvIJo6XP-14" value="Game1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="-310" width="220" height="488" as="geometry" />
+        </mxCell>
+        <mxCell id="zVuvv38M6NZ8cvIJo6XP-15" value="&lt;div&gt;- _graphics: GraphicsDeviceManager&lt;/div&gt;&lt;div&gt;- _spriteBatch: SpriteBatch&lt;/div&gt;&lt;div&gt;- player1: Player&lt;/div&gt;&lt;div&gt;+ controls: Controls&lt;/div&gt;&lt;div&gt;- ui: UI&lt;/div&gt;&lt;div&gt;- playerBullet:: Bullets&lt;br&gt;&lt;/div&gt;&lt;div&gt;- player1StartPos: Vector2&lt;/div&gt;&lt;div&gt;- player1Texture: Texture2D&lt;/div&gt;&lt;div&gt;- playerBulletTexture: Texture2D&lt;/div&gt;&lt;div&gt;- textBorder: Texture2D&lt;/div&gt;&lt;div&gt;- bunker: Texture2D&lt;/div&gt;&lt;div&gt;- font: SpriteFont&lt;/div&gt;&lt;div&gt;- currentKeyState: KeyboardState&lt;/div&gt;&lt;div&gt;- previousKeyState: KeyboardState&lt;/div&gt;&lt;div&gt;- shoot: Keys&lt;/div&gt;&lt;div&gt;- pause: Keys&lt;/div&gt;&lt;div&gt;- gamePaused: Keys&lt;/div&gt;&lt;div&gt;- playerBulletActivce: bool&lt;br&gt;&lt;/div&gt;&lt;div&gt;- extraXCoord: int&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="zVuvv38M6NZ8cvIJo6XP-14">
+          <mxGeometry y="26" width="220" height="284" as="geometry" />
+        </mxCell>
+        <mxCell id="zVuvv38M6NZ8cvIJo6XP-16" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="zVuvv38M6NZ8cvIJo6XP-14">
+          <mxGeometry y="310" width="220" height="10" as="geometry" />
+        </mxCell>
+        <mxCell id="zVuvv38M6NZ8cvIJo6XP-17" value="&lt;div&gt;+ Game1(): void&lt;/div&gt;&lt;div&gt;# Initialize(): void&lt;/div&gt;&lt;div&gt;# LoadContent(): void&lt;/div&gt;&lt;div&gt;# Update(): void&lt;/div&gt;&lt;div&gt;# Draw(): void&lt;/div&gt;&lt;div&gt;+ getControls(): void&lt;/div&gt;&lt;div&gt;+ firePlayerBullet(): void&lt;/div&gt;&lt;div&gt;+ deactivateBullet(): void&lt;/div&gt;&lt;div&gt;- pauseGame(): void&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="zVuvv38M6NZ8cvIJo6XP-14">
+          <mxGeometry y="320" width="220" height="168" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
