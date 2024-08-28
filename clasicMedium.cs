@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,8 +14,15 @@ namespace Alien_Attack
 
         }
 
-        protected override void enemyUpdates(){
-                
-            }
+        public override void updateEnemy()
+        {
+            oldKeyboardState = currentKeyboardState;
+            currentKeyboardState = Keyboard.GetState();
+        }
+
+        public override void drawEnemy()
+        {
+            
+        }
     }
 }

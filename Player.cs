@@ -35,16 +35,14 @@ namespace Alien_Attack
             getControls();
         }
 
-        public void playerUpdate(KeyboardState currentKeyState, KeyboardState previousKeyState) {
+        public void updatePlayer(KeyboardState currentKeyState, KeyboardState previousKeyState) {
             currentKeyboardState = currentKeyState;
             previousKeyboardState = previousKeyState;
             movePlayer();
         }
 
         
-        public void DrawPlayer(SpriteBatch _spriteBatch) {
-            //
-            
+        public void drawPlayer(SpriteBatch _spriteBatch) {
             spriteBatch = _spriteBatch;
             destinationRectangle = new Rectangle((int)position.X, (int)position.Y, 100, playerWidth);
             spriteBatch.Begin();
@@ -67,7 +65,7 @@ namespace Alien_Attack
         }
 
         //checks to see if user pressed the correct key and then calls the method to move the player in the right direction
-        public void movePlayer() {
+        private void movePlayer() {
             if (currentKeyboardState.IsKeyDown(moveLeft)) {
                 movePlayerLeft();
             }

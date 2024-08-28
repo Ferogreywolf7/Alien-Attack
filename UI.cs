@@ -21,8 +21,8 @@ public class UI
 	private Keys pause;
 	private MouseState mouseState;
     private MouseState previousMouseState;
-	private int x;
-	private int y;
+	private int mouseX;
+	private int mouseY;
     Controls controls;
 
     public UI(SpriteBatch _spriteBatch, SpriteFont testFont, Texture2D textBorder, Controls control)
@@ -31,7 +31,7 @@ public class UI
         spriteBatch = _spriteBatch;
 		font = testFont;
 		textBox = textBorder;
-		getCurrentControls();
+		getControls();
     }
 	public int getScore() {
 		return score;
@@ -39,7 +39,7 @@ public class UI
 	public void drawScore() {
 	}
 
-	public void getCurrentControls() {
+	public void getControls() {
 		//Gets the controls currently in use so that the user will later be able to see what the current controls are
 		left = controls.getLeft();
 		right = controls.getRight();
@@ -47,12 +47,12 @@ public class UI
 		pause = controls.getPause();
 	}
 
-	public void drawControlsMenu() {
+	private void drawControlsMenu() {
         //Gets the current state of the mouse and its coordinates
 		previousMouseState = mouseState;
 		mouseState = Mouse.GetState();
-		x = mouseState.X;
-		y = mouseState.Y;
+		mouseX = mouseState.X;
+		mouseY = mouseState.Y;
 
 		
 		
@@ -69,13 +69,13 @@ public class UI
 		spriteBatch.DrawString(font, "Move left - " + left, new Vector2(305, 150), Color.White);
 
 		//Changes color of text box to let the user know it is interactable and selected
-		if (boxLeft.Intersects(new Rectangle(x, y, 1, 1))) {
+		if (boxLeft.Intersects(new Rectangle(mouseX, mouseY, 1, 1))) {
             spriteBatch.Draw(textBox, boxLeft, Color.Green);
 			//Calls setLeft in order for the left control to be updated
 			if (mouseState.LeftButton == ButtonState.Pressed) {
 				controls.setLeft();
                 spriteBatch.Draw(textBox, boxLeft, Color.White);
-                getCurrentControls();
+                getControls();
 			}
         }
 
@@ -84,7 +84,7 @@ public class UI
         spriteBatch.DrawString(font, "Move right - " + right, new Vector2(305, 200), Color.White);
 
         //Changes color of text box to let the user know it is interactable and selected
-        if (boxRight.Intersects(new Rectangle(x, y, 1, 1)))
+        if (boxRight.Intersects(new Rectangle(mouseX, mouseY, 1, 1)))
         {
             spriteBatch.Draw(textBox, boxRight, Color.Green);
             //Calls setLeft in order for the left control to be updated
@@ -92,7 +92,7 @@ public class UI
             {
                 controls.setRight();
                 spriteBatch.Draw(textBox, boxRight, Color.White);
-                getCurrentControls();
+                getControls();
             }
         }
 
@@ -101,7 +101,7 @@ public class UI
         spriteBatch.DrawString(font, "Shoot bullet - " + fire, new Vector2(305, 250), Color.White);
 
         //Changes color of text box to let the user know it is interactable and selected
-        if (boxShoot.Intersects(new Rectangle(x, y, 1, 1)))
+        if (boxShoot.Intersects(new Rectangle(mouseX, mouseY, 1, 1)))
         {
             spriteBatch.Draw(textBox, boxShoot, Color.Green);
             //Calls setLeft in order for the left control to be updated
@@ -109,7 +109,7 @@ public class UI
             {
                 controls.setShoot();
                 spriteBatch.Draw(textBox, boxShoot, Color.White);
-                getCurrentControls();
+                getControls();
             }
         }
 
@@ -118,7 +118,7 @@ public class UI
         spriteBatch.DrawString(font, "Pause game - " + pause, new Vector2(305, 300), Color.White);
 
         //Changes color of text box to let the user know it is interactable and selected
-        if (boxPause.Intersects(new Rectangle(x, y, 1, 1)))
+        if (boxPause.Intersects(new Rectangle(mouseX, mouseY, 1, 1)))
         {
             spriteBatch.Draw(textBox, boxPause, Color.Green);
             //Calls setLeft in order for the left control to be updated
@@ -126,7 +126,7 @@ public class UI
             {
                 controls.setPause();
                 spriteBatch.Draw(textBox, boxPause, Color.White);
-                getCurrentControls();
+                getControls();
             }
         }
 

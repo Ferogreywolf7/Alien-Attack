@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 
 namespace Alien_Attack
@@ -8,7 +9,9 @@ namespace Alien_Attack
     abstract class Enemies
     {
         //Instance variables
-        private Vector2 position = new Vector2(0, 50);
+        protected Vector2 position = new Vector2(0, 50);
+        protected KeyboardState currentKeyboardState;
+        protected KeyboardState oldKeyboardState;
         public Enemies() {
         }
 
@@ -16,7 +19,8 @@ namespace Alien_Attack
             return position;
         }
 
-        protected abstract void enemyUpdates();  
+        public abstract void updateEnemy();
 
+        public abstract void drawEnemy();
     }
 }

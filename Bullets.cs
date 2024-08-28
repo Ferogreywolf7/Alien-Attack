@@ -6,23 +6,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection.Metadata;
+using System.Net;
 
 namespace Alien_Attack
 {
     internal class Bullets
     {
-        int bulletSpeed;
-        Texture2D texture;
-        string movementType;
+        private int bulletSpeed;
+        private Texture2D bulletTexture;
+        private string movementType;
         private Vector2 position;
         private Rectangle destinationRectangle;
-        SpriteFont testFont;
-        SpriteBatch spriteBatch;
+        private SpriteFont testFont;
+        private SpriteBatch spriteBatch;
         private int extraXCoord;
 
-        public Bullets(int speed, Texture2D bulletTexture, string moveType, Vector2 startPos, SpriteFont font, int extraX) {
+        public Bullets(int speed, Texture2D texture, string moveType, Vector2 startPos, SpriteFont font, int extraX) {
             bulletSpeed = speed;
-            texture = bulletTexture;
+            bulletTexture = texture;
             movementType = moveType;
             position = startPos;
             testFont = font;
@@ -32,21 +33,17 @@ namespace Alien_Attack
         public void updateBullets() {
             if (movementType == "up") {
                 position.Y -= bulletSpeed;
-                }
+            }
+            if (movementType == "down") {
+                position.Y += bulletSpeed;
+            }
         }
 
-        public void drawBullet(SpriteBatch _spriteBatch) {
-            /*spriteBatch = _spriteBatch;
-            destinationRectangle = new Rectangle((int)position.X, (int)position.Y, 100, 100);
-
-            spriteBatch.Begin();
-            spriteBatch.Draw(texture, destinationRectangle, Color.White);
-            spriteBatch.End();*/
-
+        public void drawBullets(SpriteBatch _spriteBatch) {
             spriteBatch = _spriteBatch;
             destinationRectangle = new Rectangle((int)position.X+extraXCoord-5, (int)position.Y, 10, 30);
             spriteBatch.Begin();
-            spriteBatch.Draw(texture, destinationRectangle, Color.White);
+            spriteBatch.Draw(bulletTexture, destinationRectangle, Color.White);
             spriteBatch.End();
 
         }

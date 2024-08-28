@@ -10,7 +10,6 @@ namespace Alien_Attack
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
-
         Player player1;
         Controls controls;
         UI ui;
@@ -18,6 +17,7 @@ namespace Alien_Attack
         Texture2D player1Texture;
         Texture2D playerBulletTexture;
         Texture2D textBorder;
+        Texture2D bunker;
         SpriteFont font;
         Bullets playerBullet;
         KeyboardState currentKeyState;
@@ -25,7 +25,7 @@ namespace Alien_Attack
         private Keys shoot;
         private Keys pause;
         private bool gamePaused;
-        private bool bulletActive;
+        private bool playerBulletActive;
         private int extraXCoord;
         public Game1()
         {
@@ -40,7 +40,7 @@ namespace Alien_Attack
             // TODO: Add your initialization logic here
             player1StartPos = new Vector2(50, 800);
             gamePaused = false;
-            bulletActive = false;
+            playerBulletActive = false;
 
             //Set window size
             _graphics.PreferredBackBufferWidth = 800;
@@ -54,13 +54,15 @@ namespace Alien_Attack
 
         protected override void LoadContent()
         {
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            
             textBorder = Content.Load<Texture2D>("textBorder"); 
             playerBulletTexture = Content.Load<Texture2D>("bulletPlaceholder");
             player1Texture = Content.Load<Texture2D>("playerPlaceholder");
-            player1 = new Player(player1Texture, player1StartPos, controls);
-
+            bunker = Content.Load<Texture2D>("bunkerPlaceholder");
             font = Content.Load<SpriteFont>("testFont");
+            
+            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            player1 = new Player(player1Texture, player1StartPos, controls);          
             ui = new UI(_spriteBatch, font, textBorder, controls);
 
             // TODO: use this.Content to load your game content here
@@ -82,13 +84,13 @@ namespace Alien_Attack
             {
                 firePlayerBullet();
                 
-                player1.playerUpdate(currentKeyState, previousKeyState);
+                player1.updatePlayer(currentKeyState, previousKeyState);
 
-                if (bulletActive)
+                if (playerBulletActive)
                 {
                     if (playerBullet.getBulletPos().Y <= -60)
                     {
-                        bulletActive = false;
+                        playerBulletActive = false;
                     }
                 }
             }
@@ -105,14 +107,14 @@ namespace Alien_Attack
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
-            player1.DrawPlayer(_spriteBatch);
+            player1.drawPlayer(_spriteBatch);
             //prevents the bullet from moving when the game is paused
 
             if (!gamePaused)
             {
-                if (bulletActive)
+                if (playerBulletActive)
                 {
-                    playerBullet.drawBullet(_spriteBatch);
+                    playerBullet.drawBullets(_spriteBatch);
                     playerBullet.updateBullets();
                 }
             }
@@ -135,12 +137,16 @@ namespace Alien_Attack
         public void firePlayerBullet()
         {
             //Bullet will only be fired when there is no other bullet on screen and the player has pressed the key for firing
-            if (currentKeyState.IsKeyDown(shoot) && !bulletActive)
+            if (currentKeyState.IsKeyDown(shoot) && !playerBulletActive)
             {
                 extraXCoord = player1.getPLayerWidth()/2;
                 playerBullet = new Bullets(5, playerBulletTexture, "up", player1.getPosition(), font, extraXCoord);
-                bulletActive = true;
+                playerBulletActive = true;
             }
+        }
+
+        public void deactivateBullet() {
+            playerBulletActive = false;
         }
 
         //pause game when the assigned key is pressed and the game isnt already paused
@@ -159,6 +165,5 @@ namespace Alien_Attack
                 }
             }
         }
-
     }
 }
