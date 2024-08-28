@@ -158,7 +158,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="zVuvv38M6NZ8cvIJo6XP-11" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;entryX=-0.012;entryY=0.855;entryDx=0;entryDy=0;entryPerimeter=0;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" target="zVuvv38M6NZ8cvIJo6XP-4">
-          <mxGeometry x="0.2824" width="160" relative="1" as="geometry">
+          <mxGeometry x="0.2998" width="160" relative="1" as="geometry">
             <mxPoint x="180" y="900" as="sourcePoint" />
             <mxPoint x="591" y="723" as="targetPoint" />
             <Array as="points">
@@ -174,14 +174,13 @@
             <mxPoint x="593" y="737" as="targetPoint" />
             <Array as="points">
               <mxPoint x="300" y="900" />
-              <mxPoint x="300" y="800" />
-              <mxPoint x="550" y="800" />
+              <mxPoint x="300" y="804" />
             </Array>
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="zVuvv38M6NZ8cvIJo6XP-13" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1">
-          <mxGeometry x="0.1268" width="160" relative="1" as="geometry">
+          <mxGeometry x="0.1053" width="160" relative="1" as="geometry">
             <mxPoint x="300" y="900" as="sourcePoint" />
             <mxPoint x="550" y="770" as="targetPoint" />
             <Array as="points">
