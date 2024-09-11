@@ -33,7 +33,7 @@ namespace Alien_Attack
             spriteBatch = _spriteBatch;
             if (drawnBunkers != bunkerAmount)
             {
-                destinationRectangle = new Rectangle(50 * drawnBunkers+1, 500, 100, 100);
+                destinationRectangle = new Rectangle(50, 500, 100, 100);
                 spriteBatch.Begin();
                 spriteBatch.Draw(bunker, destinationRectangle, Color.White);
                 spriteBatch.End();

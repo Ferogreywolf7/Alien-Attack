@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace Alien_Attack
         private Keys pause;
         private bool keyAccepted;
 
-        KeyboardState keyboard;
+        KeyboardState _keyboard;
 
         public Controls() {
             //Default controls
@@ -44,7 +45,7 @@ namespace Alien_Attack
         }
 
         private void getKeyboardState() {
-            keyboard = Keyboard.GetState();
+            _keyboard = Keyboard.GetState();
         }
 
 
@@ -53,11 +54,12 @@ namespace Alien_Attack
             keyAccepted = false;
             while (!keyAccepted) 
             {
-
                 //Doesn't work apart from the exact instant it checks yet it get stuck in the while loop
                 getKeyboardState();
-                if (keyboard.GetPressedKeyCount() == 1) {
-                    left = keyboard.GetPressedKeys()[0];
+                Debug.WriteLine(string.Join(' ', _keyboard.GetPressedKeys()));
+                if (_keyboard.GetPressedKeyCount() == 1) {
+                    Debug.WriteLine("pressed");
+                    left = _keyboard.GetPressedKeys()[0];
                     keyAccepted = true;
                 }
             }
@@ -71,9 +73,9 @@ namespace Alien_Attack
 
                 //Doesn't work apart from the exact instant it checks yet it get stuck in the while loop
                 getKeyboardState();
-                if (keyboard.GetPressedKeyCount() == 1)
+                if (_keyboard.GetPressedKeyCount() == 1)
                 {
-                    right = keyboard.GetPressedKeys()[0];
+                    right = _keyboard.GetPressedKeys()[0];
                     keyAccepted = true;
                 }
             }
@@ -87,9 +89,9 @@ namespace Alien_Attack
 
                 //Doesn't work apart from the exact instant it checks yet it get stuck in the while loop
                 getKeyboardState();
-                if (keyboard.GetPressedKeyCount() == 1)
+                if (_keyboard.GetPressedKeyCount() == 1)
                 {
-                    fire = keyboard.GetPressedKeys()[0];
+                    fire = _keyboard.GetPressedKeys()[0];
                     keyAccepted = true;
                 }
             }
@@ -103,9 +105,9 @@ namespace Alien_Attack
 
                 //Doesn't work apart from the exact instant it checks yet it get stuck in the while loop
                 getKeyboardState();
-                if (keyboard.GetPressedKeyCount() == 1)
+                if (_keyboard.GetPressedKeyCount() == 1)
                 {
-                    pause = keyboard.GetPressedKeys()[0];
+                    pause = _keyboard.GetPressedKeys()[0];
                     keyAccepted = true;
                 }
             }

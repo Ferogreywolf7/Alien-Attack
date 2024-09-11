@@ -9,9 +9,12 @@ namespace Alien_Attack
     abstract class Enemies
     {
         //Instance variables
-        protected Vector2 position = new Vector2(0, 50);
+        protected Vector2 position;
+        protected Vector2 originalPosition;
         protected KeyboardState currentKeyboardState;
         protected KeyboardState oldKeyboardState;
+        protected string moveType;
+        protected int steps;
         public Enemies() {
         }
 
@@ -19,8 +22,21 @@ namespace Alien_Attack
             return position;
         }
 
-        public abstract void updateEnemy();
+        public void updateEnemy() {
+            moveEnemy();
+        }
 
         public abstract void drawEnemy();
+
+        public void moveEnemy() {
+            switch (moveType){
+                case "left":
+                    position.X -= steps;
+                    break;
+                case "right":
+                    position.X += steps;
+                    break;
+            }
+        }
     }
 }
