@@ -15,11 +15,13 @@ namespace Alien_Attack
         private UI ui;
         private Bullets playerBullet;
         private Bunkers bunkers;
+        private EnemyController enemies;
         private Vector2 player1StartPos;
         private Texture2D player1Texture;
         private Texture2D playerBulletTexture;
         private Texture2D textBorder;
         private Texture2D bunker;
+        private Texture2D enemyTexture;
         private SpriteFont font;
         private KeyboardState currentKeyState;
         private KeyboardState previousKeyState;
@@ -48,7 +50,6 @@ namespace Alien_Attack
             _graphics.PreferredBackBufferWidth = 800;
             _graphics.PreferredBackBufferHeight = 1000;
             _graphics.ApplyChanges();
-
             controls = new Controls();
             getControls();
             base.Initialize();
@@ -61,12 +62,15 @@ namespace Alien_Attack
             playerBulletTexture = Content.Load<Texture2D>("bulletPlaceholder");
             player1Texture = Content.Load<Texture2D>("playerPlaceholder");
             bunker = Content.Load<Texture2D>("bunkerPlaceholder");
+            enemyTexture = Content.Load<Texture2D>("enemyPlaceholder");
             font = Content.Load<SpriteFont>("testFont");
-            
+
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             player1 = new Player(player1Texture, player1StartPos, controls);          
             ui = new UI(_spriteBatch, font, textBorder, controls);
             bunkers = new Bunkers(bunker, 2);
+            enemies = new EnemyController(_spriteBatch, enemyTexture, 2, 5, new Vector2(200, 50));
+            enemies.spawnEnemies();
             // TODO: use this.Content to load your game content here
         }
 
@@ -87,7 +91,7 @@ namespace Alien_Attack
                 firePlayerBullet();
                 
                 player1.updatePlayer(currentKeyState, previousKeyState);
-
+                enemies.updateAllEnemies();
                 if (playerBulletActive)
                 {
                     if (playerBullet.getBulletPos().Y <= -60)
@@ -114,6 +118,7 @@ namespace Alien_Attack
 
             if (!gamePaused)
             {
+                enemies.drawAllEnemies();
                 bunkers.drawBunkers(_spriteBatch);
                 if (playerBulletActive)
                 {
@@ -130,9 +135,6 @@ namespace Alien_Attack
             base.Draw(gameTime);
         }
 
-        public SpriteBatch getSpriteBatch() {
-            return _spriteBatch;
-        }
 
         public void getControls()
         {
