@@ -30,7 +30,7 @@ namespace Alien_Attack
         private bool gamePaused;
         private bool playerBulletActive;
         private int extraXCoord;
-
+        private Rectangle bulletHitbox;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -91,9 +91,12 @@ namespace Alien_Attack
                 firePlayerBullet();
                 
                 player1.updatePlayer(currentKeyState, previousKeyState);
-                enemies.updateAllEnemies();
+                enemies.updateAllEnemies(); //Very inefficient as it moves all enemies every single run through
+                
                 if (playerBulletActive)
                 {
+                    bulletHitbox = playerBullet.getHitbox();
+                    playerBulletActive = !enemies.checkCollision(bulletHitbox);
                     if (playerBullet.getBulletPos().Y <= -60)
                     {
                         playerBulletActive = false;
