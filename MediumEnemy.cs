@@ -24,5 +24,10 @@ namespace Alien_Attack
             spriteBatch.Draw(texture, destinationRectangle, Color.White);
             spriteBatch.End();
         }
+
+        public override Rectangle getHitbox()
+        {
+            return destinationRectangle;
+        }
     }
 }

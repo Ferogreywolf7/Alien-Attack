@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Alien_Attack;
 using System.Net;
+using System.Diagnostics;
 
 public class UI
 {
@@ -73,6 +74,7 @@ public class UI
             spriteBatch.Draw(textBox, boxLeft, Color.Green);
 			//Calls setLeft in order for the left control to be updated
 			if (mouseState.LeftButton == ButtonState.Pressed) {
+                Debug.WriteLine("Button clicked");
 				controls.setLeft();
                 spriteBatch.Draw(textBox, boxLeft, Color.White);
                 getControls();
@@ -87,7 +89,7 @@ public class UI
         if (boxRight.Intersects(new Rectangle(mouseX, mouseY, 1, 1)))
         {
             spriteBatch.Draw(textBox, boxRight, Color.Green);
-            //Calls setLeft in order for the left control to be updated
+            //Calls setRight when clicked in order for the right keybind to be updated
             if (mouseState.LeftButton == ButtonState.Pressed)
             {
                 controls.setRight();

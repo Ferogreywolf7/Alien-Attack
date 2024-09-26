@@ -17,7 +17,7 @@ namespace Alien_Attack
         private Keys pause;
         private bool keyAccepted;
 
-        KeyboardState _keyboard;
+        private KeyboardState _keyboard;
 
         public Controls() {
             //Default controls
@@ -52,11 +52,12 @@ namespace Alien_Attack
         //Mutators
         public void setLeft() {
             keyAccepted = false;
-            while (!keyAccepted) 
+            while (!keyAccepted) //keyAccepted == false
             {
                 //Doesn't work apart from the exact instant it checks yet it get stuck in the while loop
                 getKeyboardState();
                 Debug.WriteLine(string.Join(' ', _keyboard.GetPressedKeys()));
+                //When one key is pressed, get that key and put it into the left variable
                 if (_keyboard.GetPressedKeyCount() == 1) {
                     Debug.WriteLine("pressed");
                     left = _keyboard.GetPressedKeys()[0];
