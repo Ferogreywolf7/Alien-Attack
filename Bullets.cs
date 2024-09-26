@@ -48,6 +48,11 @@ namespace Alien_Attack
 
         }
 
+        public Rectangle getHitbox() {
+            return destinationRectangle;
+        }
+
+
         public Vector2 getBulletPos() {
             return position;
         }

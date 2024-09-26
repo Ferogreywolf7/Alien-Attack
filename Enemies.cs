@@ -28,8 +28,11 @@ namespace Alien_Attack
 
         public void updateEnemy() {
             moveEnemy();
+            
         }
         public abstract void drawEnemy();
+
+        public abstract Rectangle getHitbox();
 
         public void moveEnemy() {
             switch (moveType){
@@ -41,8 +44,20 @@ namespace Alien_Attack
                     position.X += steps;
                     break;
             }
+        }
 
-
+        public void moveEnemyDown() {
+            //Implemented like this to easily move all enemies down at once
+            position.Y += 60;
+            switch (moveType)
+            {
+                case "left":
+                    moveType = "right";
+                    break;
+                case "right":
+                    moveType = "left";
+                    break;
+            }
         }
     }
 }
