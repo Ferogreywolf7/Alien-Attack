@@ -48,7 +48,7 @@ public class UI
 		pause = controls.getPause();
 	}
 
-	private void drawControlsMenu() {
+    private void drawControlsMenu(KeyboardState keyboard) {
         //Gets the current state of the mouse and its coordinates
 		previousMouseState = mouseState;
 		mouseState = Mouse.GetState();
@@ -75,7 +75,7 @@ public class UI
 			//Calls setLeft in order for the left control to be updated
 			if (mouseState.LeftButton == ButtonState.Pressed) {
                 Debug.WriteLine("Button clicked");
-				controls.setLeft();
+				controls.setLeft(keyboard);
                 spriteBatch.Draw(textBox, boxLeft, Color.White);
                 getControls();
 			}
@@ -134,11 +134,11 @@ public class UI
 
         spriteBatch.End();
 	}
-	public void drawPauseMenu() {
+	public void drawPauseMenu(KeyboardState keyboard) {
         spriteBatch.Begin();
         spriteBatch.DrawString(font, "Game paused", new Vector2(300, 100), Color.Red);
         spriteBatch.End();
-		drawControlsMenu();
+		drawControlsMenu(keyboard);
     }
 
 }

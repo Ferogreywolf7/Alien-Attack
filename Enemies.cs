@@ -30,6 +30,7 @@ namespace Alien_Attack
             moveEnemy();
             
         }
+
         public abstract void drawEnemy();
 
         public abstract Rectangle getHitbox();
