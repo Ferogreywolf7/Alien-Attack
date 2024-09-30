@@ -106,7 +106,9 @@ namespace Alien_Attack
                 moveAllDown();
             }
             
-            else { count = 0; }
+            else { 
+                count = 0;
+            }
             
         }
         

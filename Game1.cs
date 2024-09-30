@@ -31,6 +31,7 @@ namespace Alien_Attack
         private bool playerBulletActive;
         private int extraXCoord;
         private Rectangle bulletHitbox;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -76,14 +77,15 @@ namespace Alien_Attack
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            previousKeyState = currentKeyState;
+            currentKeyState = Keyboard.GetState();
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || currentKeyState.IsKeyDown(Keys.Escape))
                 Exit();
 
             // TODO: Add your update logic here
             // Calls updates  
             // pauses the main game when the button is pressed
-            previousKeyState = currentKeyState;
-            currentKeyState = Keyboard.GetState();
+            
             pauseGame();
 
             if (!gamePaused)
@@ -132,7 +134,7 @@ namespace Alien_Attack
 
             if (gamePaused)
             {
-                ui.drawPauseMenu();
+                ui.drawPauseMenu(currentKeyState);
                 
             }
             base.Draw(gameTime);
