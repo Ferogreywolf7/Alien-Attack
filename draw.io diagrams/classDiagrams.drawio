@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0" version="24.7.8">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0" version="24.7.17">
   <diagram name="Page-1" id="3UHZmM7Ke-vPty7Pjn6x">
     <mxGraphModel dx="1434" dy="1923" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -9,20 +9,19 @@
             <mxPoint x="530" y="270" as="sourcePoint" />
             <mxPoint x="570" y="200" as="targetPoint" />
             <Array as="points">
-              <mxPoint x="581" y="159" />
-              <mxPoint x="581" y="180" />
-              <mxPoint x="509" y="180" />
+              <mxPoint x="591" y="170" />
+              <mxPoint x="591" y="170" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="aG3-FBEn-xcIMeHSPdLN-2" value="classicMedium" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-          <mxGeometry x="440" y="200" width="160" height="74" as="geometry" />
+        <mxCell id="aG3-FBEn-xcIMeHSPdLN-2" value="MediumEnemy" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="500" y="210" width="210" height="200" as="geometry" />
         </mxCell>
         <mxCell id="aG3-FBEn-xcIMeHSPdLN-4" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" parent="aG3-FBEn-xcIMeHSPdLN-2" vertex="1">
-          <mxGeometry y="26" width="160" height="8" as="geometry" />
+          <mxGeometry y="26" width="210" height="34" as="geometry" />
         </mxCell>
-        <mxCell id="aG3-FBEn-xcIMeHSPdLN-5" value="&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;- fireBullet(): void&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="aG3-FBEn-xcIMeHSPdLN-2" vertex="1">
-          <mxGeometry y="34" width="160" height="40" as="geometry" />
+        <mxCell id="aG3-FBEn-xcIMeHSPdLN-5" value="&lt;div&gt;mediumEnemy(Texture2d medEnemyTexture, SpriteBatch _spriteBatch, Vector2 startPos): void&lt;br&gt;&lt;/div&gt;&lt;div&gt;drawEnemy(): void&lt;/div&gt;&lt;div&gt;getHitbox: Rectangle&lt;/div&gt;&lt;div&gt;randomBulletFire(): void&lt;/div&gt;&lt;div&gt;updateBullet(): void&lt;/div&gt;&lt;div&gt;drawBullet(): void&lt;/div&gt;&lt;div&gt;bulletCollision(Rectangle): bool&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="aG3-FBEn-xcIMeHSPdLN-2" vertex="1">
+          <mxGeometry y="60" width="210" height="140" as="geometry" />
         </mxCell>
         <mxCell id="aG3-FBEn-xcIMeHSPdLN-14" value="&lt;i&gt;enemies {abstract}&lt;/i&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="550" y="-20" width="180" height="180" as="geometry" />
@@ -115,15 +114,6 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="jiuZyo9_bgGgw_j3xlU9-10" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;edgeStyle=elbowEdgeStyle;entryX=0.975;entryY=0.35;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0.188;exitY=0.9;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="aG3-FBEn-xcIMeHSPdLN-5" target="jiuZyo9_bgGgw_j3xlU9-8" edge="1">
-          <mxGeometry width="160" relative="1" as="geometry">
-            <mxPoint x="470" y="280" as="sourcePoint" />
-            <mxPoint x="420" y="410" as="targetPoint" />
-            <Array as="points">
-              <mxPoint x="470" y="400" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
         <mxCell id="zVuvv38M6NZ8cvIJo6XP-1" value="Controls" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="570" y="540" width="160" height="270" as="geometry" />
         </mxCell>
@@ -202,16 +192,16 @@
         <mxCell id="zVuvv38M6NZ8cvIJo6XP-17" value="&lt;div&gt;+ Game1(): void&lt;/div&gt;&lt;div&gt;# Initialize(): void&lt;/div&gt;&lt;div&gt;# LoadContent(): void&lt;/div&gt;&lt;div&gt;# Update(): void&lt;/div&gt;&lt;div&gt;# Draw(): void&lt;/div&gt;&lt;div&gt;+ getControls(): void&lt;/div&gt;&lt;div&gt;+ firePlayerBullet(): void&lt;/div&gt;&lt;div&gt;+ deactivateBullet(): void&lt;/div&gt;&lt;div&gt;- pauseGame(): void&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="zVuvv38M6NZ8cvIJo6XP-14" vertex="1">
           <mxGeometry y="320" width="220" height="168" as="geometry" />
         </mxCell>
-        <mxCell id="KnBbW-XQcQAkbaDbdpeg-1" value="EnemyController" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="KnBbW-XQcQAkbaDbdpeg-1" value="EnemyController" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="590" y="-450" width="210" height="410" as="geometry" />
         </mxCell>
-        <mxCell id="KnBbW-XQcQAkbaDbdpeg-2" value="&lt;div&gt;- enemy1: MediumEnemy&lt;/div&gt;&lt;div&gt;- enemySpacing: int = 60&lt;/div&gt;&lt;div&gt;- enemyTexture: Texture2D&lt;/div&gt;&lt;div&gt;- spriteBatch: SpriteBatch&lt;/div&gt;&lt;div&gt;- startPos: Vector2&lt;br&gt;- currentPos: Vector2&lt;/div&gt;&lt;div&gt;- enemies: List&amp;lt;MediumEnemy&amp;gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;- numOfEnemies: int&lt;/div&gt;&lt;div&gt;- rows: int&lt;/div&gt;&lt;div&gt;- columns: int&lt;/div&gt;&lt;div&gt;- num: int&lt;/div&gt;&lt;div&gt;- count: int&lt;/div&gt;&lt;div&gt;- collisionCount: int&lt;/div&gt;&lt;div&gt;- enemyHitbox: Rectangle&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="KnBbW-XQcQAkbaDbdpeg-1">
+        <mxCell id="KnBbW-XQcQAkbaDbdpeg-2" value="&lt;div&gt;- enemy1: MediumEnemy&lt;/div&gt;&lt;div&gt;- enemySpacing: int = 60&lt;/div&gt;&lt;div&gt;- enemyTexture: Texture2D&lt;/div&gt;&lt;div&gt;- spriteBatch: SpriteBatch&lt;/div&gt;&lt;div&gt;- startPos: Vector2&lt;br&gt;- currentPos: Vector2&lt;/div&gt;&lt;div&gt;- enemies: List&amp;lt;MediumEnemy&amp;gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;- numOfEnemies: int&lt;/div&gt;&lt;div&gt;- rows: int&lt;/div&gt;&lt;div&gt;- columns: int&lt;/div&gt;&lt;div&gt;- num: int&lt;/div&gt;&lt;div&gt;- count: int&lt;/div&gt;&lt;div&gt;- collisionCount: int&lt;/div&gt;&lt;div&gt;- enemyHitbox: Rectangle&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="KnBbW-XQcQAkbaDbdpeg-1" vertex="1">
           <mxGeometry y="26" width="210" height="214" as="geometry" />
         </mxCell>
-        <mxCell id="KnBbW-XQcQAkbaDbdpeg-3" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="KnBbW-XQcQAkbaDbdpeg-1">
+        <mxCell id="KnBbW-XQcQAkbaDbdpeg-3" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" parent="KnBbW-XQcQAkbaDbdpeg-1" vertex="1">
           <mxGeometry y="240" width="210" height="8" as="geometry" />
         </mxCell>
-        <mxCell id="KnBbW-XQcQAkbaDbdpeg-4" value="&lt;div&gt;+ enemyController(SpriteBatch _spriteBatch, Texture2D texture, int rows, int columns, Vector2 startPos)&lt;br&gt;&lt;/div&gt;&lt;div&gt;+ spawnEnemies(): void&lt;/div&gt;&lt;div&gt;+ updateAllEnemies(): void&lt;/div&gt;&lt;div&gt;+ drawAllEnemies(): void&lt;/div&gt;&lt;div&gt;+ deleteEnemy(int enemyNum): void&lt;/div&gt;&lt;div&gt;+ moveAllDown(): void&lt;/div&gt;&lt;div&gt;+ checkCollision(Rectangle bulletHitbox): bool&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="KnBbW-XQcQAkbaDbdpeg-1">
+        <mxCell id="KnBbW-XQcQAkbaDbdpeg-4" value="&lt;div&gt;+ enemyController(SpriteBatch _spriteBatch, Texture2D texture, int rows, int columns, Vector2 startPos)&lt;br&gt;&lt;/div&gt;&lt;div&gt;+ spawnEnemies(): void&lt;/div&gt;&lt;div&gt;+ updateAllEnemies(): void&lt;/div&gt;&lt;div&gt;+ drawAllEnemies(): void&lt;/div&gt;&lt;div&gt;+ deleteEnemy(int enemyNum): void&lt;/div&gt;&lt;div&gt;+ moveAllDown(): void&lt;/div&gt;&lt;div&gt;+ checkCollision(Rectangle bulletHitbox): bool&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="KnBbW-XQcQAkbaDbdpeg-1" vertex="1">
           <mxGeometry y="248" width="210" height="162" as="geometry" />
         </mxCell>
       </root>
