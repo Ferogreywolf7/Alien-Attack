@@ -55,7 +55,7 @@ namespace Alien_Attack
             while (!keyAccepted) //keyAccepted == false
             {
                 //Doesn't work apart from the exact instant it checks yet it get stuck in the while loop
-                getKeyboardState();
+                _keyboard = Keyboard.GetState();
                 Debug.WriteLine(string.Join(' ', _keyboard.GetPressedKeys()));
                 //When one key is pressed, get that key and put it into the left variable
                 if (_keyboard.GetPressedKeyCount() == 1) {

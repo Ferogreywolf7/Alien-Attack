@@ -54,6 +54,10 @@ namespace Alien_Attack
             return position;
         }
 
+        public Rectangle getPlayerHitbox() {
+            return destinationRectangle;
+        }
+
         public int getPLayerWidth() {
             return playerWidth;
         }
@@ -84,6 +88,7 @@ namespace Alien_Attack
             position.X += steps;
         }
         
+
 
     }
 }

@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
+using System.Collections.Generic;
 
 
 namespace Alien_Attack
@@ -18,8 +20,16 @@ namespace Alien_Attack
         protected Texture2D texture;
         protected SpriteBatch spriteBatch;
         protected Rectangle destinationRectangle;
+        protected Random rand;
+        protected int randomNum;
+        protected Bullets bullet;
+        protected int drawCount;
+        protected int updateCount;
+        protected bool bulletSpawned;
+
         public Enemies() {
             steps = 0.5f;
+            rand = new Random();
         }
 
         public Vector2 getPosition() {
@@ -28,11 +38,22 @@ namespace Alien_Attack
 
         public void updateEnemy() {
             moveEnemy();
-            
+            if (bulletSpawned == true)
+            {
+                updateBullet();
+            }
+            else { randomBulletFire(); }
         }
         public abstract void drawEnemy();
 
-        public abstract Rectangle getHitbox();
+        public abstract void updateBullet();
+
+        public Rectangle getHitbox()
+        {
+            return destinationRectangle;
+        }
+
+        public abstract void randomBulletFire();
 
         public void moveEnemy() {
             switch (moveType){
@@ -59,5 +80,7 @@ namespace Alien_Attack
                     break;
             }
         }
+
+        public abstract void drawBullet();
     }
 }

@@ -12,34 +12,34 @@ namespace Alien_Attack
 {
     internal class Bunkers
     {
-        private Texture2D bunker;
+        private Texture2D bunkerAtlas;
         private int bunkerAmount;
         private int drawnBunkers;
         private int screenWidth;
         private SpriteBatch spriteBatch;
         private Game1 game1;
         private Rectangle destinationRectangle;
+        private List<BunkerPart> bunkerPieces;
+        private Vector2 piecePosition;
 
-        public Bunkers(Texture2D Bunker, int amountOfBunkers) {
-            /*game1 = new Game1();
-            spriteBatch = game1.getSpriteBatch();*/
-            bunker = Bunker;
+        public Bunkers(Texture2D bunkerTexture, int amountOfBunkers)
+        {
+            bunkerAtlas = bunkerTexture;
             bunkerAmount = amountOfBunkers;
             screenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
             drawnBunkers = 0;
+            bunkerPieces = new List<BunkerPart>();
         }
 
-        public void drawBunkers(SpriteBatch _spriteBatch) {
+        public void drawBunkers(SpriteBatch _spriteBatch)
+        {
             spriteBatch = _spriteBatch;
             if (drawnBunkers != bunkerAmount)
             {
-                destinationRectangle = new Rectangle(50, 500, 100, 100);
-                spriteBatch.Begin();
-                spriteBatch.Draw(bunker, destinationRectangle, Color.White);
-                spriteBatch.End();
-                drawnBunkers++;
+                bunkerPieces.Add(new BunkerPart(bunkerAtlas, piecePosition));
                 drawBunkers(spriteBatch);
             }
+            drawnBunkers = 0;
         }
     }
 }

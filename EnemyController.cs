@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -11,13 +10,12 @@ namespace Alien_Attack
 {
     internal class EnemyController
     {
-        private mediumEnemy enemy1;
         private const int enemySpacing = 60;
         private Texture2D enemyTexture;
         private SpriteBatch spriteBatch;
         private Vector2 startPos;
         private Vector2 currentPos;
-        private List<mediumEnemy> enemies;
+        private static List<mediumEnemy> enemies;
         private int numOfEnemies;
         private int rows;
         private int columns;
@@ -25,6 +23,7 @@ namespace Alien_Attack
         private int count;
         private int collisionCount;
         private Rectangle enemyHitbox;
+        private bool isPlayerCollision;
         //Will only spawn in the regular enemies for now
 
         public EnemyController(SpriteBatch _spriteBatch, Texture2D texture, int rows, int columns, Vector2 startPos)
@@ -43,7 +42,7 @@ namespace Alien_Attack
 
         public void spawnEnemies() {
             //To do: Make this into recurrsion instead
-            
+                //Spawns in all of the enemies in rows
             for (int row = 0; row <= rows; row++)
             {
                 currentPos.Y += enemySpacing;
@@ -61,7 +60,7 @@ namespace Alien_Attack
         {
             //Constantly calls the update method for each enemy (moves them around)
             
-            if (num <= enemies.Count - 1) {
+            if (num <= getNumberOfEnemies()) {
                 enemies[num].updateEnemy();
 
 
@@ -69,12 +68,20 @@ namespace Alien_Attack
                 {
                     moveAllDown();
                 }
-                if (enemies[num].getPosition().X <= 60)
+                if (enemies[num].getPosition().X <= 10)
                 {
                     moveAllDown();
                 }
 
+                if (enemies[num].getPosition().Y >= 750) { 
+                    //Game over here
+                }
+
                 num++;
+
+                if (getNumberOfEnemies() == -1) { 
+                    //Victory
+                }
                 updateAllEnemies();
                 
             }
@@ -83,23 +90,25 @@ namespace Alien_Attack
         }
         
         public void drawAllEnemies() {
-            //Constantly calls the draw method for each enemy (Draws them on the screen)
-                //Two enemies dont move for some reason
-            //Recursion doesn't work here
+                //Calls drawing methods
             foreach(mediumEnemy enemy in enemies)
             {
                 enemy.drawEnemy();
+                enemy.drawBullet();
             }
             
+            
         }
+
         public void deleteEnemy(int enemyNum)
+            //Removes the enemy from the list, stopping them from being drawn and updated
         {
             enemies.RemoveAt(enemyNum);
         }
 
         public void moveAllDown() {
-            
-            if (count <= enemies.Count - 1)
+                //Loops through all enemys, calling the method to move the enemy down
+            if (count <= getNumberOfEnemies())
             {
                 enemies[count].moveEnemyDown();
                 count++;
@@ -126,13 +135,11 @@ namespace Alien_Attack
 
             }
             return false;*/
-
+                //Loops through each enemy, getting their hitbox and checking if it is in the bullets hitbox, then deleting the enemy if so
             foreach (mediumEnemy enemy2 in enemies) {
-                //Debug.WriteLine("Checking collision");
                 enemyHitbox = enemy2.getHitbox();
                 if (enemyHitbox.Intersects(bulletHitbox))
                 {
-                    //Debug.WriteLine("CollisionDetected");
                     deleteEnemy(collisionCount);
                     return true;
                 }
@@ -140,7 +147,22 @@ namespace Alien_Attack
             }
             collisionCount = 0;
             return false;
-            //Debug.WriteLine("false");
+        }
+
+        public bool checkPlayerCollision(Rectangle playerHitBox) {
+                //Checks for the collision between enemy bullets and the player
+            foreach (mediumEnemy enemy3 in enemies)
+            {
+                isPlayerCollision = enemy3.bulletCollision(playerHitBox);
+                if (isPlayerCollision) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static int getNumberOfEnemies() { 
+                return enemies.Count - 1;
         }
     }
 }

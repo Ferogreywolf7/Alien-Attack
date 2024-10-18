@@ -16,19 +16,23 @@ namespace Alien_Attack
         private Bullets playerBullet;
         private Bunkers bunkers;
         private EnemyController enemies;
+        private TextureDirectory textureBank;
         private Vector2 player1StartPos;
         private Texture2D player1Texture;
         private Texture2D playerBulletTexture;
         private Texture2D textBorder;
         private Texture2D bunker;
         private Texture2D enemyTexture;
+        private Texture2D enemyBulletTexture;
+        private Texture2D bunkerAtlas;
         private SpriteFont font;
-        private KeyboardState currentKeyState;
+        static KeyboardState currentKeyState;
         private KeyboardState previousKeyState;
         private Keys shoot;
         private Keys pause;
         private bool gamePaused;
         private bool playerBulletActive;
+        private bool playerHit;
         private int extraXCoord;
         private Rectangle bulletHitbox;
         public Game1()
@@ -36,7 +40,6 @@ namespace Alien_Attack
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-
         }
 
         protected override void Initialize()
@@ -61,9 +64,11 @@ namespace Alien_Attack
             textBorder = Content.Load<Texture2D>("textBorder"); 
             playerBulletTexture = Content.Load<Texture2D>("bulletPlaceholder");
             player1Texture = Content.Load<Texture2D>("playerPlaceholder");
-            bunker = Content.Load<Texture2D>("bunkerPlaceholder");
             enemyTexture = Content.Load<Texture2D>("enemyPlaceholder");
+            enemyBulletTexture = Content.Load<Texture2D>("enemyBulletPlaceholder");
             font = Content.Load<SpriteFont>("testFont");
+            
+
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             player1 = new Player(player1Texture, player1StartPos, controls);          
@@ -71,6 +76,8 @@ namespace Alien_Attack
             bunkers = new Bunkers(bunker, 2);
             enemies = new EnemyController(_spriteBatch, enemyTexture, 2, 5, new Vector2(200, 50));
             enemies.spawnEnemies();
+
+            textureBank = new TextureDirectory(textBorder, playerBulletTexture, player1Texture, bunker, enemyTexture, enemyBulletTexture, font);
             // TODO: use this.Content to load your game content here
         }
 
@@ -82,6 +89,7 @@ namespace Alien_Attack
             // TODO: Add your update logic here
             // Calls updates  
             // pauses the main game when the button is pressed
+
             previousKeyState = currentKeyState;
             currentKeyState = Keyboard.GetState();
             pauseGame();
@@ -91,7 +99,7 @@ namespace Alien_Attack
                 firePlayerBullet();
                 
                 player1.updatePlayer(currentKeyState, previousKeyState);
-                enemies.updateAllEnemies(); //Very inefficient as it moves all enemies every single run through
+                enemies.updateAllEnemies();
                 
                 if (playerBulletActive)
                 {
@@ -102,6 +110,12 @@ namespace Alien_Attack
                         playerBulletActive = false;
                     }
                 }
+                playerHit = enemies.checkPlayerCollision(player1.getPlayerHitbox());
+
+                if (playerHit) {
+                    //Run effects and life decreasing here
+                    Debug.WriteLine("Player hit");
+                    playerHit = false;}
             }
             if (gamePaused) {
                 getControls();
@@ -122,7 +136,7 @@ namespace Alien_Attack
             if (!gamePaused)
             {
                 enemies.drawAllEnemies();
-                bunkers.drawBunkers(_spriteBatch);
+                
                 if (playerBulletActive)
                 {
                     playerBullet.drawBullets(_spriteBatch);
@@ -152,7 +166,7 @@ namespace Alien_Attack
             if (currentKeyState.IsKeyDown(shoot) && !playerBulletActive)
             {
                 extraXCoord = player1.getPLayerWidth()/2;
-                playerBullet = new Bullets(5, playerBulletTexture, "up", player1.getPosition(), font, extraXCoord);
+                playerBullet = new Bullets(5, playerBulletTexture, "up", player1.getPosition(), extraXCoord);
                 playerBulletActive = true;
             }
         }
