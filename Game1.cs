@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Alien_Attack
@@ -15,13 +16,13 @@ namespace Alien_Attack
         private UI ui;
         private Bullets playerBullet;
         private Bunkers bunkers;
+        private List<BunkerPart> bunkerParts;
         private EnemyController enemies;
         private TextureDirectory textureBank;
         private Vector2 player1StartPos;
         private Texture2D player1Texture;
         private Texture2D playerBulletTexture;
         private Texture2D textBorder;
-        private Texture2D bunker;
         private Texture2D enemyTexture;
         private Texture2D enemyBulletTexture;
         private Texture2D bunkerAtlas;
@@ -35,6 +36,7 @@ namespace Alien_Attack
         private bool playerHit;
         private int extraXCoord;
         private Rectangle bulletHitbox;
+        private Rectangle partHitbox;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -66,6 +68,7 @@ namespace Alien_Attack
             player1Texture = Content.Load<Texture2D>("playerPlaceholder");
             enemyTexture = Content.Load<Texture2D>("enemyPlaceholder");
             enemyBulletTexture = Content.Load<Texture2D>("enemyBulletPlaceholder");
+            bunkerAtlas = Content.Load<Texture2D>("combinedBlocks");
             font = Content.Load<SpriteFont>("testFont");
             
 
@@ -73,11 +76,11 @@ namespace Alien_Attack
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             player1 = new Player(player1Texture, player1StartPos, controls);          
             ui = new UI(_spriteBatch, font, textBorder, controls);
-            bunkers = new Bunkers(bunker, 2);
+            bunkers = new Bunkers(bunkerAtlas, 2);
             enemies = new EnemyController(_spriteBatch, enemyTexture, 2, 5, new Vector2(200, 50));
             enemies.spawnEnemies();
 
-            textureBank = new TextureDirectory(textBorder, playerBulletTexture, player1Texture, bunker, enemyTexture, enemyBulletTexture, font);
+            textureBank = new TextureDirectory(textBorder, playerBulletTexture, player1Texture, bunkerAtlas, enemyTexture, enemyBulletTexture, font);
             // TODO: use this.Content to load your game content here
         }
 
@@ -100,9 +103,11 @@ namespace Alien_Attack
                 
                 player1.updatePlayer(currentKeyState, previousKeyState);
                 enemies.updateAllEnemies();
-                
+                bunkers.updateBunkers();
+                    //Collision checking
                 if (playerBulletActive)
                 {
+                    playerBullet.updateBullets();
                     bulletHitbox = playerBullet.getHitbox();
                     playerBulletActive = !enemies.checkCollision(bulletHitbox);
                     if (playerBullet.getBulletPos().Y <= -60)
@@ -111,6 +116,19 @@ namespace Alien_Attack
                     }
                 }
                 playerHit = enemies.checkPlayerCollision(player1.getPlayerHitbox());
+                //Dont like how this part is in the Game1 class, move to bunkers/enemyController
+                bunkerParts = bunkers.GetBunkerParts();
+                foreach (BunkerPart part in bunkerParts) {
+                    partHitbox = part.getBunkerHitbox();
+                    if (enemies.checkPlayerCollision(partHitbox))
+                    {
+                        part.partHit();
+                    }
+                    if (bulletHitbox.Intersects(partHitbox)) {
+                        playerBulletActive = false;
+                        part.partHit();
+                    }
+                }
 
                 if (playerHit) {
                     //Run effects and life decreasing here
@@ -136,11 +154,10 @@ namespace Alien_Attack
             if (!gamePaused)
             {
                 enemies.drawAllEnemies();
-                
+                bunkers.drawBunkers(_spriteBatch);
                 if (playerBulletActive)
                 {
                     playerBullet.drawBullets(_spriteBatch);
-                    playerBullet.updateBullets();
                 }
             }
 

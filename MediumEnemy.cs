@@ -9,7 +9,7 @@ namespace Alien_Attack
 {
     internal class mediumEnemy : Enemies
     {
-        private Rectangle playerHitbox;
+        private Rectangle hitbox;
         private Texture2D bulletTexture;
         public mediumEnemy(Texture2D medEnemyTexture, SpriteBatch _spriteBatch, Vector2 startPos)
         {
@@ -32,7 +32,7 @@ namespace Alien_Attack
 
         public override void randomBulletFire()
         {
-            randomNum = rand.Next(1, 1000-(EnemyController.getNumberOfEnemies()*20));
+            randomNum = rand.Next(1, 100+(EnemyController.getNumberOfEnemies()*20));
             if (randomNum == 99) {
                 Vector2 bulletSpawnPos = getPosition();
                 bullet = new Bullets(5, texture, "down", bulletSpawnPos, 0);
@@ -61,10 +61,9 @@ namespace Alien_Attack
             }
         }
 
-        public bool bulletCollision(Rectangle playersHitbox){
-            playerHitbox = playersHitbox;
-                //Deletes bullet if bulllet collides with player
-            if (bulletSpawned && bullet.getHitbox().Intersects(playerHitbox))
+        public bool bulletCollision(Rectangle Hitbox){
+            hitbox = Hitbox;
+            if (bulletSpawned && bullet.getHitbox().Intersects(hitbox))
             {
                 bulletSpawned = false;
                 return true;

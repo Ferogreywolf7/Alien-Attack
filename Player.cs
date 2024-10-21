@@ -30,7 +30,7 @@ namespace Alien_Attack
             steps = 5;
             position = player1StartPos;
             texture = player1Texture;
-            playerWidth = 100;
+            playerWidth = 70;
             controls = control;
             getControls();
         }
@@ -44,7 +44,7 @@ namespace Alien_Attack
         
         public void drawPlayer(SpriteBatch _spriteBatch) {
             spriteBatch = _spriteBatch;
-            destinationRectangle = new Rectangle((int)position.X, (int)position.Y, 100, playerWidth);
+            destinationRectangle = new Rectangle((int)position.X, (int)position.Y, 70, playerWidth);
             spriteBatch.Begin();
             spriteBatch.Draw(texture, destinationRectangle, Color.White);
             spriteBatch.End();
