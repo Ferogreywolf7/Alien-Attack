@@ -21,12 +21,11 @@ namespace Alien_Attack
         private SpriteBatch spriteBatch;
         private int extraXCoord;
 
-        public Bullets(int speed, Texture2D texture, string moveType, Vector2 startPos, SpriteFont font, int extraX) {
+        public Bullets(int speed, Texture2D texture, string moveType, Vector2 startPos, int extraX) {
             bulletSpeed = speed;
             bulletTexture = texture;
             movementType = moveType;
             position = startPos;
-            testFont = font;
             extraXCoord = extraX;
         }
 

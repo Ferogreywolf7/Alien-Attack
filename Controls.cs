@@ -16,7 +16,7 @@ namespace Alien_Attack
         private Keys right;
         private Keys pause;
         private bool keyAccepted;
-        private Game1 game1;
+
         private KeyboardState _keyboard;
 
         public Controls() {
@@ -45,35 +45,31 @@ namespace Alien_Attack
         }
 
         private void getKeyboardState() {
-            KeyboardState oldState = _keyboard;
             _keyboard = Keyboard.GetState();
         }
 
 
         //Mutators
-        public bool setLeft(KeyboardState keyboard) {
-            _keyboard = keyboard;
-                //Appears that KeyboardState can only be gotten from the Game1 class so this whole section must be rewritten
+        public bool setLeft(KeyboardState currentKeyState) {
             keyAccepted = false;
-            
             //Doesn't work apart from the exact instant it checks yet it get stuck in the while loop
-            //getKeyboardState();
-            Debug.WriteLine(string.Join(' ', _keyboard.GetPressedKeys()));
+            _keyboard = currentKeyState;
+                Debug.WriteLine(string.Join(' ', _keyboard.GetPressedKeys()));
             //When one key is pressed, get that key and put it into the left variable
-            if (_keyboard.GetPressedKeyCount() == 1) {
+            if (_keyboard.GetPressedKeyCount() == 1)
+            {
                 Debug.WriteLine("pressed");
                 left = _keyboard.GetPressedKeys()[0];
+                Debug.WriteLine("Left set as " + left);
                 keyAccepted = true;
             }
             return keyAccepted;
         }
 
-        public void setRight()
+        public bool setRight(KeyboardState currentKeyState)
         {
             keyAccepted = false;
-            while (!keyAccepted)
-            {
-
+            _keyboard = currentKeyState;
                 //Doesn't work apart from the exact instant it checks yet it get stuck in the while loop
                 getKeyboardState();
                 if (_keyboard.GetPressedKeyCount() == 1)
@@ -81,39 +77,33 @@ namespace Alien_Attack
                     right = _keyboard.GetPressedKeys()[0];
                     keyAccepted = true;
                 }
-            }
+            return keyAccepted;
         }
 
-        public void setShoot()
+        public bool setShoot(KeyboardState currentKeyState)
         {
             keyAccepted = false;
-            while (!keyAccepted)
-            {
-
+            _keyboard = currentKeyState;
                 //Doesn't work apart from the exact instant it checks yet it get stuck in the while loop
-                getKeyboardState();
                 if (_keyboard.GetPressedKeyCount() == 1)
                 {
                     fire = _keyboard.GetPressedKeys()[0];
                     keyAccepted = true;
                 }
-            }
+            return keyAccepted;
         }
 
-        public void setPause()
+        public bool setPause(KeyboardState currentKeyState)
         {
             keyAccepted = false;
-            while (!keyAccepted)
-            {
-
-                //Doesn't work apart from the exact instant it checks yet it get stuck in the while loop
+            _keyboard = currentKeyState;
                 getKeyboardState();
                 if (_keyboard.GetPressedKeyCount() == 1)
                 {
                     pause = _keyboard.GetPressedKeys()[0];
                     keyAccepted = true;
                 }
+            return keyAccepted;
             }
         }
     }
-}

@@ -1,0 +1,3 @@
+﻿give cooldown for enemy bullets, add lives, make more bullets spawn when less enemies
+
+Make new bunker - bunch of different squares with a counter for each one based off of their destruction amount
