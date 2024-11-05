@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Security.Cryptography.X509Certificates;
+using System.Diagnostics;
 
 namespace Alien_Attack
 {
@@ -30,13 +31,13 @@ namespace Alien_Attack
             steps = 5;
             position = player1StartPos;
             texture = player1Texture;
-            playerWidth = 100;
+            playerWidth = 70;
             controls = control;
             getControls();
         }
 
         public void updatePlayer(KeyboardState currentKeyState, KeyboardState previousKeyState) {
-            currentKeyboardState = currentKeyState;
+            currentKeyboardState = Game1.getKayboardState();
             previousKeyboardState = previousKeyState;
             movePlayer();
         }
@@ -44,7 +45,7 @@ namespace Alien_Attack
         
         public void drawPlayer(SpriteBatch _spriteBatch) {
             spriteBatch = _spriteBatch;
-            destinationRectangle = new Rectangle((int)position.X, (int)position.Y, 100, playerWidth);
+            destinationRectangle = new Rectangle((int)position.X, (int)position.Y, 70, playerWidth);
             spriteBatch.Begin();
             spriteBatch.Draw(texture, destinationRectangle, Color.White);
             spriteBatch.End();
@@ -52,6 +53,10 @@ namespace Alien_Attack
 
         public Vector2 getPosition() {
             return position;
+        }
+
+        public Rectangle getPlayerHitbox() {
+            return destinationRectangle;
         }
 
         public int getPLayerWidth() {
@@ -84,6 +89,7 @@ namespace Alien_Attack
             position.X += steps;
         }
         
+
 
     }
 }
