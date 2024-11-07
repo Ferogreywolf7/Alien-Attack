@@ -18,7 +18,6 @@ namespace Alien_Attack
         private Bunkers bunkers;
         private List<BunkerPart> bunkerParts;
         private EnemyController enemies;
-        private TextureDirectory textureBank;
         private Vector2 player1StartPos;
         private Texture2D player1Texture;
         private Texture2D playerBulletTexture;
@@ -26,6 +25,7 @@ namespace Alien_Attack
         private Texture2D enemyTexture;
         private Texture2D enemyBulletTexture;
         private Texture2D bunkerAtlas;
+        private Texture2D lifeIcon;
         private SpriteFont font;
         private static KeyboardState currentKeyState;
         private KeyboardState previousKeyState;
@@ -42,7 +42,7 @@ namespace Alien_Attack
         private string getNewKeybindOf;
         private string tempGetNewKeybindOf;
         private bool isKeyInput;
-
+        private int noOfLives;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -57,6 +57,7 @@ namespace Alien_Attack
             gamePaused = false;
             playerBulletActive = false;
             keyAccepted = true;
+            noOfLives = 3;
             //Set window size
             _graphics.PreferredBackBufferWidth = 800;
             _graphics.PreferredBackBufferHeight = 1000;
@@ -75,19 +76,18 @@ namespace Alien_Attack
             enemyTexture = Content.Load<Texture2D>("enemyPlaceholder");
             enemyBulletTexture = Content.Load<Texture2D>("enemyBulletPlaceholder");
             bunkerAtlas = Content.Load<Texture2D>("combinedBlocks");
+            lifeIcon = Content.Load<Texture2D>("playerHeartPlaceholder");
             font = Content.Load<SpriteFont>("testFont");
+
             
 
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             player1 = new Player(player1Texture, player1StartPos, controls);          
-            ui = new UI(_spriteBatch, font, textBorder, controls);
+            ui = new UI(_spriteBatch, font, textBorder, lifeIcon, controls);
             bunkers = new Bunkers(bunkerAtlas, 2);
             enemies = new EnemyController(_spriteBatch, enemyTexture, 2, 5, new Vector2(200, 50));
             enemies.spawnEnemies();
-
-            textureBank = new TextureDirectory(textBorder, playerBulletTexture, player1Texture, bunkerAtlas, enemyTexture, enemyBulletTexture, font);
-            // TODO: use this.Content to load your game content here
         }
 
         protected override void Update(GameTime gameTime)
@@ -141,7 +141,7 @@ namespace Alien_Attack
 
                 }
                 if (playerHit) {
-                    //Run effects and life decreasing here
+                    noOfLives -= 1;
                     Debug.WriteLine("Player hit");
                     playerHit = false;}
             }
@@ -177,7 +177,7 @@ namespace Alien_Attack
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             //prevents the bullet from moving when the game is paused
-
+            ui.drawLives(noOfLives);
             if (gamePaused == false)
             {
                 player1.drawPlayer(_spriteBatch);
