@@ -15,8 +15,7 @@ namespace Alien_Attack
         private Keys left;
         private Keys right;
         private Keys pause;
-        private bool keyAccepted;
-
+        private bool keyInput;
         private KeyboardState _keyboard;
 
         public Controls() {
@@ -51,7 +50,7 @@ namespace Alien_Attack
 
         //Mutators
         public bool setLeft(KeyboardState currentKeyState) {
-            keyAccepted = false;
+            keyInput = false;
             //Doesn't work apart from the exact instant it checks yet it get stuck in the while loop
             _keyboard = currentKeyState;
                 Debug.WriteLine(string.Join(' ', _keyboard.GetPressedKeys()));
@@ -61,49 +60,49 @@ namespace Alien_Attack
                 Debug.WriteLine("pressed");
                 left = _keyboard.GetPressedKeys()[0];
                 Debug.WriteLine("Left set as " + left);
-                keyAccepted = true;
+                keyInput = true;
             }
-            return keyAccepted;
+            return keyInput;
         }
 
         public bool setRight(KeyboardState currentKeyState)
         {
-            keyAccepted = false;
+            keyInput = false;
             _keyboard = currentKeyState;
                 //Doesn't work apart from the exact instant it checks yet it get stuck in the while loop
                 getKeyboardState();
                 if (_keyboard.GetPressedKeyCount() == 1)
                 {
                     right = _keyboard.GetPressedKeys()[0];
-                    keyAccepted = true;
+                    keyInput = true;
                 }
-            return keyAccepted;
+            return keyInput;
         }
 
         public bool setShoot(KeyboardState currentKeyState)
         {
-            keyAccepted = false;
+            keyInput = false;
             _keyboard = currentKeyState;
                 //Doesn't work apart from the exact instant it checks yet it get stuck in the while loop
                 if (_keyboard.GetPressedKeyCount() == 1)
                 {
                     fire = _keyboard.GetPressedKeys()[0];
-                    keyAccepted = true;
+                    keyInput = true;
                 }
-            return keyAccepted;
+            return keyInput;
         }
 
         public bool setPause(KeyboardState currentKeyState)
         {
-            keyAccepted = false;
+            keyInput = false;
             _keyboard = currentKeyState;
                 getKeyboardState();
                 if (_keyboard.GetPressedKeyCount() == 1)
                 {
                     pause = _keyboard.GetPressedKeys()[0];
-                    keyAccepted = true;
+                    keyInput = true;
                 }
-            return keyAccepted;
+            return keyInput;
             }
         }
     }
