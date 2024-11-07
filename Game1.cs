@@ -40,7 +40,9 @@ namespace Alien_Attack
         private Rectangle partHitbox;
         private bool keyAccepted;
         private string getNewKeybindOf;
-        public string tempGetNewKeybindOf;
+        private string tempGetNewKeybindOf;
+        private bool isKeyInput;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -144,7 +146,7 @@ namespace Alien_Attack
                     playerHit = false;}
             }
             if (gamePaused) {
-                if (!keyAccepted)
+                if (!keyAccepted && !isKeyInput)
                 {
                     //There is a temporary variable to make sure the keyboard check is repeated
                     if (tempGetNewKeybindOf != "") {
@@ -153,21 +155,21 @@ namespace Alien_Attack
                     switch (getNewKeybindOf)
                     {
                         case "Left":
-                            controls.setLeft(currentKeyState);
+                            isKeyInput = controls.setLeft(currentKeyState);
                             break;
                         case "Right":
-                            controls.setRight(currentKeyState);
+                            isKeyInput = controls.setRight(currentKeyState);
                             break;
                         case "Shoot":
-                            controls.setShoot(currentKeyState);
+                            isKeyInput = controls.setShoot(currentKeyState);
                             break;
                         case "Pause":
-                            controls.setPause(currentKeyState);
+                            isKeyInput = controls.setPause(currentKeyState);
+                            getControls();
                             break;
-                    }
+                    } 
                 }
             }
-
             base.Update(gameTime);
         }
 
@@ -193,6 +195,11 @@ namespace Alien_Attack
                 if (tempGetNewKeybindOf == "") {
                     keyAccepted = false;
                 }
+                else
+                {
+                    isKeyInput = false;
+                }
+                
             }
             base.Draw(gameTime);
         }
@@ -200,7 +207,6 @@ namespace Alien_Attack
 
         public void getControls()
         {
-            
             shoot = controls.getFire();
             pause = controls.getPause();
         }
@@ -239,7 +245,8 @@ namespace Alien_Attack
             }
         }
 
-        public static KeyboardState getKayboardState() {
+        public static KeyboardState getKayboardState() 
+        {
             currentKeyState = Keyboard.GetState();
             return currentKeyState;
         }
