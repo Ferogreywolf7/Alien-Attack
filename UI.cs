@@ -11,6 +11,7 @@ public class UI
 	private SpriteBatch spriteBatch;
 	private SpriteFont font;
 	private Texture2D textBox;
+    private Texture2D heart;
 	private int score;
     private Rectangle boxLeft;
     private Rectangle boxRight;
@@ -27,12 +28,13 @@ public class UI
     private bool isButtonPressed;
     private Controls controls;
     private string selectedBox;
-    public UI(SpriteBatch _spriteBatch, SpriteFont testFont, Texture2D textBorder, Controls control)
+    public UI(SpriteBatch _spriteBatch, SpriteFont testFont, Texture2D textBorder, Texture2D lifeIcon, Controls control)
 	{
 		controls = control;
         spriteBatch = _spriteBatch;
 		font = testFont;
 		textBox = textBorder;
+        heart = lifeIcon;
 		getControls();
     }
 	public int getScore() {
@@ -49,7 +51,7 @@ public class UI
 		pause = controls.getPause();
 	}
 
-	public string drawControlsMenu() {
+	private string drawControlsMenu() {
             //Defines the rectangles that the text box textures will be put onto
 		boxLeft  = new Rectangle(295, 140, 160, 40);
 		boxRight = new Rectangle(295, 190, 160, 40);
@@ -123,4 +125,14 @@ public class UI
         return selectedBox;
     }
 
+    public void drawLives(int noOfLives) {
+        if (noOfLives != 0)
+        {
+            spriteBatch.Begin();
+            spriteBatch.Draw(heart, new Rectangle (60* noOfLives, 20, 50, 50), Color.White);
+            spriteBatch.End();
+            noOfLives -= 1;
+            drawLives(noOfLives);
+        }
+    }
 }

@@ -19,7 +19,6 @@ namespace Alien_Attack
             position = originalPosition;
             moveType = "right";
             destinationRectangle = new Rectangle((int)position.X, (int)position.Y, 50, 50);
-            bulletTexture = TextureDirectory.getEnemyBulletTexture();
         }
 
         public override void drawEnemy()
