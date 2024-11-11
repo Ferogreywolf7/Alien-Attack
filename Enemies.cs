@@ -81,6 +81,10 @@ namespace Alien_Attack
                     break;
             }
         }
+            //Enemies get slightly faster when you kill them
+        public void increaseSpeed() {
+            steps += (float) 0.01;
+        }
 
         public abstract void drawBullet();
     }

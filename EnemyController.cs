@@ -103,6 +103,7 @@ namespace Alien_Attack
         public void deleteEnemy(int enemyNum)
             //Removes the enemy from the list, stopping them from being drawn and updated
         {
+            enemies[enemyNum].increaseSpeed();
             enemies.RemoveAt(enemyNum);
         }
 

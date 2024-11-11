@@ -126,7 +126,7 @@ public class UI
     }
 
     public void drawLives(int noOfLives) {
-        if (noOfLives != 0)
+        if (noOfLives >= 0)
         {
             spriteBatch.Begin();
             spriteBatch.Draw(heart, new Rectangle (60* noOfLives, 20, 50, 50), Color.White);
