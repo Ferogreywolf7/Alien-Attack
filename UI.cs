@@ -119,7 +119,8 @@ public class UI
 
     public string drawPauseMenu() {
         spriteBatch.Begin();
-        spriteBatch.DrawString(font, "Game paused", new Vector2(300, 100), Color.Red);
+        spriteBatch.DrawString(font, "Game paused", new Vector2(320, 100), Color.Red);
+        spriteBatch.DrawString(font, "Click on a box to edit it's keybind", new Vector2(270, 120), Color.Brown);
         spriteBatch.End();
         selectedBox = drawControlsMenu();
         return selectedBox;

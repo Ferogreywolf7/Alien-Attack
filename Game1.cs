@@ -69,7 +69,7 @@ namespace Alien_Attack
 
         protected override void LoadContent()
         {
-            
+                //Loading all textures for the game
             textBorder = Content.Load<Texture2D>("textBorder"); 
             playerBulletTexture = Content.Load<Texture2D>("bulletPlaceholder");
             player1Texture = Content.Load<Texture2D>("playerPlaceholder");
@@ -78,10 +78,9 @@ namespace Alien_Attack
             bunkerAtlas = Content.Load<Texture2D>("combinedBlocks");
             lifeIcon = Content.Load<Texture2D>("playerHeartPlaceholder");
             font = Content.Load<SpriteFont>("testFont");
-
             
 
-
+                //Setting up all of the objects 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             player1 = new Player(player1Texture, player1StartPos, controls);          
             ui = new UI(_spriteBatch, font, textBorder, lifeIcon, controls);
@@ -98,19 +97,20 @@ namespace Alien_Attack
             // TODO: Add your update logic here
             // Calls updates  
             // pauses the main game when the button is pressed
-
+                //Gets what keys are being pressed on the keyboard
             previousKeyState = currentKeyState;
             currentKeyState = Keyboard.GetState();
             pauseGame();
-
+                //Only runs when game isn't paused
             if (!gamePaused)
             {
                 firePlayerBullet();
-                
+                    //Moving player when keys pressed, moving enemies and changing 
                 player1.updatePlayer(currentKeyState, previousKeyState);
                 enemies.updateAllEnemies();
                 bunkers.updateBunkers();
-                    //Collision checking
+
+                    //Moving the players bullet and checkign any collision
                 if (playerBulletActive)
                 {
                     playerBullet.updateBullets();
@@ -128,8 +128,8 @@ namespace Alien_Attack
                     }
                 
                 }
-
-                playerHit = enemies.checkPlayerCollision(player1.getPlayerHitbox());
+                   
+                    //Goes through every part of the bunker and checks to see if the enemies bullets have hit it
                 bunkerParts = bunkers.GetBunkerParts();
                 foreach (BunkerPart part in bunkerParts)
                 {
@@ -140,11 +140,15 @@ namespace Alien_Attack
                     }
 
                 }
+                    //Checks to see if the enemy bullets have hit the player and if so, reduces number of lives
+                playerHit = enemies.checkPlayerCollision(player1.getPlayerHitbox());
                 if (playerHit) {
                     noOfLives -= 1;
                     Debug.WriteLine("Player hit");
                     playerHit = false;}
             }
+
+                //All logic for changing keybinds while game is paused
             if (gamePaused) {
                 if (!keyAccepted && !isKeyInput)
                 {
@@ -172,9 +176,9 @@ namespace Alien_Attack
             }
             base.Update(gameTime);
         }
-
+            //Draws all textures in the game
         protected override void Draw(GameTime gameTime)
-        {
+        { 
             GraphicsDevice.Clear(Color.CornflowerBlue);
             //prevents the bullet from moving when the game is paused
             ui.drawLives(noOfLives);
@@ -204,7 +208,7 @@ namespace Alien_Attack
             base.Draw(gameTime);
         }
 
-
+            //Gets the current keybinds for firing and pausing the game
         public void getControls()
         {
             shoot = controls.getFire();
@@ -221,12 +225,12 @@ namespace Alien_Attack
                 playerBulletActive = true;
             }
         }
-
+            //Stops all bullet related functions being called for the player's bullet
         public void deactivateBullet() {
             playerBulletActive = false;
         }
 
-        //pause game when the assigned key is pressed and the game isnt already paused
+        //pause game when the assigned key is pressed and the game isnt already paused, otherwise unpauses it
         private void pauseGame()
         {
             if (currentKeyState.IsKeyDown(pause) && previousKeyState.IsKeyUp(pause))
@@ -243,12 +247,6 @@ namespace Alien_Attack
                     player1.getControls();
                 }
             }
-        }
-
-        public static KeyboardState getKayboardState() 
-        {
-            currentKeyState = Keyboard.GetState();
-            return currentKeyState;
         }
     }
 }
