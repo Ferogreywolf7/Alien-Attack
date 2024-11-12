@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Transactions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -16,14 +17,18 @@ namespace Alien_Attack
         private Vector2 startPos;
         private Vector2 currentPos;
         private static List<mediumEnemy> enemies;
+        private List<mediumEnemy> updateOnlyBullets;
         private int numOfEnemies;
         private int rows;
         private int columns;
         private int num;
         private int count;
+        private int count2;
+        private int count3;
+        private int count4;
         private int collisionCount;
         private Rectangle enemyHitbox;
-        private bool isPlayerCollision;
+        private bool isCollision;
         //Will only spawn in the regular enemies for now
 
         public EnemyController(SpriteBatch _spriteBatch, Texture2D texture, int rows, int columns, Vector2 startPos)
@@ -38,6 +43,7 @@ namespace Alien_Attack
             count = 0;
             collisionCount = 0;
             enemies = new List<mediumEnemy>();
+            updateOnlyBullets = new List<mediumEnemy>();
         }
 
         public void spawnEnemies() {
@@ -59,7 +65,7 @@ namespace Alien_Attack
         public void updateAllEnemies()
         {
             //Constantly calls the update method for each enemy (moves them around)
-            
+            updateDeadBullets();
             if (num <= getNumberOfEnemies()) {
                 enemies[num].updateEnemy();
 
@@ -90,7 +96,8 @@ namespace Alien_Attack
         }
         
         public void drawAllEnemies() {
-                //Calls drawing methods
+            //Calls drawing methods
+            drawDeadBullets();
             foreach(mediumEnemy enemy in enemies)
             {
                 enemy.drawEnemy();
@@ -103,11 +110,61 @@ namespace Alien_Attack
         public void deleteEnemy(int enemyNum)
             //Removes the enemy from the list, stopping them from being drawn and updated
         {
-            enemies[enemyNum].increaseSpeed();
+            increaseAllSpeed();
+            if (enemies[enemyNum].isBulletAlive()) {
+                updateOnlyBullets.Add(enemies[enemyNum]);
+            }
             enemies.RemoveAt(enemyNum);
         }
 
-        public void moveAllDown() {
+        private void updateDeadBullets()
+        {
+            if (count3 < updateOnlyBullets.Count)
+            {
+                updateOnlyBullets[count3].updateBullet();
+                if (!updateOnlyBullets[count3].isBulletAlive()) {
+                    updateOnlyBullets.RemoveAt(count3);
+                }
+                count3++;
+                updateDeadBullets();
+            }
+
+            else
+            {
+                count3 = 0;
+            }
+        }
+
+        private void drawDeadBullets()
+        {
+            if (count4 < updateOnlyBullets.Count)
+            {
+                updateOnlyBullets[count4].drawBullet();
+                count4++;
+                drawDeadBullets();
+            }
+
+            else
+            {
+                count4 = 0;
+            }
+        }
+
+        private void increaseAllSpeed() {
+            if (count2 <= getNumberOfEnemies())
+            {
+                enemies[count2].increaseSpeed();
+                count2++;
+                increaseAllSpeed();
+            }
+
+            else
+            {
+                count2 = 0;
+            }
+        }
+
+        private void moveAllDown() {
                 //Loops through all enemys, calling the method to move the enemy down
             if (count <= getNumberOfEnemies())
             {
@@ -123,21 +180,6 @@ namespace Alien_Attack
         }
         
         public bool checkCollision(Rectangle bulletHitbox) {
-                //Recursion attempt
-            /*if (collisionCount <= enemies.Count - 1)
-            {
-                Debug.WriteLine("Checking collision");
-                enemyHitbox = enemies[collisionCount].getHitbox();
-                if (enemyHitbox.Intersects(bulletHitbox)) {
-                    Debug.WriteLine("CollisionDetected");
-                    deleteEnemy(collisionCount);
-                    return true;
-                }
-                collisionCount++;
-                checkCollision(bulletHitbox);
-
-            }
-            return false;*/
                 //Loops through each enemy, getting their hitbox and checking if it is in the bullets hitbox, then deleting the enemy if so
             foreach (mediumEnemy enemy2 in enemies) {
                 enemyHitbox = enemy2.getHitbox();
@@ -156,8 +198,16 @@ namespace Alien_Attack
                 //Checks for the collision between enemy bullets and the player
             foreach (mediumEnemy enemy3 in enemies)
             {
-                isPlayerCollision = enemy3.bulletCollision(playerHitBox);
-                if (isPlayerCollision) {
+                isCollision = enemy3.bulletCollision(playerHitBox);
+                if (isCollision)
+                {
+                    return true;
+                }
+            }
+            foreach (mediumEnemy enemy in updateOnlyBullets) {
+                isCollision = enemy.bulletCollision(playerHitBox);
+                if (isCollision)
+                {
                     return true;
                 }
             }

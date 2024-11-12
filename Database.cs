@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 
 namespace Alien_Attack
 {
-    
     internal class Database
     {
         private string databaseConnection;
 
         public Database() { 
-        
+        databaseConnection = "Server=192.168.1.164;User ID=root;Password=F3rogreywolf#7";
+		new MySqlConnection(databaseConnection);
         }
     }
 }

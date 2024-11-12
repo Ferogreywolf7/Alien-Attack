@@ -49,12 +49,17 @@ namespace Alien_Attack
 
         public abstract void updateBullet();
 
+        public abstract void randomBulletFire();
+
+        public bool isBulletAlive() {
+            return bulletSpawned;
+        }
+
         public Rectangle getHitbox()
         {
             return destinationRectangle;
         }
-
-        public abstract void randomBulletFire();
+        
 
         public void moveEnemy() {
             switch (moveType){
@@ -83,7 +88,7 @@ namespace Alien_Attack
         }
             //Enemies get slightly faster when you kill them
         public void increaseSpeed() {
-            steps += (float) 0.01;
+            steps += (float) 0.03;
         }
 
         public abstract void drawBullet();
