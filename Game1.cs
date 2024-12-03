@@ -35,14 +35,12 @@ namespace Alien_Attack
         private bool playerBulletActive;
         private bool bunkerHitByPlayer;
         private bool playerHit;
+        private bool inControlsMenu;
         private int extraXCoord;
         private Rectangle bulletHitbox;
         private Rectangle partHitbox;
-        private bool keyAccepted;
-        private string getNewKeybindOf;
-        private string tempGetNewKeybindOf;
-        private bool isKeyInput;
         private int noOfLives;
+        private string tempGetNewKeybindOf;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -55,8 +53,6 @@ namespace Alien_Attack
             // TODO: Add your initialization logic here
             player1StartPos = new Vector2(50, 800);
             gamePaused = false;
-            playerBulletActive = false;
-            keyAccepted = true;
             noOfLives = 3;
             //Set window size
             _graphics.PreferredBackBufferWidth = 800;
@@ -91,10 +87,6 @@ namespace Alien_Attack
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
-
-            // TODO: Add your update logic here
             // Calls updates  
             // pauses the main game when the button is pressed
                 //Gets what keys are being pressed on the keyboard
@@ -148,31 +140,10 @@ namespace Alien_Attack
                     playerHit = false;}
             }
 
-                //All logic for changing keybinds while game is paused
-            if (gamePaused) {
-                if (!keyAccepted && !isKeyInput)
-                {
-                    //There is a temporary variable to make sure the keyboard check is repeated
-                    if (tempGetNewKeybindOf != "") {
-                        getNewKeybindOf = tempGetNewKeybindOf;
-                    }
-                    switch (getNewKeybindOf)
-                    {
-                        case "Left":
-                            isKeyInput = controls.setLeft(currentKeyState);
-                            break;
-                        case "Right":
-                            isKeyInput = controls.setRight(currentKeyState);
-                            break;
-                        case "Shoot":
-                            isKeyInput = controls.setShoot(currentKeyState);
-                            break;
-                        case "Pause":
-                            isKeyInput = controls.setPause(currentKeyState);
-                            getControls();
-                            break;
-                    } 
-                }
+                //All logic for changing keybinds while game is paused. In this class due to monogame restrictions
+            if (gamePaused && inControlsMenu) {
+                controls.setNewKeybind(currentKeyState);
+                getControls();
             }
             base.Update(gameTime);
         }
@@ -193,16 +164,10 @@ namespace Alien_Attack
                 }
             }
 
-            if (gamePaused)
+            if (gamePaused && inControlsMenu)
             {
-                tempGetNewKeybindOf = ui.drawPauseMenu();
-                if (tempGetNewKeybindOf == "") {
-                    keyAccepted = false;
-                }
-                else
-                {
-                    isKeyInput = false;
-                }
+                tempGetNewKeybindOf = ui.drawControlsMenu();
+                controls.getKeybindToSet(tempGetNewKeybindOf);
                 
             }
             base.Draw(gameTime);
@@ -238,6 +203,8 @@ namespace Alien_Attack
                 if (!gamePaused)
                 {
                     gamePaused = true;
+                    //Temporary while pause/main menu is implemented
+                    inControlsMenu = true;
                 }
 
                 else if (gamePaused)
