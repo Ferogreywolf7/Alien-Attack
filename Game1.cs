@@ -85,6 +85,10 @@ namespace Alien_Attack
             enemies.spawnEnemies();
         }
 
+        public void startNewGame() { 
+        
+        }
+
         protected override void Update(GameTime gameTime)
         {
             // Calls updates  
@@ -174,13 +178,13 @@ namespace Alien_Attack
         }
 
             //Gets the current keybinds for firing and pausing the game
-        public void getControls()
+        private void getControls()
         {
             shoot = controls.getFire();
             pause = controls.getPause();
         }
 
-        public void firePlayerBullet()
+        private void firePlayerBullet()
         {
             //Bullet will only be fired when there is no other bullet on screen and the player has pressed the key for firing
             if (currentKeyState.IsKeyDown(shoot) && !playerBulletActive)
@@ -191,7 +195,7 @@ namespace Alien_Attack
             }
         }
             //Stops all bullet related functions being called for the player's bullet
-        public void deactivateBullet() {
+        private void deactivateBullet() {
             playerBulletActive = false;
         }
 
