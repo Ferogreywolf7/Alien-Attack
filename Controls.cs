@@ -132,29 +132,31 @@ namespace Alien_Attack
         }
 
         public void setNewKeybind(KeyboardState currentKeyState)
-            {
+        {
             if (!keyAccepted && !isKeyInput)
+            {
+                //There is a temporary variable to make sure the keyboard check is repeated
+                if (tempGetNewKeybindOf != "")
                 {
-                    //There is a temporary variable to make sure the keyboard check is repeated
-                    if (tempGetNewKeybindOf != "") {
-                        getNewKeybindOf = tempGetNewKeybindOf;
-                    }
-                    switch (getNewKeybindOf)
-                    {
-                        case "Left":
-                            isKeyInput = setLeft(currentKeyState);
-                            break;
-                        case "Right":
-                            isKeyInput = setRight(currentKeyState);
-                            break;
-                        case "Shoot":
-                            isKeyInput = setShoot(currentKeyState);
-                            break;
-                        case "Pause":
-                            isKeyInput = setPause(currentKeyState);
-                            break;
-                    } 
-                }}
+                    getNewKeybindOf = tempGetNewKeybindOf;
+                }
+                switch (getNewKeybindOf)
+                {
+                    case "Left":
+                        isKeyInput = setLeft(currentKeyState);
+                        break;
+                    case "Right":
+                        isKeyInput = setRight(currentKeyState);
+                        break;
+                    case "Shoot":
+                        isKeyInput = setShoot(currentKeyState);
+                        break;
+                    case "Pause":
+                        isKeyInput = setPause(currentKeyState);
+                        break;
+                }
+            }
 
+        }
     }
 }
