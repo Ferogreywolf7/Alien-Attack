@@ -12,6 +12,7 @@ public class UI
 	private SpriteFont font;
 	private Texture2D textBox;
     private Texture2D heart;
+    private Texture2D arrow;
 	private int score;
     private Rectangle topBox;
     private Rectangle upperBox;
@@ -28,13 +29,14 @@ public class UI
     private bool isButtonPressed;
     private Controls controls;
     private string selectedBox;
-    public UI(SpriteBatch _spriteBatch, SpriteFont testFont, Texture2D textBorder, Texture2D lifeIcon, Controls control)
+    public UI(SpriteBatch _spriteBatch, SpriteFont testFont, Texture2D textBorder, Texture2D lifeIcon, Texture2D backArrow, Controls control)
 	{
 		controls = control;
         spriteBatch = _spriteBatch;
 		font = testFont;
 		textBox = textBorder;
         heart = lifeIcon;
+        arrow = backArrow;
 		getControls();
             //General box layout
         topBox = new Rectangle(295, 140, 160, 40);
@@ -88,6 +90,11 @@ public class UI
             return "Pause";
 
         }
+
+        if (drawButtons(arrow, new Rectangle(50, 50, 100, 50), "")) {
+            Debug.WriteLine("Back arrow pressed");
+            return "Back";
+        }
         
         return "";
     }
@@ -123,10 +130,15 @@ public class UI
         spriteBatch.End();
         return isButtonPressed;
     }
-    
-    
 
     public string drawPauseMenu() {
+        if (drawButtons(textBox, topBox, "Play Game/Continue")) {
+            return "Start game";
+        }
+        if (drawButtons(textBox, upperBox, "Controls"))
+        {
+            return "Controls menu";
+        }
 
         return "";
     }
