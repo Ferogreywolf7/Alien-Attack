@@ -97,6 +97,7 @@ namespace Alien_Attack
             bunkers = new Bunkers(bunkerAtlas, 2);
             enemies = new EnemyController(_spriteBatch, enemyTexture, enemyRows, enemyCollums, new Vector2(200, 50));
             enemies.spawnEnemies();
+
         }
 
         protected override void Update(GameTime gameTime)
