@@ -128,7 +128,7 @@ namespace Alien_Attack
                 count3++;
                 updateDeadBullets();
             }
-
+            
             else
             {
                 count3 = 0;
