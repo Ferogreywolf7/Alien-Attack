@@ -11,6 +11,7 @@ namespace Alien_Attack
     {
         private Rectangle hitbox;
         private Texture2D bulletTexture;
+        private Vector2 bulletSpawnPos;
         public mediumEnemy(Texture2D medEnemyTexture, SpriteBatch _spriteBatch, Vector2 startPos)
         {
             texture = medEnemyTexture;
@@ -33,7 +34,7 @@ namespace Alien_Attack
         {
             randomNum = rand.Next(1, 100+(EnemyController.getNumberOfEnemies()*20));
             if (randomNum == 9) {
-                Vector2 bulletSpawnPos = getPosition();
+                bulletSpawnPos = getPosition();
                 bullet = new Bullets(5, texture, "down", bulletSpawnPos, 0);
                 bulletSpawned = true;
             }
