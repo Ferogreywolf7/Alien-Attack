@@ -56,10 +56,8 @@ namespace Alien_Attack
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-            player1StartPos = new Vector2(50, 800);
-            gamePaused = false;
-            noOfLives = 3;
+            gameStarted = false;
+            gamePaused = true;
             enemyRows = 2;
             enemyCollums = 5;
             //Set window size
@@ -84,20 +82,21 @@ namespace Alien_Attack
             backArrow = Content.Load<Texture2D>("backArrow");
             font = Content.Load<SpriteFont>("testFont");
 
-
-            //Setting up all of the objects 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            //Will be moved later on to not be called until play game option has been chosen
-            startNewGame();
+            //Instansiating the UI
+            ui = new UI(_spriteBatch, font, textBorder, lifeIcon, backArrow, controls);
         }
 
         public void startNewGame() {
+            player1StartPos = new Vector2(50, 800);
             player1 = new Player(player1Texture, player1StartPos, controls);
-            ui = new UI(_spriteBatch, font, textBorder, lifeIcon, backArrow, controls);
             bunkers = new Bunkers(bunkerAtlas, 2);
             enemies = new EnemyController(_spriteBatch, enemyTexture, enemyRows, enemyCollums, new Vector2(200, 50));
             enemies.spawnEnemies();
-
+            noOfLives = 4;
+            playerBulletActive = false;
+            gameStarted = true;
+            gamePaused = false;
         }
 
         protected override void Update(GameTime gameTime)
@@ -136,9 +135,9 @@ namespace Alien_Attack
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             //prevents the bullet from moving when the game is paused
-            ui.drawLives(noOfLives);
             if (gamePaused == false)
             {
+                ui.drawLives(noOfLives);
                 player1.drawPlayer(_spriteBatch);
                 enemies.drawAllEnemies();
                 bunkers.drawBunkers(_spriteBatch);
@@ -164,7 +163,15 @@ namespace Alien_Attack
                     case "Controls menu":
                         inControlsMenu = true;
                         break;
-
+                    case "Start game":
+                        if (gameStarted)
+                        {
+                            gamePaused = false;
+                        }
+                        else {
+                            startNewGame();
+                        }
+                        break;
                 }
 
             }
@@ -233,7 +240,7 @@ namespace Alien_Attack
         //pause game when the assigned key is pressed and the game isnt already paused, otherwise unpauses it
         private void pauseGame()
         {
-            if (currentKeyState.IsKeyDown(pause) && previousKeyState.IsKeyUp(pause))
+            if (currentKeyState.IsKeyDown(pause) && previousKeyState.IsKeyUp(pause) && gameStarted)
             {
                 if (!gamePaused)
                 {

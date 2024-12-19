@@ -135,6 +135,7 @@ public class UI
         if (drawButtons(textBox, topBox, "Play Game/Continue")) {
             return "Start game";
         }
+
         if (drawButtons(textBox, upperBox, "Controls"))
         {
             return "Controls menu";
@@ -144,7 +145,8 @@ public class UI
     }
 
     public void drawLives(int noOfLives) {
-        if (noOfLives >= 0)
+            //Draws the hearts from right to left for a certain number of them
+        if (noOfLives > 0)
         {
             spriteBatch.Begin();
             spriteBatch.Draw(heart, new Rectangle (60* noOfLives, 20, 50, 50), Color.White);
