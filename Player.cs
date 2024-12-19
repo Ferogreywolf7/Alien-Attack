@@ -27,6 +27,7 @@ namespace Alien_Attack
         Controls controls;
         private int playerWidth;
 
+
         public Player(Texture2D player1Texture, Vector2 player1StartPos, Controls control) {
             steps = 5;
             position = player1StartPos;
@@ -40,6 +41,7 @@ namespace Alien_Attack
             currentKeyboardState = currentKeyState;
             previousKeyboardState = previousKeyState;
             movePlayer();
+            enforceWalls();
         }
 
         
@@ -88,8 +90,16 @@ namespace Alien_Attack
         private void movePlayerRight() {
             position.X += steps;
         }
-        
 
+        //Stops player from being able to go off screen
+        private void enforceWalls() {
+            if (position.X <= 0) {
+                position.X = 0;
+            }
+            else if(position.X >= 730){
+                position.X = 730;
+            }
+        }
 
     }
 }
