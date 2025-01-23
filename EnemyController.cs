@@ -22,40 +22,44 @@ namespace Alien_Attack
         private int rows;
         private int columns;
         private int num;
-        private int count;
-        private int count2;
-        private int count3;
-        private int count4;
+        private int MoveDownCount;
+        private int enemySpeedCount;
+        private int BulletUpdateCount;
+        private int BulletDrawCount;
         private int collisionCount;
         private Rectangle enemyHitbox;
         private bool isCollision;
+        private string gameMode;
+        private float currentSpeed;
         //Will only spawn in the regular enemies for now
 
-        public EnemyController(SpriteBatch _spriteBatch, Texture2D texture, int rows, int columns, Vector2 startPos)
+        public EnemyController(SpriteBatch _spriteBatch, Texture2D texture, Vector2 startPos, string gameMode)
         {
             spriteBatch = _spriteBatch;
-            this.rows = rows;
-            this.columns = columns;
             this.startPos = startPos;
+            this.gameMode = gameMode;
             currentPos = startPos;
             enemyTexture = texture;
             num = 0;
-            count = 0;
+            MoveDownCount = 0;
             collisionCount = 0;
             enemies = new List<mediumEnemy>();
             updateOnlyBullets = new List<mediumEnemy>();
+            currentSpeed = 0.5f;
         }
 
-        public void spawnEnemies() {
+        public void spawnEnemies(int rows, int columns) {
+            this.rows = rows;
+            this.columns = columns;
             //To do: Make this into recurrsion instead
-                //Spawns in all of the enemies in rows
+            //Spawns in all of the enemies in rows
             for (int row = 0; row <= rows; row++)
             {
                 currentPos.Y += enemySpacing;
                 for (int column = 0; column <= columns; column++)
                 {
                     currentPos.X += enemySpacing;
-                    enemies.Add(new mediumEnemy(enemyTexture, spriteBatch, currentPos));
+                    enemies.Add(new mediumEnemy(enemyTexture, spriteBatch, currentPos, currentSpeed));
                     numOfEnemies++;
                 }
                 currentPos.X = startPos.X;
@@ -77,6 +81,8 @@ namespace Alien_Attack
                 if (enemies[num].getPosition().X <= 10)
                 {
                     moveAllDown();
+                    //currentPos = startPos;
+                    //spawnEnemies(1, columns);
                 }
 
                 if (enemies[num].getPosition().Y >= 750) { 
@@ -85,9 +91,6 @@ namespace Alien_Attack
 
                 num++;
 
-                if (getNumberOfEnemies() == -1) { 
-                    //Victory
-                }
                 updateAllEnemies();
                 
             }
@@ -106,6 +109,21 @@ namespace Alien_Attack
             
             
         }
+        private void moveAllDown()
+        {
+            //Loops through all enemys, calling the method to move the enemy down
+            if (MoveDownCount <= getNumberOfEnemies())
+            {
+                enemies[MoveDownCount].moveEnemyDown();
+                MoveDownCount++;
+                moveAllDown();
+            }
+
+            else
+            {
+                MoveDownCount = 0;
+            }
+        }
 
         public void deleteEnemy(int enemyNum)
             //Removes the enemy from the list, stopping them from being drawn and updated
@@ -119,64 +137,50 @@ namespace Alien_Attack
 
         private void updateDeadBullets()
         {
-            if (count3 < updateOnlyBullets.Count)
+            if (BulletUpdateCount < updateOnlyBullets.Count)
             {
-                updateOnlyBullets[count3].updateBullet();
-                if (!updateOnlyBullets[count3].isBulletAlive()) {
-                    updateOnlyBullets.RemoveAt(count3);
+                updateOnlyBullets[BulletUpdateCount].updateBullet();
+                if (!updateOnlyBullets[BulletUpdateCount].isBulletAlive()) {
+                    updateOnlyBullets.RemoveAt(BulletUpdateCount);
                 }
-                count3++;
+                BulletUpdateCount++;
                 updateDeadBullets();
             }
-
+            
             else
             {
-                count3 = 0;
+                BulletUpdateCount = 0;
             }
         }
 
         private void drawDeadBullets()
         {
-            if (count4 < updateOnlyBullets.Count)
+            if (BulletDrawCount < updateOnlyBullets.Count)
             {
-                updateOnlyBullets[count4].drawBullet();
-                count4++;
+                updateOnlyBullets[BulletDrawCount].drawBullet();
+                BulletDrawCount++;
                 drawDeadBullets();
             }
 
             else
             {
-                count4 = 0;
+                BulletDrawCount = 0;
             }
         }
 
         private void increaseAllSpeed() {
-            if (count2 <= getNumberOfEnemies())
+            if (enemySpeedCount <= getNumberOfEnemies())
             {
-                enemies[count2].increaseSpeed();
-                count2++;
+                enemies[enemySpeedCount].increaseSpeed();
+                enemySpeedCount++;
                 increaseAllSpeed();
             }
 
             else
             {
-                count2 = 0;
+                currentSpeed += 0.03f;
+                enemySpeedCount = 0;
             }
-        }
-
-        private void moveAllDown() {
-                //Loops through all enemys, calling the method to move the enemy down
-            if (count <= getNumberOfEnemies())
-            {
-                enemies[count].moveEnemyDown();
-                count++;
-                moveAllDown();
-            }
-            
-            else { 
-                count = 0;
-            }
-            
         }
         
         public bool checkCollision(Rectangle bulletHitbox) {

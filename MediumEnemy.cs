@@ -11,8 +11,10 @@ namespace Alien_Attack
     {
         private Rectangle hitbox;
         private Texture2D bulletTexture;
-        public mediumEnemy(Texture2D medEnemyTexture, SpriteBatch _spriteBatch, Vector2 startPos)
+        private Vector2 bulletSpawnPos;
+        public mediumEnemy(Texture2D medEnemyTexture, SpriteBatch _spriteBatch, Vector2 startPos, float speed)
         {
+            steps = speed;
             texture = medEnemyTexture;
             spriteBatch = _spriteBatch;
             originalPosition = startPos;
@@ -25,7 +27,7 @@ namespace Alien_Attack
         {
             destinationRectangle = new Rectangle((int)position.X, (int)position.Y, 50, 50);
             spriteBatch.Begin();
-            spriteBatch.Draw(texture, destinationRectangle, Color.White);
+            spriteBatch.Draw(texture, destinationRectangle, Color.Green);
             spriteBatch.End();
         }
 
@@ -33,7 +35,7 @@ namespace Alien_Attack
         {
             randomNum = rand.Next(1, 100+(EnemyController.getNumberOfEnemies()*20));
             if (randomNum == 9) {
-                Vector2 bulletSpawnPos = getPosition();
+                bulletSpawnPos = getPosition();
                 bullet = new Bullets(5, texture, "down", bulletSpawnPos, 0);
                 bulletSpawned = true;
             }

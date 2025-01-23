@@ -12,11 +12,13 @@ public class UI
 	private SpriteFont font;
 	private Texture2D textBox;
     private Texture2D heart;
+    private Texture2D arrow;
 	private int score;
-    private Rectangle boxLeft;
-    private Rectangle boxRight;
-    private Rectangle boxShoot;
-    private Rectangle boxPause;
+    private int modifier;
+    private Rectangle topBox;
+    private Rectangle upperBox;
+    private Rectangle lowerBox;
+    private Rectangle bottomBox;
 	private Keys left;
 	private Keys right;
 	private Keys fire;
@@ -28,19 +30,35 @@ public class UI
     private bool isButtonPressed;
     private Controls controls;
     private string selectedBox;
-    public UI(SpriteBatch _spriteBatch, SpriteFont testFont, Texture2D textBorder, Texture2D lifeIcon, Controls control)
+    public UI(SpriteBatch _spriteBatch, SpriteFont testFont, Texture2D textBorder, Texture2D lifeIcon, Texture2D backArrow, Controls control)
 	{
+        modifier = 1;
 		controls = control;
         spriteBatch = _spriteBatch;
 		font = testFont;
 		textBox = textBorder;
         heart = lifeIcon;
+        arrow = backArrow;
 		getControls();
+            //General box layout
+        topBox = new Rectangle(295, 140, 160, 40);
+        upperBox = new Rectangle(295, 190, 160, 40);
+        lowerBox = new Rectangle(295, 240, 160, 40);
+        bottomBox = new Rectangle(295, 290, 160, 40);
     }
 	public int getScore() {
 		return score;
 	}
+
+    public void increaseScore(int increase)
+    {
+        score += increase * modifier;
+    }
+
 	public void drawScore() {
+        spriteBatch.Begin();
+        spriteBatch.DrawString(font, "Your score is " + score, new Vector2(295, 140), Color.White);
+        spriteBatch.End();
 	}
 
 	public void getControls() {
@@ -51,40 +69,45 @@ public class UI
 		pause = controls.getPause();
 	}
 
-	private string drawControlsMenu() {
-            //Defines the rectangles that the text box textures will be put onto
-		boxLeft  = new Rectangle(295, 140, 160, 40);
-		boxRight = new Rectangle(295, 190, 160, 40);
-		boxShoot = new Rectangle(295, 240, 160, 40);
-		boxPause = new Rectangle(295, 290, 160, 40);
+	public string drawControlsMenu() {
+        spriteBatch.Begin();
+        spriteBatch.DrawString(font, "Click on a box and enter a key to edit it's keybind", new Vector2(270, 120), Color.Brown);
+        spriteBatch.End();
+
         getControls();
             //Calls the drawing for the buttons
-        if(drawButtons(textBox, boxLeft, "Left - " + left)) {
+        if(drawButtons(textBox, topBox, "Left - " + left)) {
             return "Left";
         }
 
         //for right control changing
-        if (drawButtons(textBox, boxRight, "Right - " + right))
+        if (drawButtons(textBox, upperBox, "Right - " + right))
         {
             return "Right";
         }
 
 
-        if (drawButtons(textBox, boxShoot, "Shoot - " + fire))
+        if (drawButtons(textBox, lowerBox, "Shoot - " + fire))
         {
             return "Shoot";
 
         }
 
         //for pause control changing
-        if (drawButtons(textBox, boxPause, "Pause - " + pause))
+        if (drawButtons(textBox, bottomBox, "Pause - " + pause))
         {
             return "Pause";
 
         }
+
+        if (drawButtons(arrow, new Rectangle(50, 50, 100, 50), "")) {
+            Debug.WriteLine("Back arrow pressed");
+            return "Back";
+        }
         
         return "";
     }
+
 
     private bool drawButtons(Texture2D boxTexture, Rectangle destinationRectangle, string text)
     {
@@ -118,16 +141,21 @@ public class UI
     }
 
     public string drawPauseMenu() {
-        spriteBatch.Begin();
-        spriteBatch.DrawString(font, "Game paused", new Vector2(320, 100), Color.Red);
-        spriteBatch.DrawString(font, "Click on a box to edit it's keybind", new Vector2(270, 120), Color.Brown);
-        spriteBatch.End();
-        selectedBox = drawControlsMenu();
-        return selectedBox;
+        if (drawButtons(textBox, topBox, "Play Game/Continue")) {
+            return "Start game";
+        }
+
+        if (drawButtons(textBox, upperBox, "Controls"))
+        {
+            return "Controls menu";
+        }
+
+        return "";
     }
 
     public void drawLives(int noOfLives) {
-        if (noOfLives >= 0)
+            //Draws the hearts from right to left for a certain number of them
+        if (noOfLives > 0)
         {
             spriteBatch.Begin();
             spriteBatch.Draw(heart, new Rectangle (60* noOfLives, 20, 50, 50), Color.White);

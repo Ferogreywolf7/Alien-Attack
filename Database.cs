@@ -1,4 +1,4 @@
-﻿using MySqlConnector;
+﻿/*using MySqlConnector;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,8 +15,9 @@ namespace Alien_Attack
         private string databaseConnection;
 
         public Database() { 
-        databaseConnection = "Server=192.168.1.164;User ID=root;Password=F3rogreywolf#7";
+        databaseConnection = "Server=192.168.1.163;User ID=truenas_admin;Password=Tru3N4s7";
 		new MySqlConnection(databaseConnection);
         }
     }
 }
+*/

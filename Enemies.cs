@@ -26,9 +26,7 @@ namespace Alien_Attack
         protected int drawCount;
         protected int updateCount;
         protected bool bulletSpawned;
-
         public Enemies() {
-            steps = 0.5f;
             rand = new Random();
         }
 
@@ -84,7 +82,7 @@ namespace Alien_Attack
                 case "right":
                     moveType = "left";
                     break;
-            }
+            } 
         }
             //Enemies get slightly faster when you kill them
         public void increaseSpeed() {
@@ -92,5 +90,8 @@ namespace Alien_Attack
         }
 
         public abstract void drawBullet();
+
+        
+
     }
 }
