@@ -1,3 +1,15 @@
-﻿Give cooldown for enemy bullets, make more bullets spawn when less enemies
+﻿//In actual program
+Give cooldown for enemy bullets, make more bullets spawn when less enemies
 Add Score
-Add main menu and set up database (could use hashing to check if commands are corruptedved
+Make enemy bullets move at normal speed if the enemy is killed while a bullet is shot from it
+
+Add new enemy types to make use of the inheritance. Such as a laser cannon one (Could either drop a stationary laser cannon or moving one (with the enemy) which has a low chance of spawning and gives a warning highlight then does damage to all blocks and two hearts from the player)
+
+Make shooting faster
+//In database
+
+
+//In writeup
+
+Write up why I decided to make variables/methods as private in technical solution section
+Mention why inheritance has been done in technical solution section

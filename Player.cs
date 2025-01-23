@@ -26,12 +26,13 @@ namespace Alien_Attack
         private Keys moveRight;
         Controls controls;
         private int playerWidth;
+        private string gameMode;
 
         public Player(Texture2D player1Texture, Vector2 player1StartPos, Controls control) {
             steps = 5;
             position = player1StartPos;
             texture = player1Texture;
-            playerWidth = 70;
+            playerWidth = 90;
             controls = control;
             getControls();
         }
@@ -40,14 +41,15 @@ namespace Alien_Attack
             currentKeyboardState = currentKeyState;
             previousKeyboardState = previousKeyState;
             movePlayer();
+            enforceWalls();
         }
 
         
         public void drawPlayer(SpriteBatch _spriteBatch) {
             spriteBatch = _spriteBatch;
-            destinationRectangle = new Rectangle((int)position.X, (int)position.Y, 70, playerWidth);
+            destinationRectangle = new Rectangle((int)position.X, (int)position.Y, 90, playerWidth);
             spriteBatch.Begin();
-            spriteBatch.Draw(texture, destinationRectangle, Color.Red);
+            spriteBatch.Draw(texture, destinationRectangle, Color.White);
             spriteBatch.End();
         }
 
@@ -88,8 +90,16 @@ namespace Alien_Attack
         private void movePlayerRight() {
             position.X += steps;
         }
-        
 
+        //Stops player from being able to go off screen
+        private void enforceWalls() {
+            if (position.X <= 0) {
+                position.X = 0;
+            }
+            else if(position.X >= 730){
+                position.X = 730;
+            }
+        }
 
     }
 }
