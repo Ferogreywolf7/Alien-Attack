@@ -28,6 +28,7 @@ namespace Alien_Attack
         private int playerWidth;
         private string gameMode;
 
+
         public Player(Texture2D player1Texture, Vector2 player1StartPos, Controls control) {
             steps = 5;
             position = player1StartPos;
