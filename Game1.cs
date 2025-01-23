@@ -51,12 +51,11 @@ namespace Alien_Attack
         private Rectangle bulletHitbox;
         private Rectangle partHitbox;
         private Rectangle backgroundBox;
-        private string getNewKeybindOf;
+        private string tempGetNewKeybindOf;
         private string option;
         private string gameMode;
         private string deathReason;
         private MouseState mouseState;
-        private int noOfLives;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -65,6 +64,7 @@ namespace Alien_Attack
         }
 
         protected override void Initialize()
+        {
             
             gameMode = "endless";
             gameStarted = false;
@@ -72,7 +72,6 @@ namespace Alien_Attack
             noMenu = false;
             enemyRows = 2;
             enemyCollums = 5;
-            noOfLives = 3;
             //Set window size
             _graphics.PreferredBackBufferWidth = 800;
             _graphics.PreferredBackBufferHeight = 1000;
@@ -96,6 +95,7 @@ namespace Alien_Attack
             backArrow = Content.Load<Texture2D>("backArrow");
             font = Content.Load<SpriteFont>("testFont");
 
+            _spriteBatch = new SpriteBatch(GraphicsDevice);
             //Instansiating the UI
             ui = new UI(_spriteBatch, font, textBorder, lifeIcon, backArrow, controls);
         }
@@ -104,7 +104,7 @@ namespace Alien_Attack
             deathReason = "";
             player1StartPos = new Vector2(50, 800);
             player1 = new Player(player1Texture, player1StartPos, controls);
-            ui = new UI(_spriteBatch, font, textBorder, lifeIcon, controls);
+            bunkers = new Bunkers(bunkerAtlas, 2);
             enemies = new EnemyController(_spriteBatch, enemyTexture, new Vector2(11, 50), gameMode);
             enemies.spawnEnemies(enemyRows, enemyCollums);            
             noOfLives = 4;
@@ -113,18 +113,12 @@ namespace Alien_Attack
             gamePaused = false;
             noMenu = false;
             gameOver = false;
-            enemies.spawnEnemies(); 
         }
 
         protected override void Update(GameTime gameTime)
+        {
             //Gets what keys are being pressed on the keyboard
             mouseState = Mouse.GetState();
-                Exit();
-
-            // TODO: Add your update logic here
-            // Calls updates  
-            // pauses the main game when the button is pressed
-                //Gets what keys are being pressed on the keyboard
             previousKeyState = currentKeyState;
             currentKeyState = Keyboard.GetState();
             pauseGame();
@@ -135,6 +129,12 @@ namespace Alien_Attack
                 //Moving player when keys pressed, moving enemies and changing 
                 player1.updatePlayer(currentKeyState, previousKeyState);
                 enemies.updateAllEnemies();
+                bunkers.updateBunkers();
+
+                //Moving the players bullet and checkign any collision
+                if (playerBulletActive)
+                {
+                    playerBullet.updateBullets();
                     checkplayerBulletCollision();
                 }
                 checkEnemyBulletCollision();
@@ -155,13 +155,13 @@ namespace Alien_Attack
             if (gamePaused && inControlsMenu && !noMenu) {
                 controls.setNewKeybind(currentKeyState);
                 getControls();
-                   
-                    //Goes through every part of the bunker and checks to see if the enemies bullets have hit it
-                bunkerParts = bunkers.GetBunkerParts();
-                foreach (BunkerPart part in bunkerParts)
-                {
-                    partHitbox = part.getBunkerHitbox();
-                    if (enemies.checkPlayerCollision(partHitbox))
+            }
+            base.Update(gameTime);
+        }
+        //Draws all textures in the game
+        protected override void Draw(GameTime gameTime)
+        {
+            GraphicsDevice.Clear(Color.CornflowerBlue);
             
             //_spriteBatch.Begin();
             //_spriteBatch.Draw(background, backgroundBox, Color.White);
@@ -174,31 +174,31 @@ namespace Alien_Attack
             if (!gamePaused)
             {
                 ui.drawLives(noOfLives);
-                }
-                    //Checks to see if the enemy bullets have hit the player and if so, reduces number of lives
-                playerHit = enemies.checkPlayerCollision(player1.getPlayerHitbox());
-                if (playerHit) {
-                    noOfLives -= 1;
-                    Debug.WriteLine("Player hit");
-                    playerHit = false;}
-            }
-
-                //All logic for changing keybinds while game is paused
-            if (gamePaused) {
-                if (!keyAccepted && !isKeyInput)
+                player1.drawPlayer(_spriteBatch);
+                enemies.drawAllEnemies();
+                bunkers.drawBunkers(_spriteBatch);
+                if (playerBulletActive)
                 {
-                    //There is a temporary variable to make sure the keyboard check is repeated
-                    if (tempGetNewKeybindOf != "") {
-                        getNewKeybindOf = tempGetNewKeybindOf;
-                    }
-                    switch (getNewKeybindOf)
-                    {
-                        case "Left":
-                            isKeyInput = controls.setLeft(currentKeyState);
-                            break;
-                        case "Right":
-                            isKeyInput = controls.setRight(currentKeyState);
-                            break;
+                    playerBullet.drawBullets(_spriteBatch);
+                }
+            }
+                //Shows that the game is paused
+            if (gamePaused) {
+                _spriteBatch.Begin();
+                _spriteBatch.DrawString(font, "Game paused", new Vector2(320, 100), Color.Red);
+                _spriteBatch.End();
+            }
+                //Handles all methods for the controls menu
+            if (gamePaused && inControlsMenu && !noMenu)
+            {
+                tempGetNewKeybindOf = ui.drawControlsMenu();
+                controls.getKeybindToSet(tempGetNewKeybindOf);
+
+                if (tempGetNewKeybindOf == "Back")
+                {
+                    inControlsMenu = false;
+                }
+
             }
                 //Handles all methods for outside the control menu when the game is paused
             else if (gamePaused && !noMenu)
@@ -219,17 +219,17 @@ namespace Alien_Attack
                             startNewGame();
                         }
                         break;
+                }
             }
+            base.Draw(gameTime);
         }
-        //Draws all textures in the game
-        protected override void Draw(GameTime gameTime)
+
+        //Gets the current keybinds for firing and pausing the game
+        private void getControls()
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-            //prevents the bullet from moving when the game is paused
-            ui.drawLives(noOfLives);
-            if (gamePaused == false)
-            {
-                player1.drawPlayer(_spriteBatch);
+            shoot = controls.getFire();
+            pause = controls.getPause();
+        }
 
         private void checkplayerBulletCollision() {
             bulletHitbox = playerBullet.getHitbox();
@@ -266,73 +266,6 @@ namespace Alien_Attack
                 playerHit = false;
             }
         }
-                enemies.drawAllEnemies();
-                bunkers.drawBunkers(_spriteBatch);
-                if (playerBulletActive)
-                {
-                    playerBullet.drawBullets(_spriteBatch);
-                }
-            }
-                //Shows that the game is paused
-            if (gamePaused) {
-                _spriteBatch.Begin();
-                _spriteBatch.DrawString(font, "Game paused", new Vector2(320, 100), Color.Red);
-                _spriteBatch.End();
-            }
-                //Handles all methods for the controls menu
-            if (gamePaused && inControlsMenu && !noMenu)
-            {
-                tempGetNewKeybindOf = ui.drawControlsMenu();
-                controls.getKeybindToSet(tempGetNewKeybindOf);
-
-                if (tempGetNewKeybindOf == "Back")
-                {
-                    inControlsMenu = false;
-                }
-
-            if (gamePaused)
-            {
-                tempGetNewKeybindOf = ui.drawPauseMenu();
-                if (tempGetNewKeybindOf == "") {
-                    keyAccepted = false;
-                }
-                else
-                {
-                    //Done so that user will always end up back in the pause menu even if unpausing from control menu
-                    inControlsMenu = false;
-                }
-            }
-        }
-        
-            //Code to run when the player either wins or loses a game
-        private void checkIfGameOver() {
-            if (gameOver)
-            {
-                gamePaused = true;
-                noMenu = true;
-                gameStarted = false;
-                _spriteBatch.Begin();
-                _spriteBatch.DrawString(font, "Game Over", new Vector2(295, 90), Color.White);
-                _spriteBatch.DrawString(font, deathReason, new Vector2(295, 120), Color.White);
-                _spriteBatch.DrawString(font, "Click to continue", new Vector2(295, 170), Color.Green);
-                _spriteBatch.End();
-                ui.drawScore();
-                if (mouseState.LeftButton == ButtonState.Pressed) {
-                    gameOver = false;
-                    noMenu = false;
-                    isKeyInput = false;
-                }
-                
-            }
-            base.Draw(gameTime);
-        }
-
-        //Gets the current keybinds for firing and pausing the game
-        private void getControls()
-        {
-            shoot = controls.getFire();
-            pause = controls.getPause();
-        }
 
 
         private void firePlayerBullet()
@@ -365,6 +298,28 @@ namespace Alien_Attack
                     gamePaused = false;
                     getControls();
                     player1.getControls();
+                    //Done so that user will always end up back in the pause menu even if unpausing from control menu
+                    inControlsMenu = false;
+                }
+            }
+        }
+        
+            //Code to run when the player either wins or loses a game
+        private void checkIfGameOver() {
+            if (gameOver)
+            {
+                gamePaused = true;
+                noMenu = true;
+                gameStarted = false;
+                _spriteBatch.Begin();
+                _spriteBatch.DrawString(font, "Game Over", new Vector2(295, 90), Color.White);
+                _spriteBatch.DrawString(font, deathReason, new Vector2(295, 120), Color.White);
+                _spriteBatch.DrawString(font, "Click to continue", new Vector2(295, 170), Color.Green);
+                _spriteBatch.End();
+                ui.drawScore();
+                if (mouseState.LeftButton == ButtonState.Pressed) {
+                    gameOver = false;
+                    noMenu = false;
                 }
             }
         }
