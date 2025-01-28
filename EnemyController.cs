@@ -27,8 +27,12 @@ namespace Alien_Attack
         private int BulletUpdateCount;
         private int BulletDrawCount;
         private int collisionCount;
+        private int lowestCount;
+        private int lowestCoord;
+        private int timesSpawnedEnemies;
         private Rectangle enemyHitbox;
         private bool isCollision;
+        private bool spawnedOnThisTurn;
         private string gameMode;
         private float currentSpeed;
         //Will only spawn in the regular enemies for now
@@ -46,6 +50,9 @@ namespace Alien_Attack
             enemies = new List<mediumEnemy>();
             updateOnlyBullets = new List<mediumEnemy>();
             currentSpeed = 0.5f;
+            lowestCoord = 0;
+            spawnedOnThisTurn = true;
+            timesSpawnedEnemies = 1;
         }
 
         public void spawnEnemies(int rows, int columns) {
@@ -80,13 +87,16 @@ namespace Alien_Attack
                 }
                 if (enemies[num].getPosition().X <= 10)
                 {
+                    spawnedOnThisTurn = false;
                     moveAllDown();
-                    //currentPos = startPos;
-                    //spawnEnemies(1, columns);
                 }
-
-                if (enemies[num].getPosition().Y >= 750) { 
-                    //Game over here
+                //When the enemies reach the left side of the screen, more enemies will spawn in the endless gamemode above the coordinates of the top left enemy
+                if (enemies[num].getPosition().X >= 60 && gameMode == "Endless" && !spawnedOnThisTurn) {
+                    currentPos.X = startPos.X - enemySpacing;
+                    currentPos.Y = startPos.Y + enemySpacing*timesSpawnedEnemies;
+                    spawnEnemies(0, columns);
+                    spawnedOnThisTurn = true;
+                    timesSpawnedEnemies++;
                 }
 
                 num++;
@@ -123,6 +133,23 @@ namespace Alien_Attack
             {
                 MoveDownCount = 0;
             }
+        }
+
+        public int getLowestEnemy() {
+
+            if (lowestCount <= getNumberOfEnemies())
+            {
+                if (lowestCoord < (int)enemies[lowestCount].getPosition().Y)
+                {
+                    lowestCoord = (int)enemies[lowestCount].getPosition().Y;
+                }
+                lowestCount++;
+                getLowestEnemy();
+            }
+            else {
+                lowestCount = 0;
+            }
+            return lowestCoord;
         }
 
         public void deleteEnemy(int enemyNum)
