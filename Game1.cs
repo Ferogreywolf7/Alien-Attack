@@ -21,6 +21,7 @@ namespace Alien_Attack
         private List<BunkerPart> bunkerParts;
         private EnemyController enemies;
         private Vector2 player1StartPos;
+        private Vector2 enemyStartPos;
         private Texture2D player1Texture;
         private Texture2D playerBulletTexture;
         private Texture2D textBorder;
@@ -65,8 +66,6 @@ namespace Alien_Attack
 
         protected override void Initialize()
         {
-            
-            gameMode = "endless";
             gameStarted = false;
             gamePaused = true;
             noMenu = false;
@@ -101,13 +100,15 @@ namespace Alien_Attack
         }
 
         public void startNewGame() {
+            gameMode = "Endles";
             deathReason = "";
             player1StartPos = new Vector2(50, 800);
-            player1 = new Player(player1Texture, player1StartPos, controls);
+            enemyStartPos = new Vector2(11, 50);
+            player1 = new Player(player1Texture, playerBulletTexture, player1StartPos, controls);
             bunkers = new Bunkers(bunkerAtlas, 2);
-            enemies = new EnemyController(_spriteBatch, enemyTexture, new Vector2(11, 50), gameMode);
+            enemies = new EnemyController(_spriteBatch, enemyTexture, enemyStartPos, gameMode);
             enemies.spawnEnemies(enemyRows, enemyCollums);            
-            noOfLives = 4;
+            noOfLives = 10;
             playerBulletActive = false;
             gameStarted = true;
             gamePaused = false;
@@ -125,29 +126,13 @@ namespace Alien_Attack
             //Only runs when game isn't paused
             if (!gamePaused)
             {
-                firePlayerBullet();
-                //Moving player when keys pressed, moving enemies and changing 
+                CheckForGameOverConditions();
+                //Moving player when keys pressed, moving enemies and changing bunker states
                 player1.updatePlayer(currentKeyState, previousKeyState);
                 enemies.updateAllEnemies();
                 bunkers.updateBunkers();
 
-                //Moving the players bullet and checkign any collision
-                if (playerBulletActive)
-                {
-                    playerBullet.updateBullets();
-                    checkplayerBulletCollision();
-                }
-                checkEnemyBulletCollision();
-
-                //Game over when the player runs out of lives
-                if (noOfLives == 0) {
-                    deathReason = "You ran out of lives";
-                    gameOver = true;
-                }
-                //Game won when the number of enemies is 0
-                if (EnemyController.getNumberOfEnemies() == -1  ) {
-                        //Code here for game won
-                }
+                checkCollisions();
 
             }
 
@@ -177,10 +162,6 @@ namespace Alien_Attack
                 player1.drawPlayer(_spriteBatch);
                 enemies.drawAllEnemies();
                 bunkers.drawBunkers(_spriteBatch);
-                if (playerBulletActive)
-                {
-                    playerBullet.drawBullets(_spriteBatch);
-                }
             }
                 //Shows that the game is paused
             if (gamePaused) {
@@ -231,19 +212,13 @@ namespace Alien_Attack
             pause = controls.getPause();
         }
 
-        private void checkplayerBulletCollision() {
-            bulletHitbox = playerBullet.getHitbox();
-            playerBulletActive = !enemies.checkCollision(bulletHitbox);
-            if (playerBullet.getBulletPos().Y <= -60)
+        private void checkCollisions() {
+            if (player1.isBulletActive())
             {
-                playerBulletActive = false;
+                player1.checkplayerBulletCollision(enemies, bunkers);
             }
-            //Checks if the payers bullet hits the bunker
-            bunkerHitByPlayer = bunkers.checkBunkerCollision(bulletHitbox);
-            if (bunkerHitByPlayer)
-            {
-                playerBulletActive = false;
-            }
+            checkEnemyBulletCollision();
+
         }
 
         private void checkEnemyBulletCollision() {
@@ -268,21 +243,6 @@ namespace Alien_Attack
         }
 
 
-        private void firePlayerBullet()
-        {
-                //Bullet will only be fired when there is no other bullet on screen and the player has pressed the key for firing
-            if (currentKeyState.IsKeyDown(shoot) && !playerBulletActive)
-            {
-                extraXCoord = player1.getPLayerWidth()/2;
-                playerBullet = new Bullets(5, playerBulletTexture, "up", player1.getPosition(), extraXCoord);
-                playerBulletActive = true;
-            }
-        }
-            //Stops all bullet related functions being called for the player's bullet
-        private void deactivateBullet() {
-            playerBulletActive = false;
-        }
-
             //pause game when the assigned key is pressed and the game isnt already paused, otherwise unpauses it
         private void pauseGame()
         {
@@ -302,6 +262,29 @@ namespace Alien_Attack
                     inControlsMenu = false;
                 }
             }
+        }
+
+        //Code to check all conditions for the game to be finished
+        private void CheckForGameOverConditions() {
+            if (noOfLives == 0)
+            {
+                deathReason = "You ran out of lives";
+                gameOver = true;
+            }
+            if (enemies.getLowestEnemy() >= 700) {
+                
+                deathReason = "The enemies got too low and you were overrun";
+                gameOver = true;
+            }
+            if (EnemyController.getNumberOfEnemies() == -1) {
+                deathReason = "All enemies were cleared";
+                gameOver = true;
+            }
+            if (EnemyController.getNumberOfEnemies() == -1)
+            {
+                //Code here for game won
+            }
+
         }
         
             //Code to run when the player either wins or loses a game

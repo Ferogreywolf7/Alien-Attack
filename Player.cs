@@ -24,14 +24,24 @@ namespace Alien_Attack
 
         private Keys moveLeft;
         private Keys moveRight;
+        private Keys shoot;
         Controls controls;
         private int playerWidth;
         private string gameMode;
 
-        public Player(Texture2D player1Texture, Vector2 player1StartPos, Controls control) {
+        private Bullets playerBullet;
+        private Texture2D bulletTexture;
+        private Rectangle bulletHitbox;
+        private bool bulletActive;
+        private bool bunkerHit;
+        private int extraXCoord;
+
+
+        public Player(Texture2D player1Texture, Texture2D bulletTexture, Vector2 player1StartPos, Controls control) {
             steps = 5;
             position = player1StartPos;
             texture = player1Texture;
+            this.bulletTexture = bulletTexture;
             playerWidth = 90;
             controls = control;
             getControls();
@@ -42,6 +52,10 @@ namespace Alien_Attack
             previousKeyboardState = previousKeyState;
             movePlayer();
             enforceWalls();
+            firePlayerBullet();
+            if (bulletActive) {
+                playerBullet.updateBullets();
+            }
         }
 
         
@@ -51,6 +65,10 @@ namespace Alien_Attack
             spriteBatch.Begin();
             spriteBatch.Draw(texture, destinationRectangle, Color.White);
             spriteBatch.End();
+            if (bulletActive)
+            {
+                playerBullet.drawBullets(_spriteBatch);
+            }
         }
 
         public Vector2 getPosition() {
@@ -69,6 +87,7 @@ namespace Alien_Attack
         {
             moveLeft = controls.getLeft();
             moveRight = controls.getRight();
+            shoot = controls.getFire();
         }
 
         //checks to see if user pressed the correct key and then calls the method to move the player in the right direction
@@ -100,6 +119,45 @@ namespace Alien_Attack
                 position.X = 730;
             }
         }
+
+        //Player bullet related functions
+        private void firePlayerBullet()
+        {
+            //Bullet will only be fired when there is no other bullet on screen and the player has pressed the key for firing
+            if (currentKeyboardState.IsKeyDown(shoot) && !bulletActive)
+            {
+                extraXCoord = getPLayerWidth() / 2;
+                playerBullet = new Bullets(5, bulletTexture, "up", getPosition(), extraXCoord);
+                bulletActive = true;
+            }
+        }
+
+        public bool isBulletActive() {
+            return bulletActive;
+        }
+
+        public void checkplayerBulletCollision(EnemyController enemies, Bunkers bunkers)
+        {
+            bulletHitbox = playerBullet.getHitbox();
+            bulletActive = !enemies.checkCollision(bulletHitbox);
+            if (playerBullet.getBulletPos().Y <= -60)
+            {
+                bulletActive = false;
+            }
+            //Checks if the payers bullet hits the bunker
+            bunkerHit = bunkers.checkBunkerCollision(bulletHitbox);
+            if (bunkerHit)
+            {
+                bulletActive = false;
+            }
+        }
+
+        //Stops all bullet related functions being called for the player's bullet
+        private void deactivateBullet()
+        {
+            bulletActive = false;
+        }
+
 
     }
 }
