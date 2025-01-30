@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Alien_Attack;
 using System.Net;
 using System.Diagnostics;
+using System;
 
 public class UI
 {
@@ -30,8 +31,11 @@ public class UI
     private bool isButtonPressed;
     private Controls controls;
     private string selectedBox;
+    private Stopwatch timer;
     public UI(SpriteBatch _spriteBatch, SpriteFont testFont, Texture2D textBorder, Texture2D lifeIcon, Texture2D backArrow, Controls control)
 	{
+        Debug.WriteLine("timer instansiated");
+        timer = new Stopwatch();
         modifier = 1;
 		controls = control;
         spriteBatch = _spriteBatch;
@@ -163,5 +167,26 @@ public class UI
             noOfLives -= 1;
             drawLives(noOfLives);
         }
+    }
+
+    //Uses c# timespan as a timer that only runs when the game is unpaused
+    public void startStopwatch()
+    {
+
+        timer.Start();
+        Debug.WriteLine("Timer started");
+    }
+
+    public void stopStopwatch()
+    {
+        timer.Stop();
+    }
+
+    public string getStopwatchTime()
+    {
+        TimeSpan timeElapsed = timer.Elapsed;
+        //Sets the time taken to a string with a format of five digits of seconds and two digits of miliseconds
+        string timeTaken = timeElapsed.ToString(@"mm\:ss\.ff");
+        return timeTaken;
     }
 }

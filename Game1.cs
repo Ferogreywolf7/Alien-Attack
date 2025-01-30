@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+
 
 namespace Alien_Attack
 {
@@ -100,11 +102,11 @@ namespace Alien_Attack
         }
 
         public void startNewGame() {
-            gameMode = "Endles";
+            gameMode = "Endless";
             deathReason = "";
             player1StartPos = new Vector2(50, 800);
             enemyStartPos = new Vector2(11, 50);
-            player1 = new Player(player1Texture, playerBulletTexture, player1StartPos, controls);
+            player1 = new Player(player1Texture, playerBulletTexture, player1StartPos, controls, ui);
             bunkers = new Bunkers(bunkerAtlas, 2);
             enemies = new EnemyController(_spriteBatch, enemyTexture, enemyStartPos, gameMode);
             enemies.spawnEnemies(enemyRows, enemyCollums);            
@@ -114,6 +116,7 @@ namespace Alien_Attack
             gamePaused = false;
             noMenu = false;
             gameOver = false;
+            ui.startStopwatch();
         }
 
         protected override void Update(GameTime gameTime)
@@ -251,10 +254,13 @@ namespace Alien_Attack
                 if (!gamePaused)
                 {
                     gamePaused = true;
+                    ui.stopStopwatch();
+                    ui.getStopwatchTime();
                 }
 
                 else if (gamePaused)
                 {
+                    ui.startStopwatch();
                     gamePaused = false;
                     getControls();
                     player1.getControls();
@@ -291,6 +297,8 @@ namespace Alien_Attack
         private void checkIfGameOver() {
             if (gameOver)
             {
+                ui.stopStopwatch();
+                ui.getStopwatchTime();
                 gamePaused = true;
                 noMenu = true;
                 gameStarted = false;
@@ -306,5 +314,7 @@ namespace Alien_Attack
                 }
             }
         }
+
+        
     }
 }
