@@ -28,23 +28,31 @@ namespace Alien_Attack
         Controls controls;
         private int playerWidth;
         private string gameMode;
-
+            //Bullet related variables
         private Bullets playerBullet;
         private Texture2D bulletTexture;
         private Rectangle bulletHitbox;
         private bool bulletActive;
         private bool bunkerHit;
         private int extraXCoord;
+            //Cooldown related variables
+        private bool timeElapsed;
+        private double startTime;
+        private double currentTime;
+        private double bulletCooldown;
+        private UI ui;
 
-
-        public Player(Texture2D player1Texture, Texture2D bulletTexture, Vector2 player1StartPos, Controls control) {
+        public Player(Texture2D player1Texture, Texture2D bulletTexture, Vector2 player1StartPos, Controls control, UI ui) {
+            this.ui = ui;
             steps = 5;
             position = player1StartPos;
             texture = player1Texture;
             this.bulletTexture = bulletTexture;
+            bulletCooldown = 1.50;
             playerWidth = 90;
             controls = control;
             getControls();
+            timeElapsed = true;
         }
 
         public void updatePlayer(KeyboardState currentKeyState, KeyboardState previousKeyState) {
@@ -55,6 +63,9 @@ namespace Alien_Attack
             firePlayerBullet();
             if (bulletActive) {
                 playerBullet.updateBullets();
+            }
+            if (!timeElapsed) {
+                checkCooldown();
             }
         }
 
@@ -124,12 +135,26 @@ namespace Alien_Attack
         private void firePlayerBullet()
         {
             //Bullet will only be fired when there is no other bullet on screen and the player has pressed the key for firing
-            if (currentKeyboardState.IsKeyDown(shoot) && !bulletActive)
+            if (currentKeyboardState.IsKeyDown(shoot)  && timeElapsed)
             {
                 extraXCoord = getPLayerWidth() / 2;
                 playerBullet = new Bullets(5, bulletTexture, "up", getPosition(), extraXCoord);
                 bulletActive = true;
+                timeElapsed = false;
+                startCooldown();
             }
+        }
+
+        private void checkCooldown() {
+            currentTime = Convert.ToDouble(ui.getStopwatchTime().Replace(":",""));
+            if ((currentTime - startTime) >= bulletCooldown) {
+                Debug.WriteLine("Cooldown finished");
+                timeElapsed = true;
+            }
+        }
+
+        private void startCooldown() {
+            startTime = Convert.ToDouble(ui.getStopwatchTime().Replace(":", ""));
         }
 
         public bool isBulletActive() {
