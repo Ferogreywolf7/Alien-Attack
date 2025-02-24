@@ -26,6 +26,7 @@ namespace Alien_Attack
         protected int drawCount;
         protected int updateCount;
         protected bool bulletSpawned;
+        protected bool isDead;
         public Enemies() {
             rand = new Random();
         }
@@ -51,6 +52,14 @@ namespace Alien_Attack
 
         public bool isBulletAlive() {
             return bulletSpawned;
+        }
+
+        public bool isEnemyDead() {
+            return isDead;
+        }
+
+        public void killEnemy() {
+            isDead = true;
         }
 
         public Rectangle getHitbox()
@@ -91,7 +100,6 @@ namespace Alien_Attack
 
         public abstract void drawBullet();
 
-        
 
     }
 }

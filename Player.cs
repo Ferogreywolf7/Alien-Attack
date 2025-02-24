@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Security.Cryptography.X509Certificates;
 using System.Diagnostics;
+using System.Diagnostics.Metrics;
 
 namespace Alien_Attack
 {
@@ -15,7 +16,6 @@ namespace Alien_Attack
     {
         private int steps;
         private Vector2 position;
-        private Texture2D texture;
         Rectangle destinationRectangle;
         SpriteBatch spriteBatch;
 
@@ -28,13 +28,14 @@ namespace Alien_Attack
         Controls controls;
         private int playerWidth;
         private string gameMode;
+
             //Bullet related variables
-        private Bullets playerBullet;
+        private List<Bullets> bullets;
         private Texture2D bulletTexture;
         private Rectangle bulletHitbox;
-        private bool bulletActive;
         private bool bunkerHit;
         private int extraXCoord;
+
             //Cooldown related variables
         private bool timeElapsed;
         private double startTime;
@@ -42,17 +43,24 @@ namespace Alien_Attack
         private double bulletCooldown;
         private UI ui;
 
-        public Player(Texture2D player1Texture, Texture2D bulletTexture, Vector2 player1StartPos, Controls control, UI ui) {
+        private static Texture2D playerAnimated;
+        private int topLeft;
+        private int counter;
+        public Player(Texture2D playerSpriteSheet, Texture2D bulletTexture, Vector2 player1StartPos, Controls control, UI ui) {
             this.ui = ui;
             steps = 5;
             position = player1StartPos;
-            texture = player1Texture;
             this.bulletTexture = bulletTexture;
-            bulletCooldown = 1.50;
+            bulletCooldown = 1.5;
+            bullets = new List<Bullets> { };
             playerWidth = 90;
             controls = control;
             getControls();
             timeElapsed = true;
+
+            topLeft = 0;
+            counter = 0;
+            playerAnimated = playerSpriteSheet;
         }
 
         public void updatePlayer(KeyboardState currentKeyState, KeyboardState previousKeyState) {
@@ -61,8 +69,8 @@ namespace Alien_Attack
             movePlayer();
             enforceWalls();
             firePlayerBullet();
-            if (bulletActive) {
-                playerBullet.updateBullets();
+            foreach(Bullets bullet in bullets){
+                bullet.updateBullets();
             }
             if (!timeElapsed) {
                 checkCooldown();
@@ -71,15 +79,32 @@ namespace Alien_Attack
 
         
         public void drawPlayer(SpriteBatch _spriteBatch) {
+            
             spriteBatch = _spriteBatch;
             destinationRectangle = new Rectangle((int)position.X, (int)position.Y, 90, playerWidth);
+            Rectangle sourceRectangle = new Rectangle(topLeft, 0, 250, 330);
             spriteBatch.Begin();
-            spriteBatch.Draw(texture, destinationRectangle, Color.White);
+            //spriteBatch.Draw(texture, destinationRectangle, Color.White);
+            spriteBatch.Draw(playerAnimated, destinationRectangle, sourceRectangle, Color.White);
             spriteBatch.End();
-            if (bulletActive)
+
+
+            //.ToList is used to make a unique and unmodifiable copy of the bullets list to prevent changes during the foreach loop
+            foreach (Bullets bullet in bullets.ToList())
             {
-                playerBullet.drawBullets(_spriteBatch);
+                bullet.drawBullets(_spriteBatch);
             }
+            counter++;
+            if (counter == 10)
+            {
+                topLeft += 330;
+                counter = 0;
+            }
+            if (topLeft >= 330 * 4) {
+                topLeft = 0;
+            }
+
+            
         }
 
         public Vector2 getPosition() {
@@ -126,20 +151,19 @@ namespace Alien_Attack
             if (position.X <= 0) {
                 position.X = 0;
             }
-            else if(position.X >= 730){
-                position.X = 730;
+            else if(position.X >= 710){
+                position.X = 710;
             }
         }
 
         //Player bullet related functions
         private void firePlayerBullet()
         {
-            //Bullet will only be fired when there is no other bullet on screen and the player has pressed the key for firing
+            //Bullet will only be fired when there is no other bullet on screen and the player has pressed t\he key for firing
             if (currentKeyboardState.IsKeyDown(shoot)  && timeElapsed)
             {
                 extraXCoord = getPLayerWidth() / 2;
-                playerBullet = new Bullets(5, bulletTexture, "up", getPosition(), extraXCoord);
-                bulletActive = true;
+                bullets.Add(new Bullets(6, bulletTexture, "up", getPosition(), extraXCoord));
                 timeElapsed = false;
                 startCooldown();
             }
@@ -157,32 +181,31 @@ namespace Alien_Attack
             startTime = Convert.ToDouble(ui.getStopwatchTime().Replace(":", ""));
         }
 
-        public bool isBulletActive() {
-            return bulletActive;
-        }
-
         public void checkplayerBulletCollision(EnemyController enemies, Bunkers bunkers)
         {
-            bulletHitbox = playerBullet.getHitbox();
-            bulletActive = !enemies.checkCollision(bulletHitbox);
-            if (playerBullet.getBulletPos().Y <= -60)
+
+            foreach (Bullets bullet in bullets.ToList())
             {
-                bulletActive = false;
-            }
-            //Checks if the payers bullet hits the bunker
-            bunkerHit = bunkers.checkBunkerCollision(bulletHitbox);
-            if (bunkerHit)
-            {
-                bulletActive = false;
+                bulletHitbox = bullet.getHitbox();
+                if (enemies.checkCollision(bulletHitbox)){
+                    bullets.Remove(bullet);
+                }
+                if (bullet.getBulletPos().Y <= -60)
+                {
+                    bullets.Remove(bullet);
+                }
+
+                //Checks if the payers bullet hits the bunker
+                bunkerHit = bunkers.checkBunkerCollision(bulletHitbox);
+                if (bunkerHit)
+                {
+                    bullets.Remove(bullet);
+                }
             }
         }
 
-        //Stops all bullet related functions being called for the player's bullet
-        private void deactivateBullet()
-        {
-            bulletActive = false;
+        public static Texture2D getPlayerTexture() {
+            return playerAnimated;
         }
-
-
     }
 }

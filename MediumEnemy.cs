@@ -33,7 +33,7 @@ namespace Alien_Attack
 
         public override void randomBulletFire()
         {
-            randomNum = rand.Next(1, 100+(EnemyController.getNumberOfEnemies()*20));
+            randomNum = rand.Next(1, 80+(EnemyController.getNumberOfEnemies()*20));
             if (randomNum == 9) {
                 bulletSpawnPos = getPosition();
                 bullet = new Bullets(5, texture, "down", bulletSpawnPos, 0);

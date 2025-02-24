@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Transactions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,19 +14,17 @@ namespace Alien_Attack
     {
         private const int enemySpacing = 60;
         private Texture2D enemyTexture;
+        private Texture2D explosion;
         private SpriteBatch spriteBatch;
         private Vector2 startPos;
         private Vector2 currentPos;
         private static List<mediumEnemy> enemies;
-        private List<mediumEnemy> updateOnlyBullets;
         private int numOfEnemies;
         private int rows;
         private int columns;
         private int num;
         private int MoveDownCount;
         private int enemySpeedCount;
-        private int BulletUpdateCount;
-        private int BulletDrawCount;
         private int collisionCount;
         private int lowestCount;
         private int lowestCoord;
@@ -35,9 +34,17 @@ namespace Alien_Attack
         private bool spawnedOnThisTurn;
         private string gameMode;
         private float currentSpeed;
+        private int level;
+            //Explosion animation variables
+        private int topLeft;
+        private bool exploding;
+        private int xCoord;
+        private int yCoord;
+        private int counter;
+
         //Will only spawn in the regular enemies for now
 
-        public EnemyController(SpriteBatch _spriteBatch, Texture2D texture, Vector2 startPos, string gameMode)
+        public EnemyController(SpriteBatch _spriteBatch, Texture2D texture, Vector2 startPos, string gameMode, Texture2D explosionSheet)
         {
             spriteBatch = _spriteBatch;
             this.startPos = startPos;
@@ -48,22 +55,26 @@ namespace Alien_Attack
             MoveDownCount = 0;
             collisionCount = 0;
             enemies = new List<mediumEnemy>();
-            updateOnlyBullets = new List<mediumEnemy>();
-            currentSpeed = 0.5f;
+            currentSpeed = 0.5f + level/5;
             lowestCoord = 0;
             spawnedOnThisTurn = true;
             timesSpawnedEnemies = 1;
+            explosion = explosionSheet;
+            topLeft = 0;
+            counter = 0;
         }
 
         public void spawnEnemies(int rows, int columns) {
+            level = UI.getLevel();
             this.rows = rows;
-            this.columns = columns;
+            this.columns = (int) columns;
+            this.columns += level / 4;
             //To do: Make this into recurrsion instead
             //Spawns in all of the enemies in rows
             for (int row = 0; row <= rows; row++)
             {
                 currentPos.Y += enemySpacing;
-                for (int column = 0; column <= columns; column++)
+                for (int column = 0; column <= this.columns; column++)
                 {
                     currentPos.X += enemySpacing;
                     enemies.Add(new mediumEnemy(enemyTexture, spriteBatch, currentPos, currentSpeed));
@@ -76,7 +87,8 @@ namespace Alien_Attack
         public void updateAllEnemies()
         {
             //Constantly calls the update method for each enemy (moves them around)
-            updateDeadBullets();
+            //updateDeadBullets();
+            checkIfDelete();
             if (num <= getNumberOfEnemies()) {
                 enemies[num].updateEnemy();
 
@@ -93,7 +105,7 @@ namespace Alien_Attack
                 //When the enemies reach the left side of the screen, more enemies will spawn in the endless gamemode above the coordinates of the top left enemy
                 if (enemies[num].getPosition().X >= 60 && gameMode == "Endless" && !spawnedOnThisTurn) {
                     currentPos.X = startPos.X - enemySpacing;
-                    currentPos.Y = startPos.Y + enemySpacing*timesSpawnedEnemies;
+                    currentPos.Y = startPos.Y - enemySpacing;//*timesSpawnedEnemies;
                     spawnEnemies(0, columns);
                     spawnedOnThisTurn = true;
                     timesSpawnedEnemies++;
@@ -110,14 +122,18 @@ namespace Alien_Attack
         
         public void drawAllEnemies() {
             //Calls drawing methods
-            drawDeadBullets();
-            foreach(mediumEnemy enemy in enemies)
+            //drawDeadBullets();
+            foreach (mediumEnemy enemy in enemies)
             {
-                enemy.drawEnemy();
+                if (!enemy.isEnemyDead())
+                {
+                    enemy.drawEnemy();
+                }
                 enemy.drawBullet();
             }
-            
-            
+            if (exploding) {
+                explode();
+            }
         }
         private void moveAllDown()
         {
@@ -151,47 +167,60 @@ namespace Alien_Attack
             }
             return lowestCoord;
         }
+            //Keeps the enemy alive if the bullet hasn't been destroyed yet
+        public void checkIfDelete()
+        {
+            foreach (mediumEnemy enemy in enemies.ToList())
+            {
+                if (enemy.isEnemyDead())
+                {
+                    xCoord = (int)enemies[collisionCount].getPosition().X;
+                    yCoord = (int)enemies[collisionCount].getPosition().Y;
+                    exploding = true;
+                    explode();  //Loops when bullet still alive
+                }
+                if (enemy.isEnemyDead() && !enemy.isBulletAlive())
+                {
+                    deleteEnemy(collisionCount);
+                }
+                
+                collisionCount++;
+            }
+            collisionCount = 0;
+        }
 
         public void deleteEnemy(int enemyNum)
             //Removes the enemy from the list, stopping them from being drawn and updated
         {
             increaseAllSpeed();
-            if (enemies[enemyNum].isBulletAlive()) {
-                updateOnlyBullets.Add(enemies[enemyNum]);
-            }
             enemies.RemoveAt(enemyNum);
+            UI.increaseScore(100);
         }
 
-        private void updateDeadBullets()
-        {
-            if (BulletUpdateCount < updateOnlyBullets.Count)
+        //Displays explosion effect
+        public void explode() {
+            Rectangle sourceRectangle = new Rectangle(topLeft, 0, 158, 145);
+            Rectangle destinationRectangle = new Rectangle(xCoord, yCoord, 75, 75);
+            if (exploding)
             {
-                updateOnlyBullets[BulletUpdateCount].updateBullet();
-                if (!updateOnlyBullets[BulletUpdateCount].isBulletAlive()) {
-                    updateOnlyBullets.RemoveAt(BulletUpdateCount);
+                if (topLeft >= 158 * 10)
+                {
+                    topLeft = 0;
+                    exploding = false;
                 }
-                BulletUpdateCount++;
-                updateDeadBullets();
-            }
-            
-            else
-            {
-                BulletUpdateCount = 0;
-            }
-        }
+                else
+                {
+                    spriteBatch.Begin();
+                    spriteBatch.Draw(explosion, destinationRectangle, sourceRectangle, Color.White);
+                    spriteBatch.End();
+                    counter++;
+                    if (counter == 5)
+                    {
+                        topLeft += 158;
+                        counter = 0;
+                    }
 
-        private void drawDeadBullets()
-        {
-            if (BulletDrawCount < updateOnlyBullets.Count)
-            {
-                updateOnlyBullets[BulletDrawCount].drawBullet();
-                BulletDrawCount++;
-                drawDeadBullets();
-            }
-
-            else
-            {
-                BulletDrawCount = 0;
+                }
             }
         }
 
@@ -211,32 +240,24 @@ namespace Alien_Attack
         }
         
         public bool checkCollision(Rectangle bulletHitbox) {
-                //Loops through each enemy, getting their hitbox and checking if it is in the bullets hitbox, then deleting the enemy if so
-            foreach (mediumEnemy enemy2 in enemies) {
+            //Loops through each enemy, getting their hitbox and checking if it is in the bullets hitbox, then deleting the enemy if so
+            foreach (mediumEnemy enemy2 in enemies)
+            {
                 enemyHitbox = enemy2.getHitbox();
-                if (enemyHitbox.Intersects(bulletHitbox))
+                if (enemyHitbox.Intersects(bulletHitbox) && !enemy2.isEnemyDead())
                 {
-                    deleteEnemy(collisionCount);
+                    enemy2.killEnemy();
                     return true;
                 }
-                collisionCount++;
             }
-            collisionCount = 0;
             return false;
         }
 
-        public bool checkPlayerCollision(Rectangle playerHitBox) {
+        public bool checkBulletCollision(Rectangle playerHitBox) {
                 //Checks for the collision between enemy bullets and the player
             foreach (mediumEnemy enemy3 in enemies)
             {
                 isCollision = enemy3.bulletCollision(playerHitBox);
-                if (isCollision)
-                {
-                    return true;
-                }
-            }
-            foreach (mediumEnemy enemy in updateOnlyBullets) {
-                isCollision = enemy.bulletCollision(playerHitBox);
                 if (isCollision)
                 {
                     return true;

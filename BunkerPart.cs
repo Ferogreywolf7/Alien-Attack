@@ -35,18 +35,19 @@ namespace Alien_Attack
             spriteBatch.Draw(textureAtlas, destinationRectangle, sourceRectangle, Color.White);
             spriteBatch.End();
         }
-
+            //Gets the amount of damage the part has taken so it can be destroyed if needed
         public int getDestructionCount() {
             return destructionCount;
         }
-
+            //Gets the hitbox for the bunker part
         public Rectangle getBunkerHitbox() {
             return destinationRectangle;
         }
-
+            //Damages the part of the bunker
         public void partHit() {
             destructionCount += 1;
         }
+            //Checks if the hitbox has collided with this specific part of the bunker and if so, damages the part
         public bool bulletCollision(Rectangle hitbox) {
             collision = false;
             if (hitbox.Intersects(getBunkerHitbox())) {

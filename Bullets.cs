@@ -55,5 +55,6 @@ namespace Alien_Attack
         public Vector2 getBulletPos() {
             return position;
         }
+
     }
 }
