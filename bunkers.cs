@@ -30,7 +30,7 @@ namespace Alien_Attack
         private List<BunkerPart> bunkerPieces;
         private Vector2 piecePosition;
         private bool isBunkerCollision;
-
+        private int level;
         public Bunkers(Texture2D bunkerTexture, int NoOfBunkers)
         {
             bunkerAtlas = bunkerTexture;
@@ -67,6 +67,8 @@ namespace Alien_Attack
             
         }
         private void createBunkers() {
+            level = UI.getLevel();
+            bunkerAmount -= level/5;
             if (bunkerNo <= bunkerAmount)
             {
                 piecePosition = new Vector2(((screenWidth + 50) / (bunkerAmount * 10)) * bunkerNo*2, 700);
@@ -95,11 +97,12 @@ namespace Alien_Attack
         private void removeBunkerPiece(int pieceNum) {
             bunkerPieces.RemoveAt(pieceNum);
         }
-
+            //
         public List<BunkerPart> GetBunkerParts() {
             return bunkerPieces;
         }
 
+            //Check if the bullets hitbox has hit a part of the bunker and returns true if so so that the bullet can be deleted
         public bool checkBunkerCollision(Rectangle hitbox) {
             bulletHitbox = hitbox;
             foreach (BunkerPart part in bunkerPieces) {

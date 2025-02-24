@@ -18,29 +18,26 @@ namespace Alien_Attack
         private Player player1;
         public Controls controls;
         private UI ui;
-        private Bullets playerBullet;
         private Bunkers bunkers;
+        private Database database;
         private List<BunkerPart> bunkerParts;
         private EnemyController enemies;
         private Vector2 player1StartPos;
         private Vector2 enemyStartPos;
-        private Texture2D player1Texture;
         private Texture2D playerBulletTexture;
         private Texture2D textBorder;
         private Texture2D enemyTexture;
-        private Texture2D enemyBulletTexture;
         private Texture2D bunkerAtlas;
         private Texture2D lifeIcon;
         private Texture2D backArrow;
+        private Texture2D playerSpritSheet;
+        private Texture2D explosionSpriteSheet;
         private Texture2D background;
         private SpriteFont font;
         private static KeyboardState currentKeyState;
         private KeyboardState previousKeyState;
-        private Keys shoot;
         private Keys pause;
         private bool gamePaused;
-        private bool playerBulletActive;
-        private bool bunkerHitByPlayer;
         private bool playerHit;
         private bool inControlsMenu;
         private bool noMenu;
@@ -59,6 +56,12 @@ namespace Alien_Attack
         private string gameMode;
         private string deathReason;
         private MouseState mouseState;
+        private bool inCustomiseMenu;
+        private string wantsToSave;
+        private string createNewUser;
+        private List<string> word;
+        private bool gameWon;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -68,6 +71,7 @@ namespace Alien_Attack
 
         protected override void Initialize()
         {
+            database = new Database();
             gameStarted = false;
             gamePaused = true;
             noMenu = false;
@@ -80,6 +84,7 @@ namespace Alien_Attack
             backgroundBox = new Rectangle(0, 0, 800, 1000);
             controls = new Controls();
             getControls();
+            database.tryConnectToDatabase();
             base.Initialize();
         }
 
@@ -88,13 +93,14 @@ namespace Alien_Attack
             //Loading all textures for the game
             textBorder = Content.Load<Texture2D>("textBorder");
             playerBulletTexture = Content.Load<Texture2D>("bulletPlaceholder");
-            player1Texture = Content.Load<Texture2D>("player2");
             enemyTexture = Content.Load<Texture2D>("enemyPlaceholder");
-            enemyBulletTexture = Content.Load<Texture2D>("enemyBulletPlaceholder");
             bunkerAtlas = Content.Load<Texture2D>("combinedBlocks");
             lifeIcon = Content.Load<Texture2D>("playerHeartPlaceholder");
             backArrow = Content.Load<Texture2D>("backArrow");
             font = Content.Load<SpriteFont>("testFont");
+
+            playerSpritSheet = Content.Load<Texture2D>("playerAnimationSpriteSheet");
+            explosionSpriteSheet = Content.Load<Texture2D>("explosionAnimationSpriteSheet");
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             //Instansiating the UI
@@ -102,21 +108,24 @@ namespace Alien_Attack
         }
 
         public void startNewGame() {
-            gameMode = "Endless";
+            gameMode = "Classic";
             deathReason = "";
             player1StartPos = new Vector2(50, 800);
             enemyStartPos = new Vector2(11, 50);
-            player1 = new Player(player1Texture, playerBulletTexture, player1StartPos, controls, ui);
+            player1 = new Player(playerSpritSheet, playerBulletTexture, player1StartPos, controls, ui);
             bunkers = new Bunkers(bunkerAtlas, 2);
-            enemies = new EnemyController(_spriteBatch, enemyTexture, enemyStartPos, gameMode);
+            enemies = new EnemyController(_spriteBatch, enemyTexture, enemyStartPos, gameMode, explosionSpriteSheet);
             enemies.spawnEnemies(enemyRows, enemyCollums);            
-            noOfLives = 10;
-            playerBulletActive = false;
+            noOfLives = 5;
             gameStarted = true;
             gamePaused = false;
             noMenu = false;
             gameOver = false;
+            gameWon = false;
             ui.startStopwatch();
+            wantsToSave = "";
+            createNewUser = "";
+            word = new List<string>();
         }
 
         protected override void Update(GameTime gameTime)
@@ -158,21 +167,26 @@ namespace Alien_Attack
 
             //Draws any required parts if the game is finished
             checkIfGameOver();
+            checkIfGameWon();
+            ui.drawStopwatchTime();
+            ui.drawLevel();
                  //prevents any game processes from advance if the game is paused
             if (!gamePaused)
             {
+                //Draws everything on the screen when it is running
                 ui.drawLives(noOfLives);
                 player1.drawPlayer(_spriteBatch);
                 enemies.drawAllEnemies();
                 bunkers.drawBunkers(_spriteBatch);
             }
                 //Shows that the game is paused
-            if (gamePaused) {
+            if (gamePaused && !noMenu) {
                 _spriteBatch.Begin();
                 _spriteBatch.DrawString(font, "Game paused", new Vector2(320, 100), Color.Red);
                 _spriteBatch.End();
             }
-                //Handles all methods for the controls menu
+
+                //Handles all methods for the controls menu, allowing for keybinds to be changed
             if (gamePaused && inControlsMenu && !noMenu)
             {
                 tempGetNewKeybindOf = ui.drawControlsMenu();
@@ -184,7 +198,12 @@ namespace Alien_Attack
                 }
 
             }
-                //Handles all methods for outside the control menu when the game is paused
+            if (gamePaused && inCustomiseMenu) {
+                ui.drawCustomiseMenu(playerSpritSheet);
+            }
+
+
+            //Handles all methods in the main menu when the game is paused
             else if (gamePaused && !noMenu)
             {
                 option = ui.drawPauseMenu();
@@ -193,33 +212,36 @@ namespace Alien_Attack
                     case "Controls menu":
                         inControlsMenu = true;
                         break;
+                    //Unpauses the game when start game is pressed if there is already a game going, otherwise it starts a new game
                     case "Start game":
                         if (gameStarted)
                         {
                             gamePaused = false;
+                            ui.startStopwatch();
+                            getControls();
+                            player1.getControls();
                         }
                         else
                         {
                             startNewGame();
                         }
                         break;
+                    case "Customise":
+                        inCustomiseMenu = true;
+                        break;
                 }
             }
             base.Draw(gameTime);
         }
 
-        //Gets the current keybinds for firing and pausing the game
+            //Gets the current keybinds for firing and pausing the game
         private void getControls()
         {
-            shoot = controls.getFire();
             pause = controls.getPause();
         }
-
-        private void checkCollisions() {
-            if (player1.isBulletActive())
-            {
-                player1.checkplayerBulletCollision(enemies, bunkers);
-            }
+            //Calls various subroutines to check collisions
+        private void checkCollisions() { 
+            player1.checkplayerBulletCollision(enemies, bunkers);
             checkEnemyBulletCollision();
 
         }
@@ -230,13 +252,13 @@ namespace Alien_Attack
             foreach (BunkerPart part in bunkerParts)
             {
                 partHitbox = part.getBunkerHitbox();
-                if (enemies.checkPlayerCollision(partHitbox))
+                if (enemies.checkBulletCollision(partHitbox))
                 {
                     part.partHit();
                 }
             }
                 //Checks to see if the enemy bullets have hit the player and if so, reduces number of lives
-            playerHit = enemies.checkPlayerCollision(player1.getPlayerHitbox());
+            playerHit = enemies.checkBulletCollision(player1.getPlayerHitbox());
             if (playerHit)
             {
                 noOfLives -= 1;
@@ -282,13 +304,9 @@ namespace Alien_Attack
                 deathReason = "The enemies got too low and you were overrun";
                 gameOver = true;
             }
-            if (EnemyController.getNumberOfEnemies() == -1) {
-                deathReason = "All enemies were cleared";
-                gameOver = true;
-            }
             if (EnemyController.getNumberOfEnemies() == -1)
             {
-                //Code here for game won
+                gameWon = true;
             }
 
         }
@@ -298,23 +316,98 @@ namespace Alien_Attack
             if (gameOver)
             {
                 ui.stopStopwatch();
-                ui.getStopwatchTime();
                 gamePaused = true;
                 noMenu = true;
                 gameStarted = false;
                 _spriteBatch.Begin();
                 _spriteBatch.DrawString(font, "Game Over", new Vector2(295, 90), Color.White);
                 _spriteBatch.DrawString(font, deathReason, new Vector2(295, 120), Color.White);
-                _spriteBatch.DrawString(font, "Click to continue", new Vector2(295, 170), Color.Green);
                 _spriteBatch.End();
                 ui.drawScore();
-                if (mouseState.LeftButton == ButtonState.Pressed) {
-                    gameOver = false;
-                    noMenu = false;
+                if (wantsToSave == "")
+                {
+                    wantsToSave = ui.checkIfUserWantsToSave();
+                }
+                if (wantsToSave == "save")
+                {
+
+                    if (createNewUser == "") {
+                        createNewUser = ui.checkIfNewUserToBeMade();
+                    }
+                        //Creates a new username based off of text inputted
+                    if (createNewUser == "create")
+                    {
+                            //Inputs text and shows it on screen
+                        (bool, List<string>) outputs = ui.enterText(currentKeyState, previousKeyState, word);
+                        if (outputs.Item1)
+                        {
+                            word = outputs.Item2;
+                            Debug.WriteLine(String.Join(" ", word));
+                            _spriteBatch.Begin();
+                            _spriteBatch.DrawString(font, "Enter Username: (press enter to submit)", new Vector2(300, 250), Color.White);
+                            _spriteBatch.DrawString(font, String.Join(" ", word), new Vector2(300, 300), Color.White);
+                            _spriteBatch.End();
+                        }
+                        else
+                        {
+                            database.addUser(String.Join("",word));
+                            wantsToSave = "dont save";
+                        }
+                    }
+                    if (createNewUser == "login") {
+                            //Inputs text and shows it on screen
+                        (bool, List<string>) outputs = ui.enterText(currentKeyState, previousKeyState, word);
+                        if (outputs.Item1)
+                        {
+                            word = outputs.Item2;
+                            Debug.WriteLine(String.Join(" ", word));
+                            _spriteBatch.Begin();
+                            _spriteBatch.DrawString(font, "Enter an existing username: (press enter to submit)", new Vector2(300, 250), Color.White);
+                            _spriteBatch.DrawString(font, String.Join(" ", word), new Vector2(300, 300), Color.White);
+                            _spriteBatch.End();
+                        }
+                        else
+                        {
+                            database.checkIfUserExists(String.Join("", word));
+                            wantsToSave = "dont save";
+                        }
+                    }
+                }
+                if (wantsToSave == "dont save")
+                {
+                    //If the user has or hasn't saved the data in the database, let the user go back to the main menu
+                    _spriteBatch.Begin();
+                    _spriteBatch.DrawString(font, "Click to continue", new Vector2(295, 170), Color.Green);
+                    _spriteBatch.End();
+
+                    if (mouseState.LeftButton == ButtonState.Pressed)
+                    {
+                        ui.resetStopwatch();
+                        level = 0;
+                        gameOver = false;
+                        noMenu = false;
+                    }
                 }
             }
         }
 
+        private void checkIfGameWon() {
+            if (gameWon) {
+                ui.stopStopwatch();
+                gamePaused = true;
+                noMenu = true;
+                gameStarted = false;
+                _spriteBatch.Begin();
+                _spriteBatch.DrawString(font, "You won! The level of difficulty has been increased by 1", new Vector2(), Color.Green);
+                _spriteBatch.DrawString(font, "Click to continue", new Vector2(295, 170), Color.Green);
+                _spriteBatch.End();
+                if (mouseState.LeftButton == ButtonState.Pressed)
+                {
+                    ui.increaseLevel();
+                    startNewGame();
+                }
+            }
+        }
         
     }
 }
