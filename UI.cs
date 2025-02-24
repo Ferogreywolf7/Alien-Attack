@@ -126,9 +126,8 @@ public class UI
             return "Pause";
 
         }
-
+            //For arrow going back to main menu
         if (drawButtons(arrow, new Rectangle(50, 50, 100, 50), "")) {
-            Debug.WriteLine("Back arrow pressed");
             return "Back";
         }
 
