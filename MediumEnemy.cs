@@ -12,7 +12,7 @@ namespace Alien_Attack
         private Rectangle hitbox;
         private Texture2D bulletTexture;
         private Vector2 bulletSpawnPos;
-        public mediumEnemy(Texture2D medEnemyTexture, SpriteBatch _spriteBatch, Vector2 startPos, float speed)
+        public mediumEnemy(Texture2D medEnemyTexture, SpriteBatch _spriteBatch, Vector2 startPos, float speed, Texture2D explosionTexture)
         {
             steps = speed;
             texture = medEnemyTexture;
@@ -21,6 +21,7 @@ namespace Alien_Attack
             position = originalPosition;
             moveType = "right";
             destinationRectangle = new Rectangle((int)position.X, (int)position.Y, 50, 50);
+            explosionSpriteSheet = explosionTexture;
         }
 
         public override void drawEnemy()
@@ -33,7 +34,7 @@ namespace Alien_Attack
 
         public override void randomBulletFire()
         {
-            randomNum = rand.Next(1, 80+(EnemyController.getNumberOfEnemies()*20));
+            randomNum = rand.Next(1, 80+(EnemyController.getNumberOfEnemies()*20) - (UI.getLevel()*5));
             if (randomNum == 9) {
                 bulletSpawnPos = getPosition();
                 bullet = new Bullets(5, texture, "down", bulletSpawnPos, 0);

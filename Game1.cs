@@ -43,12 +43,10 @@ namespace Alien_Attack
         private bool noMenu;
         private bool gameStarted;
         private bool gameOver;
-        private int extraXCoord;
         private int noOfLives;
         private int enemyRows;
         private int enemyCollums;
         private int level;
-        private Rectangle bulletHitbox;
         private Rectangle partHitbox;
         private Rectangle backgroundBox;
         private string tempGetNewKeybindOf;
@@ -198,7 +196,7 @@ namespace Alien_Attack
                 }
 
             }
-            if (gamePaused && inCustomiseMenu) {
+            else if (gamePaused && inCustomiseMenu) {
                 ui.drawCustomiseMenu(playerSpritSheet);
             }
 

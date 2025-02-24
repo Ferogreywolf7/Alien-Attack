@@ -1,7 +1,7 @@
 ﻿//In actual program
 Give cooldown for enemy bullets
  make bullets, fire rate faster
-
+ Explosions dont render (seems to be a texture bug as the enemy texture renders fine in the same bit of code)
 Add new enemy types to make use of the inheritance. Such as a laser cannon one (Could either drop a stationary laser cannon or moving one (with the enemy) which has a low chance of spawning and gives a warning highlight then does damage to all blocks and two hearts from the player)
 
 Make shooting faster
@@ -14,3 +14,4 @@ Make shooting faster
 
 Write up why I decided to make variables/methods as private in technical solution section
 Mention why inheritance has been done in technical solution section
+In techincal, show examples of high level techniques, write why you have used them

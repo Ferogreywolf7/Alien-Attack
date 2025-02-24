@@ -35,12 +35,6 @@ namespace Alien_Attack
         private string gameMode;
         private float currentSpeed;
         private int level;
-            //Explosion animation variables
-        private int topLeft;
-        private bool exploding;
-        private int xCoord;
-        private int yCoord;
-        private int counter;
 
         //Will only spawn in the regular enemies for now
 
@@ -60,8 +54,6 @@ namespace Alien_Attack
             spawnedOnThisTurn = true;
             timesSpawnedEnemies = 1;
             explosion = explosionSheet;
-            topLeft = 0;
-            counter = 0;
         }
 
         public void spawnEnemies(int rows, int columns) {
@@ -77,7 +69,7 @@ namespace Alien_Attack
                 for (int column = 0; column <= this.columns; column++)
                 {
                     currentPos.X += enemySpacing;
-                    enemies.Add(new mediumEnemy(enemyTexture, spriteBatch, currentPos, currentSpeed));
+                    enemies.Add(new mediumEnemy(enemyTexture, spriteBatch, currentPos, currentSpeed, explosion));
                     numOfEnemies++;
                 }
                 currentPos.X = startPos.X;
@@ -90,30 +82,33 @@ namespace Alien_Attack
             //updateDeadBullets();
             checkIfDelete();
             if (num <= getNumberOfEnemies()) {
-                enemies[num].updateEnemy();
-
-
-                if (enemies[num].getPosition().X >= 740)
+                if (!enemies[num].isEnemyDead())
                 {
-                    moveAllDown();
-                }
-                if (enemies[num].getPosition().X <= 10)
-                {
-                    spawnedOnThisTurn = false;
-                    moveAllDown();
-                }
-                //When the enemies reach the left side of the screen, more enemies will spawn in the endless gamemode above the coordinates of the top left enemy
-                if (enemies[num].getPosition().X >= 60 && gameMode == "Endless" && !spawnedOnThisTurn) {
-                    currentPos.X = startPos.X - enemySpacing;
-                    currentPos.Y = startPos.Y - enemySpacing;//*timesSpawnedEnemies;
-                    spawnEnemies(0, columns);
-                    spawnedOnThisTurn = true;
-                    timesSpawnedEnemies++;
-                }
+                    enemies[num].updateEnemy();
 
-                num++;
 
-                updateAllEnemies();
+                    if (enemies[num].getPosition().X >= 740)
+                    {
+                        moveAllDown();
+                    }
+                    if (enemies[num].getPosition().X <= 10)
+                    {
+                        spawnedOnThisTurn = false;
+                        moveAllDown();
+                    }
+                    //When the enemies reach the left side of the screen, more enemies will spawn in the endless gamemode above the coordinates of the top left enemy
+                    if (enemies[num].getPosition().X >= 60 && gameMode == "Endless" && !spawnedOnThisTurn)
+                    {
+                        currentPos.X = startPos.X - enemySpacing;
+                        currentPos.Y = startPos.Y - enemySpacing;//*timesSpawnedEnemies;
+                        spawnEnemies(0, columns);
+                        spawnedOnThisTurn = true;
+                        timesSpawnedEnemies++;
+                    }
+                }
+                    num++;
+
+                    updateAllEnemies();
                 
             }
             else { num = 0; }
@@ -129,10 +124,10 @@ namespace Alien_Attack
                 {
                     enemy.drawEnemy();
                 }
+                else {
+                    enemy.explode();
+                }
                 enemy.drawBullet();
-            }
-            if (exploding) {
-                explode();
             }
         }
         private void moveAllDown()
@@ -167,21 +162,18 @@ namespace Alien_Attack
             }
             return lowestCoord;
         }
-            //Keeps the enemy alive if the bullet hasn't been destroyed yet
+
+            //Keeps the enemy alive if the bullet hasn't been destroyed yet or explosion animation cycle hasn't completed
         public void checkIfDelete()
         {
             foreach (mediumEnemy enemy in enemies.ToList())
             {
-                if (enemy.isEnemyDead())
-                {
-                    xCoord = (int)enemies[collisionCount].getPosition().X;
-                    yCoord = (int)enemies[collisionCount].getPosition().Y;
-                    exploding = true;
-                    explode();  //Loops when bullet still alive
-                }
                 if (enemy.isEnemyDead() && !enemy.isBulletAlive())
                 {
-                    deleteEnemy(collisionCount);
+                    if (enemy.getExploded())
+                    {
+                        deleteEnemy(collisionCount);
+                    }
                 }
                 
                 collisionCount++;
@@ -195,33 +187,6 @@ namespace Alien_Attack
             increaseAllSpeed();
             enemies.RemoveAt(enemyNum);
             UI.increaseScore(100);
-        }
-
-        //Displays explosion effect
-        public void explode() {
-            Rectangle sourceRectangle = new Rectangle(topLeft, 0, 158, 145);
-            Rectangle destinationRectangle = new Rectangle(xCoord, yCoord, 75, 75);
-            if (exploding)
-            {
-                if (topLeft >= 158 * 10)
-                {
-                    topLeft = 0;
-                    exploding = false;
-                }
-                else
-                {
-                    spriteBatch.Begin();
-                    spriteBatch.Draw(explosion, destinationRectangle, sourceRectangle, Color.White);
-                    spriteBatch.End();
-                    counter++;
-                    if (counter == 5)
-                    {
-                        topLeft += 158;
-                        counter = 0;
-                    }
-
-                }
-            }
         }
 
         private void increaseAllSpeed() {
@@ -243,8 +208,8 @@ namespace Alien_Attack
             //Loops through each enemy, getting their hitbox and checking if it is in the bullets hitbox, then deleting the enemy if so
             foreach (mediumEnemy enemy2 in enemies)
             {
-                enemyHitbox = enemy2.getHitbox();
-                if (enemyHitbox.Intersects(bulletHitbox) && !enemy2.isEnemyDead())
+                
+                if (enemy2.checkCollision(bulletHitbox) && !enemy2.isEnemyDead())
                 {
                     enemy2.killEnemy();
                     return true;
