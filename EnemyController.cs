@@ -35,6 +35,7 @@ namespace Alien_Attack
         private string gameMode;
         private float currentSpeed;
         private int level;
+        private int xPos;
 
         //Will only spawn in the regular enemies for now
 
@@ -82,29 +83,26 @@ namespace Alien_Attack
             //updateDeadBullets();
             checkIfDelete();
             if (num <= getNumberOfEnemies()) {
-                if (!enemies[num].isEnemyDead())
+                enemies[num].updateEnemy();
+
+                xPos = (int) enemies[num].getPosition().X;
+                if (xPos >= 740)
                 {
-                    enemies[num].updateEnemy();
-
-
-                    if (enemies[num].getPosition().X >= 740)
-                    {
-                        moveAllDown();
-                    }
-                    if (enemies[num].getPosition().X <= 10)
-                    {
-                        spawnedOnThisTurn = false;
-                        moveAllDown();
-                    }
-                    //When the enemies reach the left side of the screen, more enemies will spawn in the endless gamemode above the coordinates of the top left enemy
-                    if (enemies[num].getPosition().X >= 60 && gameMode == "Endless" && !spawnedOnThisTurn)
-                    {
-                        currentPos.X = startPos.X - enemySpacing;
-                        currentPos.Y = startPos.Y - enemySpacing;//*timesSpawnedEnemies;
-                        spawnEnemies(0, columns);
-                        spawnedOnThisTurn = true;
-                        timesSpawnedEnemies++;
-                    }
+                    moveAllDown();
+                }
+                if (xPos <= 10)
+                {
+                    spawnedOnThisTurn = false;
+                    moveAllDown();
+                }
+                //When the enemies reach the left side of the screen, more enemies will spawn in the endless gamemode above the coordinates of the top left enemy
+                if (xPos >= 60 && gameMode == "Endless" && !spawnedOnThisTurn)
+                {
+                    currentPos.X = startPos.X - enemySpacing;
+                    currentPos.Y = startPos.Y - enemySpacing;//*timesSpawnedEnemies;
+                    spawnEnemies(0, columns);
+                    spawnedOnThisTurn = true;
+                    timesSpawnedEnemies++;
                 }
                     num++;
 
@@ -117,7 +115,6 @@ namespace Alien_Attack
         
         public void drawAllEnemies() {
             //Calls drawing methods
-            //drawDeadBullets();
             foreach (mediumEnemy enemy in enemies)
             {
                 if (!enemy.isEnemyDead())
@@ -130,6 +127,7 @@ namespace Alien_Attack
                 enemy.drawBullet();
             }
         }
+
         private void moveAllDown()
         {
             //Loops through all enemys, calling the method to move the enemy down

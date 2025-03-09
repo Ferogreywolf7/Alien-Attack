@@ -109,7 +109,7 @@
 /processorParam:TextureFormat=Color
 /build:playerAnimationSpriteSheet.png
 
-#begin playerAnimationSpriteSheet.png
+#begin playerExplosion.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -119,7 +119,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:playerAnimationSpriteSheet.png
+/build:playerExplosion.png
 
 #begin playerHeartPlaceholder.png
 /importer:TextureImporter

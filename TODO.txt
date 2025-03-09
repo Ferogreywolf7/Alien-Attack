@@ -8,10 +8,9 @@ Make shooting faster
 
 //In database
 
-
+Reset player and game IDs using ALTER SEQUENCE idName RESTART WITH 0;
 
 //In writeup
 
 Write up why I decided to make variables/methods as private in technical solution section
-Mention why inheritance has been done in technical solution section
 In techincal, show examples of high level techniques, write why you have used them

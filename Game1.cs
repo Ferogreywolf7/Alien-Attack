@@ -32,6 +32,7 @@ namespace Alien_Attack
         private Texture2D backArrow;
         private Texture2D playerSpritSheet;
         private Texture2D explosionSpriteSheet;
+        private Texture2D playerExplosionSpriteSheet;
         private Texture2D background;
         private SpriteFont font;
         private static KeyboardState currentKeyState;
@@ -59,6 +60,14 @@ namespace Alien_Attack
         private string createNewUser;
         private List<string> word;
         private bool gameWon;
+
+        private double timeCooldownStarted;
+        private double invulnerableCooldown;
+        private bool cooldownEnded;
+        private Rectangle explosionFrameRectangle;
+        private Rectangle explosionDestinationRectangle;
+        private int topLeftOfFrame;
+        private int counter;
 
         public Game1()
         {
@@ -99,6 +108,7 @@ namespace Alien_Attack
 
             playerSpritSheet = Content.Load<Texture2D>("playerAnimationSpriteSheet");
             explosionSpriteSheet = Content.Load<Texture2D>("explosionAnimationSpriteSheet");
+            playerExplosionSpriteSheet = Content.Load<Texture2D>("playerExplosion");
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             //Instansiating the UI
@@ -124,6 +134,11 @@ namespace Alien_Attack
             wantsToSave = "";
             createNewUser = "";
             word = new List<string>();
+            topLeftOfFrame = 0;
+            invulnerableCooldown = 2.2;
+            timeCooldownStarted = 00.00;
+            counter = 0;
+            cooldownEnded = true;
         }
 
         protected override void Update(GameTime gameTime)
@@ -176,6 +191,9 @@ namespace Alien_Attack
                 player1.drawPlayer(_spriteBatch);
                 enemies.drawAllEnemies();
                 bunkers.drawBunkers(_spriteBatch);
+                if (!cooldownEnded) {
+                    drawPlayerExplosionAnimation();
+                }
             }
                 //Shows that the game is paused
             if (gamePaused && !noMenu) {
@@ -196,9 +214,9 @@ namespace Alien_Attack
                 }
 
             }
-            else if (gamePaused && inCustomiseMenu) {
+            /*else if (gamePaused && inCustomiseMenu) {
                 ui.drawCustomiseMenu(playerSpritSheet);
-            }
+            }*/
 
 
             //Handles all methods in the main menu when the game is paused
@@ -244,6 +262,11 @@ namespace Alien_Attack
 
         }
 
+        private void getCooldownStartTime() {
+            timeCooldownStarted = Convert.ToDouble(ui.getStopwatchTime().Replace(":", ""));
+            Debug.WriteLine("Cooldown started at :" + timeCooldownStarted);
+        }
+
         private void checkEnemyBulletCollision() {
                 //Goes through every part of the bunker and checks to see if the enemies bullets have hit it
             bunkerParts = bunkers.GetBunkerParts();
@@ -255,13 +278,30 @@ namespace Alien_Attack
                     part.partHit();
                 }
             }
-                //Checks to see if the enemy bullets have hit the player and if so, reduces number of lives
+            //Checks to see if the enemy bullets have hit the player and if so, reduces number of lives
             playerHit = enemies.checkBulletCollision(player1.getPlayerHitbox());
-            if (playerHit)
-            {
+                //Player can only be hit again when the cooldown has ended
+            cooldownEnded = ui.checkCooldown(timeCooldownStarted, invulnerableCooldown);
+            if (playerHit && cooldownEnded) {
                 noOfLives -= 1;
                 Debug.WriteLine("Player hit");
-                playerHit = false;
+                explosionDestinationRectangle = new Rectangle((int) player1.getPosition().X, (int) player1.getPosition().Y-30, 75, 75);
+                getCooldownStartTime();
+                cooldownEnded = false;
+                topLeftOfFrame = 0;
+            }
+
+        }
+
+        private void drawPlayerExplosionAnimation() {
+            explosionFrameRectangle = new Rectangle(topLeftOfFrame, 0, 175, 175);
+            _spriteBatch.Begin();
+            _spriteBatch.Draw(playerExplosionSpriteSheet, explosionDestinationRectangle ,explosionFrameRectangle ,Color.White);
+            _spriteBatch.End();
+            counter++;
+            if (counter == 5) {
+                topLeftOfFrame += 175;
+                counter = 0;
             }
         }
 
@@ -328,48 +368,7 @@ namespace Alien_Attack
                 }
                 if (wantsToSave == "save")
                 {
-
-                    if (createNewUser == "") {
-                        createNewUser = ui.checkIfNewUserToBeMade();
-                    }
-                        //Creates a new username based off of text inputted
-                    if (createNewUser == "create")
-                    {
-                            //Inputs text and shows it on screen
-                        (bool, List<string>) outputs = ui.enterText(currentKeyState, previousKeyState, word);
-                        if (outputs.Item1)
-                        {
-                            word = outputs.Item2;
-                            Debug.WriteLine(String.Join(" ", word));
-                            _spriteBatch.Begin();
-                            _spriteBatch.DrawString(font, "Enter Username: (press enter to submit)", new Vector2(300, 250), Color.White);
-                            _spriteBatch.DrawString(font, String.Join(" ", word), new Vector2(300, 300), Color.White);
-                            _spriteBatch.End();
-                        }
-                        else
-                        {
-                            database.addUser(String.Join("",word));
-                            wantsToSave = "dont save";
-                        }
-                    }
-                    if (createNewUser == "login") {
-                            //Inputs text and shows it on screen
-                        (bool, List<string>) outputs = ui.enterText(currentKeyState, previousKeyState, word);
-                        if (outputs.Item1)
-                        {
-                            word = outputs.Item2;
-                            Debug.WriteLine(String.Join(" ", word));
-                            _spriteBatch.Begin();
-                            _spriteBatch.DrawString(font, "Enter an existing username: (press enter to submit)", new Vector2(300, 250), Color.White);
-                            _spriteBatch.DrawString(font, String.Join(" ", word), new Vector2(300, 300), Color.White);
-                            _spriteBatch.End();
-                        }
-                        else
-                        {
-                            database.checkIfUserExists(String.Join("", word));
-                            wantsToSave = "dont save";
-                        }
-                    }
+                    databaseAdding();
                 }
                 if (wantsToSave == "dont save")
                 {
@@ -388,6 +387,62 @@ namespace Alien_Attack
                 }
             }
         }
+
+        private void databaseAdding(){
+                if (createNewUser == "") {
+                        createNewUser = ui.checkIfNewUserToBeMade();
+                    }
+                        //Creates a new username based off of text inputted
+                    if (createNewUser == "create")
+                    {
+                            //Inputs text and shows it on screen
+                        (bool, List<string>) outputs = ui.enterText(currentKeyState, previousKeyState, word);
+                            //if continuing text input
+                        if (outputs.Item1)
+                        {
+                                //Writes the text that the user is entering onto the screen
+                            word = outputs.Item2;
+                            Debug.WriteLine(String.Join(" ", word));
+                            _spriteBatch.Begin();
+                            _spriteBatch.DrawString(font, "Enter Username: (press enter to submit)", new Vector2(300, 250), Color.White);
+                            _spriteBatch.DrawString(font, String.Join(" ", word), new Vector2(300, 300), Color.White);
+                            _spriteBatch.End();
+                        }
+                        else
+                        {
+                            database.addUser(String.Join("", word));
+                            wantsToSave = "dont save";
+                        }
+                        }
+                        if (createNewUser == "login")
+                        {
+                            //Inputs text and shows it on screen
+                            (bool, List<string>) outputs = ui.enterText(currentKeyState, previousKeyState, word);
+                            if (outputs.Item1)
+                            {
+                                word = outputs.Item2;
+                                Debug.WriteLine(String.Join(" ", word));
+                                _spriteBatch.Begin();
+                                _spriteBatch.DrawString(font, "Enter an existing username: (press enter to submit)", new Vector2(300, 250), Color.White);
+                                _spriteBatch.DrawString(font, String.Join(" ", word), new Vector2(300, 300), Color.White);
+                                _spriteBatch.End();
+                            }
+                            else
+                            {
+
+                                if (database.checkIfUserExists(String.Join("", word)))
+                                {
+                                    //userexists
+                                }
+                                wantsToSave = "dont save";
+                            }
+                        }
+            }
+
+
+
+
+
 
         private void checkIfGameWon() {
             if (gameWon) {

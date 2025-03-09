@@ -46,6 +46,7 @@ namespace Alien_Attack
         private static Texture2D playerAnimated;
         private int topLeft;
         private int counter;
+
         public Player(Texture2D playerSpriteSheet, Texture2D bulletTexture, Vector2 player1StartPos, Controls control, UI ui) {
             this.ui = ui;
             steps = 5;
@@ -57,7 +58,6 @@ namespace Alien_Attack
             controls = control;
             getControls();
             timeElapsed = true;
-
             topLeft = 0;
             counter = 0;
             playerAnimated = playerSpriteSheet;
@@ -94,6 +94,8 @@ namespace Alien_Attack
             {
                 bullet.drawBullets(_spriteBatch);
             }
+
+                //Code for switching animation states for the player by moving the coordinates responsible for grabbing the image off of the sprite sheet
             counter++;
             if (counter == 10)
             {
@@ -170,11 +172,7 @@ namespace Alien_Attack
         }
 
         private void checkCooldown() {
-            currentTime = Convert.ToDouble(ui.getStopwatchTime().Replace(":",""));
-            if ((currentTime - startTime) >= bulletCooldown) {
-                Debug.WriteLine("Cooldown finished");
-                timeElapsed = true;
-            }
+            timeElapsed = ui.checkCooldown(startTime, bulletCooldown);
         }
 
         private void startCooldown() {
@@ -203,6 +201,7 @@ namespace Alien_Attack
                 }
             }
         }
+
 
         public static Texture2D getPlayerTexture() {
             return playerAnimated;

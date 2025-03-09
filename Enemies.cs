@@ -45,7 +45,10 @@ namespace Alien_Attack
         }
 
         public void updateEnemy() {
-            moveEnemy();
+            if (!isEnemyDead())
+            {
+                moveEnemy();
+            }
             if (bulletSpawned == true)
             {
                 updateBullet();

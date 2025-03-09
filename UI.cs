@@ -35,6 +35,7 @@ public class UI
     private string selectedBox;
     private Stopwatch timer;
     private string timeTaken;
+    private double currentTime;
     private static int level;
     private static int score;
     private int currentColour;
@@ -226,6 +227,15 @@ public class UI
     public void resetStopwatch() {
         timer.Restart();
     }
+        //Checks to see if the cooldown has elapsed by minusing the start time from the current time and checking to see if it is greater than the cooldown time. It then returns true if that is the case as the cooldown has ended
+    public bool checkCooldown(double startTime, double cooldownTime) {
+        currentTime = Convert.ToDouble(getStopwatchTime().Replace(":", ""));
+        if ((currentTime - startTime) >= cooldownTime)
+        {
+            return true;
+        }
+        return false;
+    }
 
     public static int getLevel() {
         return level;
@@ -386,6 +396,7 @@ public class UI
                         case Keys.D2:
                             word.Add('"'.ToString());
                             break;
+                        //Removed £ and $ as they break the font
                         case Keys.D5:
                             word.Add("%");
                             break;
@@ -411,6 +422,7 @@ public class UI
                 }
                 else
                 {
+                        //Keys when not holding shift
                     switch (key)
                     {
                         case Keys.A:

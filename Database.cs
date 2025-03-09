@@ -31,28 +31,29 @@ namespace Alien_Attack
                 await cmd.ExecuteNonQueryAsync();
             }
         }
-
-        public async Task checkIfUserExists(string username) {
+            //Not done async as we need the results from this one
+        public bool checkIfUserExists(string username) {
             Debug.WriteLine("Starting check");
-            await using var command = dataSource.CreateCommand("SELECT username FROM Players WHERE username = '" + username + "'");
-            await using var reader = await command.ExecuteReaderAsync();
-                Debug.WriteLine("check");
-                while (await reader.ReadAsync())
-                {
-                    Debug.WriteLine("Checking");
-                        //Doesnt work
-                    if (await reader.IsDBNullAsync(0)) {
-                        Debug.WriteLine("No username exists");
-                    }
-                }
+             using var command = dataSource.CreateCommand("SELECT username FROM Players WHERE username = '" + username + "'");
+             using var reader =  command.ExecuteReader();
+                //Code inside the while loop only runs when data is found so there must be a username corresponding to this
+            while ( reader.Read())
+            {
+                Debug.WriteLine("Username must exist as it goes into this loop");
+                return true;
+            }
+            Debug.WriteLine("Username doesn't exist");
+            return false;
         }
 
-        public async Task getUserID(string username) {
-            await using var command = dataSource.CreateCommand("SELECT userid FROM Players WHERE username = '"+username+"'");
-            await using var reader = await command.ExecuteReaderAsync();
-            while (await reader.ReadAsync()) {
+        public string getUserID(string username) {
+            using var command = dataSource.CreateCommand("SELECT userid FROM Players WHERE username = '"+username+"'");
+            using var reader = command.ExecuteReader();
+            while ( reader.Read()) {
                 userid = reader.GetString(0);
+                return userid;
             }
+            return "-1";
         }
 
         public async Task insertGameValues(int userid, int score, string gameMode, string timesurvived, int level) {
