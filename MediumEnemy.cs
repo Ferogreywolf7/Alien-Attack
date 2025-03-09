@@ -12,6 +12,7 @@ namespace Alien_Attack
         private Rectangle hitbox;
         private Texture2D bulletTexture;
         private Vector2 bulletSpawnPos;
+
         public mediumEnemy(Texture2D medEnemyTexture, SpriteBatch _spriteBatch, Vector2 startPos, float speed, Texture2D explosionTexture)
         {
             steps = speed;
