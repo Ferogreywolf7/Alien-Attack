@@ -197,7 +197,7 @@ namespace Alien_Attack
 
             else
             {
-                currentSpeed += 0.03f;
+                currentSpeed += 0.04f;
                 enemySpeedCount = 0;
             }
         }

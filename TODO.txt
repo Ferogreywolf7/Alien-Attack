@@ -1,16 +1,39 @@
 ﻿//In actual program
+
 Give cooldown for enemy bullets
  make bullets, fire rate faster
- Explosions dont render (seems to be a texture bug as the enemy texture renders fine in the same bit of code)
 Add new enemy types to make use of the inheritance. Such as a laser cannon one (Could either drop a stationary laser cannon or moving one (with the enemy) which has a low chance of spawning and gives a warning highlight then does damage to all blocks and two hearts from the player)
+Add different patterns for aliens to change level variety
+Add quicker less damage bullets along with current
 
-Make shooting faster
+
+Get value from database and merge sort them when a button is pressed - by default no sorting is done and is just in the order of the userID
+Add leaderboard - buttons along the top and for usernames in order to see specific users games or to sort by a certain value ascending or descending
 
 //In database
 
 Reset player and game IDs using ALTER SEQUENCE idName RESTART WITH 0;
 
+
+
 //In writeup
 
 Write up why I decided to make variables/methods as private in technical solution section
 In techincal, show examples of high level techniques, write why you have used them
+
+make project summary better
+Explanation of why doing game, end user, how is it different to others. Add images of other games for references etc
+Questions for the survey lead into objectives. Changes made based off of the survey + your own results and end user as well as any constraints/limitations.
+
+Move human computer interaction into modelling section. Shows how menus will look. What I wanted it to look like
+Why using different colour schemes under the modelling section.
+
+Need ERD diagram
+Top down diagram (heirarchy chart) decompose it
+
+Class diagrams with relationships (inheritance, polymorphism etc) For polymorphism I could use when displaying data from the leaderboard if the user only wants a specific user
+
+Flow charts for algorithms
+Put code under an appendix and point it out. Mention where you have used certain techniques. Show where classes are started
+
+Mention how players found it hard to know how long the reload time is so reload bar was implemented

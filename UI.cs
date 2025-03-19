@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Runtime.InteropServices;
+using System.Diagnostics.Metrics;
 
 public class UI
 {
@@ -17,7 +18,6 @@ public class UI
     private Texture2D textBox;
     private Texture2D heart;
     private Texture2D arrow;
-    private int modifier;
     private Rectangle topBox;
     private Rectangle upperBox;
     private Rectangle lowerBox;
@@ -32,22 +32,22 @@ public class UI
     private int mouseY;
     private bool isButtonPressed;
     private Controls controls;
-    private string selectedBox;
     private Stopwatch timer;
     private string timeTaken;
     private double currentTime;
     private static int level;
     private static int score;
+    private int counter;
     private int currentColour;
     private Rectangle upperBoxLeft;
     private Rectangle upperBoxRight;
     private Rectangle lowerBoxLeft;
     private Rectangle lowerBoxRight;
+    private Rectangle sourceRectangle;
+    private string text;
     public UI(SpriteBatch _spriteBatch, SpriteFont testFont, Texture2D textBorder, Texture2D lifeIcon, Texture2D backArrow, Controls control)
     {
-        Debug.WriteLine("timer instansiated");
         timer = new Stopwatch();
-        modifier = 1;
         controls = control;
         spriteBatch = _spriteBatch;
         font = testFont;
@@ -73,6 +73,8 @@ public class UI
 
         level = 1;
         currentColour = 0;
+        counter = 0;
+        text = "loading";
     }
     public int getScore() {
         return score;
@@ -84,9 +86,7 @@ public class UI
     }
 
     public void drawScore() {
-       spriteBatch.Begin();
-        spriteBatch.DrawString(font, "Your score is " + score, new Vector2(295, 140), Color.White);
-       spriteBatch.End();
+        drawText("Your score is " + score, new Vector2(295, 140));
     }
 
     public void getControls() {
@@ -98,9 +98,7 @@ public class UI
     }
 
     public string drawControlsMenu() {
-        spriteBatch.Begin();
-        spriteBatch.DrawString(font, "Click on a box and enter a key to edit it's keybind", new Vector2(270, 120), Color.Brown);
-        spriteBatch.End();
+        drawText("Click on a box and enter a key to edit it's keybind", new Vector2(270, 120), Color.Brown);
 
         getControls();
         //Calls the drawing for the buttons
@@ -148,10 +146,11 @@ public class UI
 
         spriteBatch.Begin();
         spriteBatch.Draw(boxTexture, destinationRectangle, Color.White);
-        spriteBatch.DrawString(font, text, new Vector2(destinationRectangle.Left + 10, destinationRectangle.Top + 10), Color.White);
+        spriteBatch.End();
+        drawText(text, new Vector2(destinationRectangle.Left + 10, destinationRectangle.Top + 10));
 
         //Keeps selected box highlighted
-
+        spriteBatch.Begin();
         //Changes color of text box to let the user know it is interactable and selected
         if (destinationRectangle.Intersects(new Rectangle(mouseX, mouseY, 1, 1)))
         {
@@ -219,9 +218,7 @@ public class UI
 
     public void drawStopwatchTime() {
         getStopwatchTime();
-        spriteBatch.Begin();
-        spriteBatch.DrawString(font, "Time survived: " + timeTaken, new Vector2(620, 920), Color.White);
-        spriteBatch.End();
+        drawText("Time survived: " + timeTaken, new Vector2(620, 920));
     }
 
     public void resetStopwatch() {
@@ -246,9 +243,7 @@ public class UI
     }
 
     public void drawLevel() {
-        spriteBatch.Begin();
-        spriteBatch.DrawString(font, "Level: " + level, new Vector2(200, 920), Color.White);
-        spriteBatch.End();
+        drawText("Level: " + level, new Vector2(200, 920));
     }
 
     public void drawCustomiseMenu(Texture2D texture)
@@ -548,4 +543,36 @@ public class UI
         }
         return (cont, word);
     }
+
+        //Draws text on the screen
+    public void drawText(string text, Vector2 position) {
+        spriteBatch.Begin();
+        spriteBatch.DrawString(font, text, position, Color.White);
+        spriteBatch.End();
+    }
+        //Polymorphism incase different colours are wanted
+    public void drawText(string text, Vector2 position, Color colour) {
+        spriteBatch.Begin();
+        spriteBatch.DrawString(font, text, position, colour);
+        spriteBatch.End();
+    }
+
+    public void loadingScreen(Texture2D loadingSpriteSheet) {
+        if (counter > 250) {
+            counter = 0;
+            text = "loading";
+        }
+        if (counter % 50 == 0)
+        {
+            sourceRectangle = new Rectangle(200 * (int)counter / 50, 0, 200, 200);
+            text += ".";
+        }
+        spriteBatch.Begin();
+        spriteBatch.Draw(loadingSpriteSheet, new Rectangle(500, 100, 40, 40), sourceRectangle, Color.White);
+        spriteBatch.End();
+        drawText(text, new Vector2(497, 145));
+        counter++;
+        
+    }
 }
+
