@@ -17,15 +17,12 @@ namespace Alien_Attack
     {
         private Texture2D bunkerAtlas;
         private int bunkerAmount;
-        private int drawnBunkers;
         private int screenWidth;
         private int pieceCount;
         private int bunkerNo;
         private const int pieceHeight = 30;
         private const int pieceWidth = 30;
         private SpriteBatch spriteBatch;
-        private Game1 game1;
-        private Rectangle destinationRectangle;
         private Rectangle bulletHitbox;
         private List<BunkerPart> bunkerPieces;
         private Vector2 piecePosition;
@@ -36,7 +33,6 @@ namespace Alien_Attack
             bunkerAtlas = bunkerTexture;
             bunkerAmount = NoOfBunkers;
             screenWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-            drawnBunkers = 0;
             pieceCount = 0;
             bunkerNo = 1;
             bunkerPieces = new List<BunkerPart>();

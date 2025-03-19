@@ -107,7 +107,7 @@ namespace Alien_Attack
         }
             //Enemies get slightly faster when you kill them
         public void increaseSpeed() {
-            steps += (float) 0.03;
+            steps += (float) 0.04;
         }
 
         public abstract void drawBullet();

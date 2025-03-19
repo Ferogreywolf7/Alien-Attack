@@ -39,7 +39,6 @@ namespace Alien_Attack
             //Cooldown related variables
         private bool timeElapsed;
         private double startTime;
-        private double currentTime;
         private double bulletCooldown;
         private UI ui;
 
@@ -47,7 +46,14 @@ namespace Alien_Attack
         private int topLeft;
         private int counter;
 
-        public Player(Texture2D playerSpriteSheet, Texture2D bulletTexture, Vector2 player1StartPos, Controls control, UI ui) {
+        private Vector2 barPosition;
+        private bool startReload;
+        private Texture2D reloadBarTexture;
+        private Texture2D reloadBorderTexture;
+        private int barWidth;
+        private int counter2;
+
+        public Player(Texture2D playerSpriteSheet, Texture2D bulletTexture, Texture2D reloadBarTexture, Texture2D reloadBorderTexture, Vector2 player1StartPos, Controls control, UI ui) {
             this.ui = ui;
             steps = 5;
             position = player1StartPos;
@@ -60,7 +66,11 @@ namespace Alien_Attack
             timeElapsed = true;
             topLeft = 0;
             counter = 0;
+            counter2 = 0;
             playerAnimated = playerSpriteSheet;
+            this.reloadBarTexture = reloadBarTexture;
+            this.reloadBorderTexture = reloadBorderTexture;
+            barPosition = new Vector2(10, 800);
         }
 
         public void updatePlayer(KeyboardState currentKeyState, KeyboardState previousKeyState) {
@@ -86,6 +96,7 @@ namespace Alien_Attack
             spriteBatch.Begin();
             //spriteBatch.Draw(texture, destinationRectangle, Color.White);
             spriteBatch.Draw(playerAnimated, destinationRectangle, sourceRectangle, Color.White);
+            playerReloadBar();
             spriteBatch.End();
 
 
@@ -202,9 +213,28 @@ namespace Alien_Attack
             }
         }
 
+        private void playerReloadBar() {
+            barPosition = position;
+            if (!timeElapsed && startReload)
+            {
+                barWidth = 0;
+                startReload = false;
+            }
+            else if (!timeElapsed)
+            {
+                if (counter2 % 2 == 0)
+                {
+                    barWidth++;
+                }
+                counter2++;
 
-        public static Texture2D getPlayerTexture() {
-            return playerAnimated;
+                spriteBatch.Draw(reloadBarTexture, new Rectangle((int)barPosition.X + playerWidth / 4, (int)barPosition.Y + 102, barWidth, 15), Color.White);
+                spriteBatch.Draw(reloadBorderTexture, new Rectangle((int)barPosition.X + playerWidth / 4, (int)barPosition.Y + 100, 50, 20), Color.White);
+            }
+            else
+            {
+                startReload = true;
+            }
         }
     }
 }

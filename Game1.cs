@@ -34,6 +34,7 @@ namespace Alien_Attack
         private Texture2D explosionSpriteSheet;
         private Texture2D playerExplosionSpriteSheet;
         private Texture2D background;
+        private Texture2D reloadBar;
         private SpriteFont font;
         private static KeyboardState currentKeyState;
         private KeyboardState previousKeyState;
@@ -58,9 +59,10 @@ namespace Alien_Attack
         private bool inCustomiseMenu;
         private string wantsToSave;
         private string createNewUser;
-        private List<string> word;
+        private List<string> username;
         private bool gameWon;
-
+        private int userID;
+        private bool databaseOnline;
         private double timeCooldownStarted;
         private double invulnerableCooldown;
         private bool cooldownEnded;
@@ -91,7 +93,7 @@ namespace Alien_Attack
             backgroundBox = new Rectangle(0, 0, 800, 1000);
             controls = new Controls();
             getControls();
-            database.tryConnectToDatabase();
+            databaseOnline = database.tryConnectToDatabase();
             base.Initialize();
         }
 
@@ -104,6 +106,7 @@ namespace Alien_Attack
             bunkerAtlas = Content.Load<Texture2D>("combinedBlocks");
             lifeIcon = Content.Load<Texture2D>("playerHeartPlaceholder");
             backArrow = Content.Load<Texture2D>("backArrow");
+            reloadBar = Content.Load<Texture2D>("reloadBar");
             font = Content.Load<SpriteFont>("testFont");
 
             playerSpritSheet = Content.Load<Texture2D>("playerAnimationSpriteSheet");
@@ -120,7 +123,7 @@ namespace Alien_Attack
             deathReason = "";
             player1StartPos = new Vector2(50, 800);
             enemyStartPos = new Vector2(11, 50);
-            player1 = new Player(playerSpritSheet, playerBulletTexture, player1StartPos, controls, ui);
+            player1 = new Player(playerSpritSheet, playerBulletTexture, reloadBar, textBorder, player1StartPos, controls, ui);
             bunkers = new Bunkers(bunkerAtlas, 2);
             enemies = new EnemyController(_spriteBatch, enemyTexture, enemyStartPos, gameMode, explosionSpriteSheet);
             enemies.spawnEnemies(enemyRows, enemyCollums);            
@@ -133,9 +136,9 @@ namespace Alien_Attack
             ui.startStopwatch();
             wantsToSave = "";
             createNewUser = "";
-            word = new List<string>();
+            username = new List<string>();
             topLeftOfFrame = 0;
-            invulnerableCooldown = 2.2;
+            invulnerableCooldown = 1.5;
             timeCooldownStarted = 00.00;
             counter = 0;
             cooldownEnded = true;
@@ -197,9 +200,7 @@ namespace Alien_Attack
             }
                 //Shows that the game is paused
             if (gamePaused && !noMenu) {
-                _spriteBatch.Begin();
-                _spriteBatch.DrawString(font, "Game paused", new Vector2(320, 100), Color.Red);
-                _spriteBatch.End();
+                ui.drawText("Game paused", new Vector2(320, 100), Color.Red);
             }
 
                 //Handles all methods for the controls menu, allowing for keybinds to be changed
@@ -214,9 +215,9 @@ namespace Alien_Attack
                 }
 
             }
-            /*else if (gamePaused && inCustomiseMenu) {
+            else if (gamePaused && inCustomiseMenu) {
                 ui.drawCustomiseMenu(playerSpritSheet);
-            }*/
+            }
 
 
             //Handles all methods in the main menu when the game is paused
@@ -348,34 +349,46 @@ namespace Alien_Attack
             }
 
         }
-        
-            //Code to run when the player either wins or loses a game
-        private void checkIfGameOver() {
+
+        //Code to run when the player either wins or loses a game
+        private void checkIfGameOver()
+        {
             if (gameOver)
             {
                 ui.stopStopwatch();
                 gamePaused = true;
                 noMenu = true;
                 gameStarted = false;
-                _spriteBatch.Begin();
-                _spriteBatch.DrawString(font, "Game Over", new Vector2(295, 90), Color.White);
-                _spriteBatch.DrawString(font, deathReason, new Vector2(295, 120), Color.White);
-                _spriteBatch.End();
+                ui.drawText("Game Over", new Vector2(295, 90));
+                ui.drawText(deathReason, new Vector2(295, 120));
                 ui.drawScore();
+                //databaseOnline = database.tryConnectToDatabase();     Opening a connection to the database takes a while and nothing can be done while checking if the connection is open due to it having to not be an async task
+
+                
+
                 if (wantsToSave == "")
                 {
                     wantsToSave = ui.checkIfUserWantsToSave();
                 }
-                if (wantsToSave == "save")
+                if (!databaseOnline)
                 {
-                    databaseAdding();
+                    ui.drawText("Can't connect to database", new Vector2(295, 200));
+                    wantsToSave = "dont save";
                 }
+                else
+                {
+                    if (wantsToSave == "save")
+                    {
+                        databaseAdding();
+                    }
+                    wantsToSave = "dont save";
+                }
+
                 if (wantsToSave == "dont save")
                 {
+                    ui.loadingScreen(bunkerAtlas);
                     //If the user has or hasn't saved the data in the database, let the user go back to the main menu
-                    _spriteBatch.Begin();
-                    _spriteBatch.DrawString(font, "Click to continue", new Vector2(295, 170), Color.Green);
-                    _spriteBatch.End();
+                    ui.drawText("Click to continue", new Vector2(295, 170));
 
                     if (mouseState.LeftButton == ButtonState.Pressed)
                     {
@@ -389,71 +402,68 @@ namespace Alien_Attack
         }
 
         private void databaseAdding(){
-                if (createNewUser == "") {
-                        createNewUser = ui.checkIfNewUserToBeMade();
-                    }
-                        //Creates a new username based off of text inputted
-                    if (createNewUser == "create")
-                    {
-                            //Inputs text and shows it on screen
-                        (bool, List<string>) outputs = ui.enterText(currentKeyState, previousKeyState, word);
-                            //if continuing text input
-                        if (outputs.Item1)
-                        {
-                                //Writes the text that the user is entering onto the screen
-                            word = outputs.Item2;
-                            Debug.WriteLine(String.Join(" ", word));
-                            _spriteBatch.Begin();
-                            _spriteBatch.DrawString(font, "Enter Username: (press enter to submit)", new Vector2(300, 250), Color.White);
-                            _spriteBatch.DrawString(font, String.Join(" ", word), new Vector2(300, 300), Color.White);
-                            _spriteBatch.End();
-                        }
-                        else
-                        {
-                            database.addUser(String.Join("", word));
-                            wantsToSave = "dont save";
-                        }
-                        }
-                        if (createNewUser == "login")
-                        {
-                            //Inputs text and shows it on screen
-                            (bool, List<string>) outputs = ui.enterText(currentKeyState, previousKeyState, word);
-                            if (outputs.Item1)
-                            {
-                                word = outputs.Item2;
-                                Debug.WriteLine(String.Join(" ", word));
-                                _spriteBatch.Begin();
-                                _spriteBatch.DrawString(font, "Enter an existing username: (press enter to submit)", new Vector2(300, 250), Color.White);
-                                _spriteBatch.DrawString(font, String.Join(" ", word), new Vector2(300, 300), Color.White);
-                                _spriteBatch.End();
-                            }
-                            else
-                            {
-
-                                if (database.checkIfUserExists(String.Join("", word)))
-                                {
-                                    //userexists
-                                }
-                                wantsToSave = "dont save";
-                            }
-                        }
+             if (createNewUser == "") {
+                createNewUser = ui.checkIfNewUserToBeMade();
+             }
+                //Creates a new username based off of text inputted
+            if (createNewUser == "create")
+            {
+                    //Inputs text and shows it on screen
+                (bool, List<string>) outputs = ui.enterText(currentKeyState, previousKeyState, username);
+                    //if continuing text input
+                if (outputs.Item1)
+                {
+                        //Writes the text that the user is entering onto the screen
+                    username = outputs.Item2;
+                    Debug.WriteLine(String.Join(" ", username));
+                    ui.drawText("Enter Username: (press enter to submit)", new Vector2(300, 250));
+                    ui.drawText(String.Join(" ", username), new Vector2(300, 300));
+                }
+                    //User has finished entering text
+                else
+                {
+                    database.addUser(String.Join("", username));
+                    wantsToSave = "dont save";
+                }
             }
+            if (createNewUser == "login")
+            {
+                //Inputs text and shows it on screen
+                (bool, List<string>) outputs = ui.enterText(currentKeyState, previousKeyState, username);
+                if (outputs.Item1)
+                {
+                    username = outputs.Item2;
+                    Debug.WriteLine(String.Join(" ", username));
+                    ui.drawText("Enter an existing username: (press enter to submit)", new Vector2(300, 250));
+                    ui.drawText(String.Join(" ", username), new Vector2(300, 300));
+                }
+                else
+                {
+                        //Checks if the user exists in the database
+                    if (database.checkIfUserExists(String.Join("", username)))
+                    {
+                        //User exists
+                        userID = database.getUserID(string.Join("", username));
+                        database.insertGameValues(userID, ui.getScore(), gameMode, ui.getStopwatchTime(), UI.getLevel());
+                    }
+                    else {
+                        //User doesnt exist
+                        createNewUser = "";
+                    }
 
-
-
-
-
-
+                    wantsToSave = "dont save"; //Goes back to click to continue screen
+                }
+            }
+        }
+            //Code to go to a new level
         private void checkIfGameWon() {
             if (gameWon) {
                 ui.stopStopwatch();
                 gamePaused = true;
                 noMenu = true;
                 gameStarted = false;
-                _spriteBatch.Begin();
-                _spriteBatch.DrawString(font, "You won! The level of difficulty has been increased by 1", new Vector2(), Color.Green);
-                _spriteBatch.DrawString(font, "Click to continue", new Vector2(295, 170), Color.Green);
-                _spriteBatch.End();
+                ui.drawText("You won! The level of difficulty has been increased by 1 to level " + UI.getLevel()+1, new Vector2(250, 150));
+                ui.drawText("Click to continue", new Vector2(295, 170), Color.Green);
                 if (mouseState.LeftButton == ButtonState.Pressed)
                 {
                     ui.increaseLevel();

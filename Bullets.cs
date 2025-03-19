@@ -17,7 +17,6 @@ namespace Alien_Attack
         private string movementType;
         private Vector2 position;
         private Rectangle destinationRectangle;
-        private SpriteFont testFont;
         private SpriteBatch spriteBatch;
         private int extraXCoord;
 
