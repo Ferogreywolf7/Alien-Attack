@@ -14,14 +14,23 @@ namespace Alien_Attack
     {
         private NpgsqlDataSource dataSource;
         private string connectionString;
-        private string userid;
-        public Database() {
-            connectionString = "Host=192.168.1.163;Username=Admin;Password=Tru3N4s7;Database=AlienAttack";
-            
+        private int userid;
+        private string username;
+        private int highestLevel;
+        private string longestSurvived;
+        private int highScore;
+        private Leaderboard leaderboard;
+        private int index;
+        public Database(Leaderboard leaderboard) {
+             connectionString = "Host=192.168.1.163;Username=user07;Password=d4T4b4S37;Database=AlienAttack";       //Local
+            //***REMOVED***    //Global
+            this.leaderboard = leaderboard;
+            index = 0;
         }
 
         public bool tryConnectToDatabase() {
             dataSource = NpgsqlDataSource.Create(connectionString);
+            
             try
             {
                 var cmd = dataSource.CreateCommand("SELECT * FROM Players;");
@@ -32,6 +41,7 @@ namespace Alien_Attack
             catch {
                 //Can't create connection to database
                 Debug.WriteLine("Can't connect to the database");
+                dataSource.Dispose();
                 return false;
             }
             
@@ -69,16 +79,16 @@ namespace Alien_Attack
             using var reader = command.ExecuteReader();
                 //gets the value for the string
             while ( reader.Read()) {
-                userid = reader.GetString(0);
+                userid = reader.GetInt32(0);
                 return Convert.ToInt32(userid);
             }
             return -1;
         }
 
         public async Task insertGameValues(int userid, int score, string gameMode, string timesurvived, int level) {
-                //Runs SQL command to insert a games data into the database
-            DateTime dateofplay = DateTime.Today;
-            await using (var cmd = dataSource.CreateCommand("INSERT INTO Games (userid, score, gamemode, timesurvived, dateofplay, level) VALUES ("+userid+", "+score+", "+gameMode+", "+timesurvived+", "+dateofplay+", "+level+");"))
+            //Runs SQL command to insert a games data into the database
+            DateTime dateofplay = DateTime.Now;
+            await using (var cmd = dataSource.CreateCommand("INSERT INTO Games (userid, score, gamemode, timesurvived, dateofplay, level) VALUES ("+userid+", "+score+", '"+gameMode+"', '"+timesurvived+"', '"+dateofplay+"', "+level+");"))
             {
                 await cmd.ExecuteNonQueryAsync();
             }
@@ -86,17 +96,21 @@ namespace Alien_Attack
 
         //Gets data and stores it in an encrypted file with the last modified date. When checking if the leaderboard has been updated, compare the date against when it was requested
         public async Task getLeaderboardData() { 
-        await using var command = dataSource.CreateCommand("SELECT (username, highestlevel, longestsurvived) FROM Players ");
+        await using var command = dataSource.CreateCommand("SELECT (username, highestlevel, longestsurvived, highScore) FROM Players;");
             await using var reader = await command.ExecuteReaderAsync();
-                //Gets all of the data
+            //Gets all of the data
+            leaderboard.clearFileAndWriteHeaders();
             while (await reader.ReadAsync())
             {
                 using var lineReader = reader.GetData(0);
                     //Prints all of the data
                 while (lineReader.Read()) {
-                    Debug.WriteLine("username: " + lineReader.GetFieldValue<string>(0));
-                    Debug.WriteLine("highestLevel: " + lineReader.GetFieldValue<int>(1));
-                    Debug.WriteLine("longestSurvived: " + lineReader.GetFieldValue<TimeSpan>(2).ToString());
+                    username = lineReader.GetFieldValue<string>(0);
+                    highestLevel = lineReader.GetFieldValue<int>(1);
+                    longestSurvived = lineReader.GetFieldValue<TimeSpan>(2).ToString();
+                    highScore = lineReader.GetFieldValue<int>(3);
+                    Debug.WriteLine(username+highestLevel+longestSurvived+highScore);
+                    leaderboard.writeDataToPlayerFile(username, highestLevel, longestSurvived, highScore);
                 }
             }
         }
@@ -104,6 +118,7 @@ namespace Alien_Attack
         public void getGameData() { 
         
         }
+
         public void getGameData(string username) { 
         
         }
