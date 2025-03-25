@@ -15,6 +15,7 @@ namespace Alien_Attack
         private const int enemySpacing = 60;
         private Texture2D enemyTexture;
         private Texture2D explosion;
+        private Texture2D bulletTexture;
         private SpriteBatch spriteBatch;
         private Vector2 startPos;
         private Vector2 currentPos;
@@ -39,7 +40,7 @@ namespace Alien_Attack
 
         //Will only spawn in the regular enemies for now
 
-        public EnemyController(SpriteBatch _spriteBatch, Texture2D texture, Vector2 startPos, string gameMode, Texture2D explosionSheet)
+        public EnemyController(SpriteBatch _spriteBatch, Texture2D texture, Vector2 startPos, string gameMode, Texture2D explosionSheet, Texture2D enemyBulletTexture)
         {
             spriteBatch = _spriteBatch;
             this.startPos = startPos;
@@ -55,6 +56,7 @@ namespace Alien_Attack
             spawnedOnThisTurn = true;
             timesSpawnedEnemies = 1;
             explosion = explosionSheet;
+            bulletTexture = enemyBulletTexture;
         }
 
         public void spawnEnemies(int rows, int columns) {
@@ -70,7 +72,7 @@ namespace Alien_Attack
                 for (int column = 0; column <= this.columns; column++)
                 {
                     currentPos.X += enemySpacing;
-                    enemies.Add(new mediumEnemy(enemyTexture, spriteBatch, currentPos, currentSpeed, explosion));
+                    enemies.Add(new mediumEnemy(enemyTexture, spriteBatch, currentPos, currentSpeed, explosion, bulletTexture));
                     numOfEnemies++;
                 }
                 currentPos.X = startPos.X;

@@ -20,14 +20,12 @@ namespace Alien_Attack
         SpriteBatch spriteBatch;
 
         KeyboardState currentKeyboardState;
-        KeyboardState previousKeyboardState;
 
         private Keys moveLeft;
         private Keys moveRight;
         private Keys shoot;
         Controls controls;
         private int playerWidth;
-        private string gameMode;
 
             //Bullet related variables
         private List<Bullets> bullets;
@@ -75,7 +73,6 @@ namespace Alien_Attack
 
         public void updatePlayer(KeyboardState currentKeyState, KeyboardState previousKeyState) {
             currentKeyboardState = currentKeyState;
-            previousKeyboardState = previousKeyState;
             movePlayer();
             enforceWalls();
             firePlayerBullet();

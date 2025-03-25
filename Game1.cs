@@ -16,12 +16,13 @@ namespace Alien_Attack
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private Player player1;
-        public Controls controls;
+        private Controls controls;
         private UI ui;
         private Bunkers bunkers;
         private Database database;
         private List<BunkerPart> bunkerParts;
         private EnemyController enemies;
+        private Leaderboard leaderboard;
         private Vector2 player1StartPos;
         private Vector2 enemyStartPos;
         private Texture2D playerBulletTexture;
@@ -33,10 +34,11 @@ namespace Alien_Attack
         private Texture2D playerSpritSheet;
         private Texture2D explosionSpriteSheet;
         private Texture2D playerExplosionSpriteSheet;
+        private Texture2D enemyBulletTexture;
         private Texture2D background;
         private Texture2D reloadBar;
         private SpriteFont font;
-        private static KeyboardState currentKeyState;
+        private KeyboardState currentKeyState;
         private KeyboardState previousKeyState;
         private Keys pause;
         private bool gamePaused;
@@ -70,6 +72,9 @@ namespace Alien_Attack
         private Rectangle explosionDestinationRectangle;
         private int topLeftOfFrame;
         private int counter;
+        private string leaderboardChoice;
+        private bool scoreSaved;
+        private bool doesntExistError;
 
         public Game1()
         {
@@ -80,7 +85,6 @@ namespace Alien_Attack
 
         protected override void Initialize()
         {
-            database = new Database();
             gameStarted = false;
             gamePaused = true;
             noMenu = false;
@@ -91,9 +95,6 @@ namespace Alien_Attack
             _graphics.PreferredBackBufferHeight = 1000;
             _graphics.ApplyChanges();
             backgroundBox = new Rectangle(0, 0, 800, 1000);
-            controls = new Controls();
-            getControls();
-            databaseOnline = database.tryConnectToDatabase();
             base.Initialize();
         }
 
@@ -101,8 +102,9 @@ namespace Alien_Attack
         {
             //Loading all textures for the game
             textBorder = Content.Load<Texture2D>("textBorder");
-            playerBulletTexture = Content.Load<Texture2D>("bulletPlaceholder");
-            enemyTexture = Content.Load<Texture2D>("enemyPlaceholder");
+            playerBulletTexture = Content.Load<Texture2D>("playerBullet");
+            enemyTexture = Content.Load<Texture2D>("enemies");
+            enemyBulletTexture = Content.Load<Texture2D>("enemyBullet");
             bunkerAtlas = Content.Load<Texture2D>("combinedBlocks");
             lifeIcon = Content.Load<Texture2D>("playerHeartPlaceholder");
             backArrow = Content.Load<Texture2D>("backArrow");
@@ -114,8 +116,12 @@ namespace Alien_Attack
             playerExplosionSpriteSheet = Content.Load<Texture2D>("playerExplosion");
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            //Instansiating the UI
+            controls = new Controls();
+            getControls();
             ui = new UI(_spriteBatch, font, textBorder, lifeIcon, backArrow, controls);
+            leaderboard = new Leaderboard(ui);
+            database = new Database(leaderboard);
+            databaseOnline = database.tryConnectToDatabase();
         }
 
         public void startNewGame() {
@@ -125,7 +131,7 @@ namespace Alien_Attack
             enemyStartPos = new Vector2(11, 50);
             player1 = new Player(playerSpritSheet, playerBulletTexture, reloadBar, textBorder, player1StartPos, controls, ui);
             bunkers = new Bunkers(bunkerAtlas, 2);
-            enemies = new EnemyController(_spriteBatch, enemyTexture, enemyStartPos, gameMode, explosionSpriteSheet);
+            enemies = new EnemyController(_spriteBatch, enemyTexture, enemyStartPos, gameMode, explosionSpriteSheet, enemyBulletTexture);
             enemies.spawnEnemies(enemyRows, enemyCollums);            
             noOfLives = 5;
             gameStarted = true;
@@ -138,10 +144,13 @@ namespace Alien_Attack
             createNewUser = "";
             username = new List<string>();
             topLeftOfFrame = 0;
-            invulnerableCooldown = 1.5;
+            invulnerableCooldown = 0.9;
             timeCooldownStarted = 00.00;
             counter = 0;
             cooldownEnded = true;
+            scoreSaved = false;
+            doesntExistError = false;
+            leaderboardChoice = "";
         }
 
         protected override void Update(GameTime gameTime)
@@ -174,18 +183,14 @@ namespace Alien_Attack
         //Draws all textures in the game
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-            
-            //_spriteBatch.Begin();
-            //_spriteBatch.Draw(background, backgroundBox, Color.White);
-            //_spriteBatch.End();
+            GraphicsDevice.Clear(Color.Black);
 
-
-            //Draws any required parts if the game is finished
+            //Draws any required parts no matter when during the game
             checkIfGameOver();
             checkIfGameWon();
             ui.drawStopwatchTime();
             ui.drawLevel();
+
                  //prevents any game processes from advance if the game is paused
             if (!gamePaused)
             {
@@ -218,7 +223,6 @@ namespace Alien_Attack
             else if (gamePaused && inCustomiseMenu) {
                 ui.drawCustomiseMenu(playerSpritSheet);
             }
-
 
             //Handles all methods in the main menu when the game is paused
             else if (gamePaused && !noMenu)
@@ -256,6 +260,7 @@ namespace Alien_Attack
         {
             pause = controls.getPause();
         }
+
             //Calls various subroutines to check collisions
         private void checkCollisions() { 
             player1.checkplayerBulletCollision(enemies, bunkers);
@@ -263,10 +268,6 @@ namespace Alien_Attack
 
         }
 
-        private void getCooldownStartTime() {
-            timeCooldownStarted = Convert.ToDouble(ui.getStopwatchTime().Replace(":", ""));
-            Debug.WriteLine("Cooldown started at :" + timeCooldownStarted);
-        }
 
         private void checkEnemyBulletCollision() {
                 //Goes through every part of the bunker and checks to see if the enemies bullets have hit it
@@ -292,6 +293,11 @@ namespace Alien_Attack
                 topLeftOfFrame = 0;
             }
 
+        }
+        private void getCooldownStartTime()
+        {
+            timeCooldownStarted = Convert.ToDouble(ui.getStopwatchTime().Replace(":", ""));
+            Debug.WriteLine("Cooldown started at :" + timeCooldownStarted);
         }
 
         private void drawPlayerExplosionAnimation() {
@@ -350,7 +356,7 @@ namespace Alien_Attack
 
         }
 
-        //Code to run when the player either wins or loses a game
+            //Code to run when the player either wins or loses a game
         private void checkIfGameOver()
         {
             if (gameOver)
@@ -363,51 +369,69 @@ namespace Alien_Attack
                 ui.drawText(deathReason, new Vector2(295, 120));
                 ui.drawScore();
                 //databaseOnline = database.tryConnectToDatabase();     Opening a connection to the database takes a while and nothing can be done while checking if the connection is open due to it having to not be an async task
+                databaseOnline = true;
+                if (!databaseOnline)
+                {
+                    ui.drawText("Can't connect to database", new Vector2(295, 200), Color.Red);
+                    wantsToSave = "dont save";
+                }
 
-                
-
-                if (wantsToSave == "")
+                else if(wantsToSave == "")
                 {
                     wantsToSave = ui.checkIfUserWantsToSave();
                 }
-                if (!databaseOnline)
-                {
-                    ui.drawText("Can't connect to database", new Vector2(295, 200));
-                    wantsToSave = "dont save";
-                }
-                else
-                {
-                    if (wantsToSave == "save")
+                
+                if (wantsToSave == "save")
                     {
                         databaseAdding();
                     }
-                    wantsToSave = "dont save";
-                }
-
+                    
+                
                 if (wantsToSave == "dont save")
                 {
-                    ui.loadingScreen(bunkerAtlas);
-                    //If the user has or hasn't saved the data in the database, let the user go back to the main menu
-                    ui.drawText("Click to continue", new Vector2(295, 170));
+                    ui.loadingScreen(bunkerAtlas);  //Placeholder to check if the loading aimation works
+                    if (leaderboardChoice == "") {
+                        leaderboardChoice = ui.checkIfLeaderboardShown();
+                    }
 
-                    if (mouseState.LeftButton == ButtonState.Pressed)
+                    if (leaderboardChoice == "display") {
+                        if (scoreSaved) {
+                            database.getLeaderboardData();
+                            scoreSaved = false;
+                        }
+                        leaderboard.drawLeaderboard();
+                    }
+
+                    //Resets the game if the player chooses not to view the leaderboard
+                    if (leaderboardChoice == "dont display")
                     {
-                        ui.resetStopwatch();
-                        level = 0;
-                        gameOver = false;
-                        noMenu = false;
+                        ui.drawText("Click to continue", new Vector2(295, 170));
+
+                        if (mouseState.LeftButton == ButtonState.Pressed)
+                        {
+                            ui.resetStopwatch();
+                            level = 0;
+                            gameOver = false;
+                            noMenu = false;
+                        }
                     }
                 }
             }
         }
 
         private void databaseAdding(){
-             if (createNewUser == "") {
+            if (doesntExistError)
+            {
+                ui.drawText("User doesn't exist!", new Vector2(300, 200), Color.Purple);
+            }
+           if (createNewUser == "") {
                 createNewUser = ui.checkIfNewUserToBeMade();
-             }
+                Debug.WriteLineIf(createNewUser != "","create new user = " + createNewUser);
+           }
                 //Creates a new username based off of text inputted
             if (createNewUser == "create")
             {
+                doesntExistError = false;
                     //Inputs text and shows it on screen
                 (bool, List<string>) outputs = ui.enterText(currentKeyState, previousKeyState, username);
                     //if continuing text input
@@ -416,26 +440,30 @@ namespace Alien_Attack
                         //Writes the text that the user is entering onto the screen
                     username = outputs.Item2;
                     Debug.WriteLine(String.Join(" ", username));
-                    ui.drawText("Enter Username: (press enter to submit)", new Vector2(300, 250));
-                    ui.drawText(String.Join(" ", username), new Vector2(300, 300));
+                    ui.drawText("Enter Username: (press enter to submit)", new Vector2(300, 250), Color.LightBlue);
+                    ui.drawText(String.Join(" ", username), new Vector2(20, 300));
                 }
                     //User has finished entering text
                 else
                 {
                     database.addUser(String.Join("", username));
+                    userID = database.getUserID(String.Join("", username));
+                    database.insertGameValues(userID, ui.getScore(), gameMode, ui.getStopwatchTime(), UI.getLevel());
+                    scoreSaved = true;
                     wantsToSave = "dont save";
                 }
             }
             if (createNewUser == "login")
             {
+                doesntExistError = false;
                 //Inputs text and shows it on screen
                 (bool, List<string>) outputs = ui.enterText(currentKeyState, previousKeyState, username);
                 if (outputs.Item1)
                 {
                     username = outputs.Item2;
-                    Debug.WriteLine(String.Join(" ", username));
-                    ui.drawText("Enter an existing username: (press enter to submit)", new Vector2(300, 250));
-                    ui.drawText(String.Join(" ", username), new Vector2(300, 300));
+                    //Debug.WriteLine(String.Join(" ", username));
+                    ui.drawText("Enter an existing username: (press enter to submit)", new Vector2(220, 250), Color.LightBlue);
+                    ui.drawText(String.Join(" ", username), new Vector2(20, 300));
                 }
                 else
                 {
@@ -445,14 +473,19 @@ namespace Alien_Attack
                         //User exists
                         userID = database.getUserID(string.Join("", username));
                         database.insertGameValues(userID, ui.getScore(), gameMode, ui.getStopwatchTime(), UI.getLevel());
+                        scoreSaved = true;
+                        wantsToSave = "dont save"; //Goes back to click to continue screen
                     }
                     else {
                         //User doesnt exist
+                        doesntExistError = true;
                         createNewUser = "";
-                    }
-
-                    wantsToSave = "dont save"; //Goes back to click to continue screen
+                    }   
                 }
+            }
+            if (createNewUser == "back")
+            {
+                wantsToSave = "";
             }
         }
             //Code to go to a new level
@@ -462,7 +495,7 @@ namespace Alien_Attack
                 gamePaused = true;
                 noMenu = true;
                 gameStarted = false;
-                ui.drawText("You won! The level of difficulty has been increased by 1 to level " + UI.getLevel()+1, new Vector2(250, 150));
+                ui.drawText("You won! The level of difficulty has been increased by 1 to level " + (Convert.ToInt32(UI.getLevel())+1), new Vector2(250, 150));
                 ui.drawText("Click to continue", new Vector2(295, 170), Color.Green);
                 if (mouseState.LeftButton == ButtonState.Pressed)
                 {

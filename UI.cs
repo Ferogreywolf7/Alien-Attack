@@ -2,13 +2,11 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Alien_Attack;
-using System.Net;
 using System.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Runtime.InteropServices;
-using System.Diagnostics.Metrics;
+using System.Text.RegularExpressions;
+using System.Diagnostics.Tracing;
 
 public class UI
 {
@@ -31,6 +29,7 @@ public class UI
     private int mouseX;
     private int mouseY;
     private bool isButtonPressed;
+    private bool cont;
     private Controls controls;
     private Stopwatch timer;
     private string timeTaken;
@@ -44,7 +43,12 @@ public class UI
     private Rectangle lowerBoxLeft;
     private Rectangle lowerBoxRight;
     private Rectangle sourceRectangle;
+    private Rectangle leaderboardBoxLeft;
+    private Rectangle leaderboardBoxMiddleLeft;
+    private Rectangle leaderboardBoxMiddleRight;
+    private Rectangle leaderboardBoxRight;
     private string text;
+    private Regex regex;
     public UI(SpriteBatch _spriteBatch, SpriteFont testFont, Texture2D textBorder, Texture2D lifeIcon, Texture2D backArrow, Controls control)
     {
         timer = new Stopwatch();
@@ -70,6 +74,11 @@ public class UI
         lowerBoxLeft.Offset(-200, 0);
         lowerBoxRight = lowerBox;
         lowerBoxRight.Offset(200, 0);
+
+        leaderboardBoxLeft = new Rectangle(205, 240, 130, 40);
+        leaderboardBoxMiddleLeft = new Rectangle(365, 240, 130, 40);
+        leaderboardBoxMiddleRight = new Rectangle(525, 240, 130, 40);
+        leaderboardBoxRight = new Rectangle(685, 240, 130, 40);
 
         level = 1;
         currentColour = 0;
@@ -133,7 +142,6 @@ public class UI
         return "";
     }
 
-
     private bool drawButtons(Texture2D boxTexture, Rectangle destinationRectangle, string text)
     {
         //Draw buttons and returns true when pressed
@@ -156,7 +164,7 @@ public class UI
         {
             spriteBatch.Draw(boxTexture, destinationRectangle, Color.Green);
             //Calls setLeft in order for the left control to be updated
-            if (mouseState.LeftButton == ButtonState.Pressed)
+            if (mouseState.LeftButton == ButtonState.Pressed )
             {
                 isButtonPressed = true;
 
@@ -180,6 +188,23 @@ public class UI
             return "Customise";
         }*/
 
+        return "";
+    }
+
+    public string drawPlayerDataNames()
+    {
+        if (drawButtons(textBox, leaderboardBoxLeft, "Highest level"))
+        {
+            return "sortLevel";
+        }
+        if (drawButtons(textBox, leaderboardBoxMiddleLeft, "Longest survived"))
+        {
+            return "sortTime";
+        }
+        if (drawButtons(textBox, leaderboardBoxMiddleRight, "High score"))
+        {
+            return "sortScore";
+        }
         return "";
     }
 
@@ -222,7 +247,7 @@ public class UI
     }
 
     public void resetStopwatch() {
-        timer.Restart();
+        timer.Reset();
     }
         //Checks to see if the cooldown has elapsed by minusing the start time from the current time and checking to see if it is greater than the cooldown time. It then returns true if that is the case as the cooldown has ended
     public bool checkCooldown(double startTime, double cooldownTime) {
@@ -287,262 +312,116 @@ public class UI
         {
             return "create";
         }
+        if (drawButtons(arrow, new Rectangle(50, 50, 100, 50), ""))
+        {
+            return "back";
+        }
         return "";
 
     }
 
+    public string checkIfLeaderboardShown() {
+        if (drawButtons(textBox, lowerBoxLeft, "Display leaderboard"))
+        {
+            return "display";
+        }
+        if (drawButtons(textBox, lowerBoxRight, "Skip leaderboard"))
+        {
+            return "dont display";
+        }
+        return "";
+    }
+
     //Adds characters to word based on what keys are being pressed
-    public (bool,List<string>) enterText(KeyboardState currentKeyState,KeyboardState previousKeyState, List<string> word)
+    public (bool, List<string>) enterText(KeyboardState currentKeyState, KeyboardState previousKeyState, List<string> word)
     {
-        bool cont = true;
-        if (currentKeyState.GetPressedKeyCount() >= 1) { 
+        cont = true;
+        if (currentKeyState.GetPressedKeyCount() >= 1)
+        {
             Keys key = currentKeyState.GetPressedKeys()[0];
-                //Makes sure that one press isn't registered as multiple due to fast updates
-            if (!previousKeyState.IsKeyDown(key)) {
-                    //Cases for keys when holding shift
+            Debug.WriteLine("Key = "+key.ToString());
+            //Makes sure that one press isn't registered as multiple due to fast updates
+            if (!previousKeyState.IsKeyDown(key))
+            {
+                //Cases for keys when holding shift
                 if (currentKeyState.IsKeyDown(Keys.LeftShift) || currentKeyState.IsKeyDown(Keys.RightShift))
                 {
-                    switch (key)
+                    if (key >= Keys.A && key <= Keys.Z)
                     {
-                        case Keys.A:
-                            word.Add("A");
-                            break;
-                        case Keys.B:
-                            word.Add("B");
-                            break;
-                        case Keys.C:
-                            word.Add("C");
-                            break;
-                        case Keys.D:
-                            word.Add("D");
-                            break;
-                        case Keys.E:
-                            word.Add("E");
-                            break;
-                        case Keys.F:
-                            word.Add("F");
-                            break;
-                        case Keys.G:
-                            word.Add("G");
-                            break;
-                        case Keys.H:
-                            word.Add("H");
-                            break;
-                        case Keys.I:
-                            word.Add("I");
-                            break;
-                        case Keys.J:
-                            word.Add("J");
-                            break;
-                        case Keys.K:
-                            word.Add("K");
-                            break;
-                        case Keys.L:
-                            word.Add("L");
-                            break;
-                        case Keys.M:
-                            word.Add("M");
-                            break;
-                        case Keys.N:
-                            word.Add("N");
-                            break;
-                        case Keys.O:
-                            word.Add("O");
-                            break;
-                        case Keys.P:
-                            word.Add("P");
-                            break;
-                        case Keys.Q:
-                            word.Add("Q");
-                            break;
-                        case Keys.R:
-                            word.Add("R");
-                            break;
-                        case Keys.S:
-                            word.Add("S");
-                            break;
-                        case Keys.T:
-                            word.Add("T");
-                            break;
-                        case Keys.U:
-                            word.Add("U");
-                            break;
-                        case Keys.V:
-                            word.Add("V");
-                            break;
-                        case Keys.W:
-                            word.Add("W");
-                            break;
-                        case Keys.X:
-                            word.Add("X");
-                            break;
-                        case Keys.Y:
-                            word.Add("Y");
-                            break;
-                        case Keys.Z:
-                            word.Add("Z");
-                            break;
-                        case Keys.D0:
-                            word.Add(")");
-                            break;
-                        case Keys.D1:
-                            word.Add("!");
-                            break;
-                        case Keys.D2:
-                            word.Add('"'.ToString());
-                            break;
-                        //Removed £ and $ as they break the font
-                        case Keys.D5:
-                            word.Add("%");
-                            break;
-                        case Keys.D6:
-                            word.Add("^");
-                            break;
-                        case Keys.D7:
-                            word.Add("&");
-                            break;
-                        case Keys.D8:
-                            word.Add("*");
-                            break;
-                        case Keys.D9:
-                            word.Add("(");
-                            break;
-                        case Keys.Back:
-                            word.RemoveAt(word.Count - 1);
-                            break;
-                        case Keys.Enter:
-                            cont = false;
-                            break;
+                        word.Add(letterChecking(key).ToUpper());
+                    }
+                    else
+                    {
+                        switch (key)
+                        {
+                            case Keys.D0:
+                                word.Add(")");
+                                break;
+                            case Keys.D1:
+                                word.Add("!");
+                                break;
+                            case Keys.D2:
+                                word.Add('"'.ToString());
+                                break;
+                            //Removed £ and $ as they break the font
+                            case Keys.D5:
+                                word.Add("%");
+                                break;
+                            case Keys.D6:
+                                word.Add("^");
+                                break;
+                            case Keys.D7:
+                                word.Add("&");
+                                break;
+                            case Keys.D8:
+                                word.Add("*");
+                                break;
+                            case Keys.D9:
+                                word.Add("(");
+                                break;
+                            case Keys.Back:
+                                word.RemoveAt(word.Count - 1);
+                                break;
+                            case Keys.Enter:
+                                cont = false;
+                                break;
+                        }
                     }
                 }
                 else
                 {
-                        //Keys when not holding shift
-                    switch (key)
+                    //Keys when not holding shift
+                    if (key >= Keys.A && key <= Keys.Z)
                     {
-                        case Keys.A:
-                            word.Add("a");
-                            break;
-                        case Keys.B:
-                            word.Add("b");
-                            break;
-                        case Keys.C:
-                            word.Add("c");
-                            break;
-                        case Keys.D:
-                            word.Add("d");
-                            break;
-                        case Keys.E:
-                            word.Add("e");
-                            break;
-                        case Keys.F:
-                            word.Add("f");
-                            break;
-                        case Keys.G:
-                            word.Add("g");
-                            break;
-                        case Keys.H:
-                            word.Add("h");
-                            break;
-                        case Keys.I:
-                            word.Add("i");
-                            break;
-                        case Keys.J:
-                            word.Add("j");
-                            break;
-                        case Keys.K:
-                            word.Add("k");
-                            break;
-                        case Keys.L:
-                            word.Add("l");
-                            break;
-                        case Keys.M:
-                            word.Add("m");
-                            break;
-                        case Keys.N:
-                            word.Add("n");
-                            break;
-                        case Keys.O:
-                            word.Add("o");
-                            break;
-                        case Keys.P:
-                            word.Add("p");
-                            break;
-                        case Keys.Q:
-                            word.Add("q");
-                            break;
-                        case Keys.R:
-                            word.Add("r");
-                            break;
-                        case Keys.S:
-                            word.Add("s");
-                            break;
-                        case Keys.T:
-                            word.Add("t");
-                            break;
-                        case Keys.U:
-                            word.Add("u");
-                            break;
-                        case Keys.V:
-                            word.Add("v");
-                            break;
-                        case Keys.W:
-                            word.Add("w");
-                            break;
-                        case Keys.X:
-                            word.Add("x");
-                            break;
-                        case Keys.Y:
-                            word.Add("y");
-                            break;
-                        case Keys.Z:
-                            word.Add("z");
-                            break;
-                        case Keys.D0:
-                            word.Add("0");
-                            break;
-                        case Keys.D1:
-                            word.Add("1");
-                            break;
-                        case Keys.D2:
-                            word.Add("2");
-                            break;
-                        case Keys.D3:
-                            word.Add("3");
-                            break;
-                        case Keys.D4:
-                            word.Add("4");
-                            break;
-                        case Keys.D5:
-                            word.Add("5");
-                            break;
-                        case Keys.D6:
-                            word.Add("6");
-                            break;
-                        case Keys.D7:
-                            word.Add("7");
-                            break;
-                        case Keys.D8:
-                            word.Add("8");
-                            break;
-                        case Keys.D9:
-                            word.Add("9");
-                            break;
-                        case Keys.Back:
-                            if (word.Count > 0)
-                            {
-                                word.RemoveAt(word.Count - 1);
-                            }
-                            break;
-                        case Keys.Enter:
-                            cont = false;
-                            break;
+                        word.Add(letterChecking(key));
+                    }
+                    else if (key >= Keys.D0 && key <= Keys.D9) {
+                        word.Add(key.ToString()[1].ToString());
+                    }
+                    else
+                    {
+                        switch (key)
+                        {
+                            case Keys.Back:
+                                if (word.Count > 0)
+                                {
+                                    word.RemoveAt(word.Count - 1);
+                                }
+                                break;
+                            case Keys.Enter:
+                                cont = false;
+                                break;
+                        }
                     }
                 }
-            } 
+            }
         }
-        return (cont, word);
+                return (cont, word);
     }
+        //Gets letters form user input
+    private string letterChecking(Keys key) {
+        return key.ToString().ToLower();
+        }
 
         //Draws text on the screen
     public void drawText(string text, Vector2 position) {
@@ -570,9 +449,10 @@ public class UI
         spriteBatch.Begin();
         spriteBatch.Draw(loadingSpriteSheet, new Rectangle(500, 100, 40, 40), sourceRectangle, Color.White);
         spriteBatch.End();
-        drawText(text, new Vector2(497, 145));
+        drawText(text, new Vector2(497-counter/50, 145));
         counter++;
         
     }
+
 }
 
