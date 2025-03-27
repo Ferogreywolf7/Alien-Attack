@@ -132,8 +132,9 @@ namespace Alien_Attack
             player1 = new Player(playerSpritSheet, playerBulletTexture, reloadBar, textBorder, player1StartPos, controls, ui);
             bunkers = new Bunkers(bunkerAtlas, 2);
             enemies = new EnemyController(_spriteBatch, enemyTexture, enemyStartPos, gameMode, explosionSpriteSheet, enemyBulletTexture);
-            enemies.spawnEnemies(enemyRows, enemyCollums);            
-            noOfLives = 5;
+            enemies.spawnEnemies(enemyRows, enemyCollums);
+            if (noOfLives == 0) { noOfLives = 0; }
+            else { noOfLives++; }
             gameStarted = true;
             gamePaused = false;
             noMenu = false;
@@ -368,8 +369,6 @@ namespace Alien_Attack
                 ui.drawText("Game Over", new Vector2(295, 90));
                 ui.drawText(deathReason, new Vector2(295, 120));
                 ui.drawScore();
-                //databaseOnline = database.tryConnectToDatabase();     Opening a connection to the database takes a while and nothing can be done while checking if the connection is open due to it having to not be an async task
-                databaseOnline = true;
                 if (!databaseOnline)
                 {
                     ui.drawText("Can't connect to database", new Vector2(295, 200), Color.Red);
@@ -397,9 +396,13 @@ namespace Alien_Attack
                     if (leaderboardChoice == "display") {
                         if (scoreSaved) {
                             database.getLeaderboardData();
+                            leaderboard.initialiseLeaderboard();
                             scoreSaved = false;
                         }
                         leaderboard.drawLeaderboard();
+                        if (ui.closeLeaderboard()) {
+                            leaderboardChoice = "dont display";
+                        }
                     }
 
                     //Resets the game if the player chooses not to view the leaderboard

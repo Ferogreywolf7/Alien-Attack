@@ -51,7 +51,7 @@ namespace Alien_Attack
             MoveDownCount = 0;
             collisionCount = 0;
             enemies = new List<mediumEnemy>();
-            currentSpeed = 0.5f + level/5;
+            currentSpeed = 0.5f + level/3;
             lowestCoord = 0;
             spawnedOnThisTurn = true;
             timesSpawnedEnemies = 1;

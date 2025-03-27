@@ -48,7 +48,6 @@ public class UI
     private Rectangle leaderboardBoxMiddleRight;
     private Rectangle leaderboardBoxRight;
     private string text;
-    private Regex regex;
     public UI(SpriteBatch _spriteBatch, SpriteFont testFont, Texture2D textBorder, Texture2D lifeIcon, Texture2D backArrow, Controls control)
     {
         timer = new Stopwatch();
@@ -142,14 +141,18 @@ public class UI
         return "";
     }
 
-    private bool drawButtons(Texture2D boxTexture, Rectangle destinationRectangle, string text)
-    {
-        //Draw buttons and returns true when pressed
+    private void getMouseState() {
         //Gets Mouse location and coordinates
         previousMouseState = mouseState;
         mouseState = Mouse.GetState();
         mouseX = mouseState.X;
         mouseY = mouseState.Y;
+    }
+
+    private bool drawButtons(Texture2D boxTexture, Rectangle destinationRectangle, string text)
+    {
+        //Draw buttons and returns true when pressed
+        getMouseState();
         isButtonPressed = false;
 
         spriteBatch.Begin();
@@ -161,13 +164,11 @@ public class UI
         spriteBatch.Begin();
         //Changes color of text box to let the user know it is interactable and selected
         if (destinationRectangle.Intersects(new Rectangle(mouseX, mouseY, 1, 1)))
-        {
+        { 
             spriteBatch.Draw(boxTexture, destinationRectangle, Color.Green);
-            //Calls setLeft in order for the left control to be updated
-            if (mouseState.LeftButton == ButtonState.Pressed )
+            if (mouseState.LeftButton == ButtonState.Pressed)
             {
                 isButtonPressed = true;
-
             }
         }
         spriteBatch.End();
@@ -191,8 +192,13 @@ public class UI
         return "";
     }
 
+    public bool closeLeaderboard() {
+        return drawButtons(textBox, new Rectangle(630, 100, 160, 40), "Close leaderboard");
+    }
+
     public string drawPlayerDataNames()
     {
+        drawText("Username", new Vector2(75, 250));
         if (drawButtons(textBox, leaderboardBoxLeft, "Highest level"))
         {
             return "sortLevel";
@@ -205,6 +211,18 @@ public class UI
         {
             return "sortScore";
         }
+        return "";
+    }
+
+
+    public string drawNewPages() {
+        if (drawButtons(arrow, new Rectangle(), "")) {
+            return "previous";
+        }
+        if (drawButtons(arrow, new Rectangle(), "")) {
+            return "next";
+        }
+
         return "";
     }
 
