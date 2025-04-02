@@ -24,7 +24,6 @@ namespace Alien_Attack
 
         public bool tryConnectToDatabase() {
             dataSource = NpgsqlDataSource.Create(connectionString);
-            
             try
             {
                 var cmd = dataSource.CreateCommand("SELECT * FROM Players;");
