@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Globalization;
 using CsvHelper.Configuration;
-using Npgsql.Internal;
-using System.Diagnostics;
 using Microsoft.Xna.Framework;
 
 namespace Alien_Attack
@@ -18,12 +16,14 @@ namespace Alien_Attack
         private List<playerTableFormat> recordList;
         private UI ui;
         private string sort;
+        private string lastSort;
         private List<playerTableFormat> listToDisplay;
         private string lastModified;
-        private int numOfRecords;
         private int yCoordToWriteText;
         private int numRecordToStartAt;
         private string buttonPressed;
+        private int numOfRecordsTotal;
+        private bool displayListChanged;
         public Leaderboard(UI ui) {
                 //Makes it so the name of the variable types doesnt have to match the headings by case
             config = new CsvConfiguration(CultureInfo.InvariantCulture)
@@ -53,8 +53,8 @@ namespace Alien_Attack
             public int level { get; set; }
         }
         
-        //Uses default file reader to get text in the csv file and then uses the csv reader to parse it into usable data
-        public List<playerTableFormat> readDataFromPlayerFile() {
+            //Uses default file reader to get text in the csv file and then uses the csv reader to parse it into usable data
+        public void readDataFromPlayerFile() {
 
             using (StreamReader reader = new StreamReader("Content/playerTable.csv"))
             using (CsvReader csv = new CsvReader(reader, config))
@@ -62,7 +62,7 @@ namespace Alien_Attack
                 var records = csv.GetRecords<playerTableFormat>();
                 recordList = records.ToList();
             }
-            return recordList;
+            
         }
             //Gets the specific data from the list
         private List<double> getSpecificData(int index) {
@@ -82,9 +82,10 @@ namespace Alien_Attack
             }
             return listToSort;
         }
-
+            //Takes the indiviual sorted pieces of data and matches them up to the right records
         private List<playerTableFormat> reorganiseRecords(List<Double> toReorganise, int index) {
             List<playerTableFormat> reorganised = new List<playerTableFormat>();
+            toReorganise = toReorganise.Distinct().ToList();    //Only allows unique values in the list to be sorted to prevent data from being sorted multiple times
             foreach (Double data in toReorganise) {
                 foreach (playerTableFormat Record in recordList)
                 {
@@ -114,20 +115,50 @@ namespace Alien_Attack
             //Sorts by the specific data when the button is pressed
         public void drawLeaderboard() {
             sort = ui.drawPlayerDataNames();
-            switch (sort)
+                //System for showing the next/previous 10 data
+            if (buttonPressed == "next")
             {
+                numRecordToStartAt += 10;
+                sort = lastSort;
+            }
+            if (buttonPressed == "previous")
+            {
+                numRecordToStartAt -= 10;
+                sort = lastSort;
+            }
+            //Prevents the counter from going over the total number of items or under 0 - Defensive programming
+            if (numRecordToStartAt > numOfRecordsTotal)
+            {
+                numRecordToStartAt -= 10;
+                sort = "";
+            }
+            if (numRecordToStartAt < 0)
+            {
+                numRecordToStartAt += 10;
+                sort = "";
+            }
+            switch (sort)
+            {   
+                    //Gets data sorted based off of what button the user presses
                 case "sortLevel":
                     listToDisplay = reorganiseRecords(breakdownList(getSpecificData(1)), 1);  //Gets specific data from record, then sorts by that data and puts the rest of the record back in
                     reverseRecords();
+                    displayListChanged = true;
+                    lastSort = sort;
                     break;
                 case "sortTime":
                     listToDisplay = reorganiseRecords(breakdownList(getSpecificData(2)), 2);
                     reverseRecords();
+                    displayListChanged = true;
+                    lastSort = sort;
                     break;
                 case "sortScore":
                     listToDisplay = reorganiseRecords(breakdownList(getSpecificData(3)), 3);
                     reverseRecords();
+                    displayListChanged = true;
+                    lastSort = sort;
                     break;
+
             }
             ui.drawText("Last updated: " + lastModified, new Vector2(550, 850));
             displayData();
@@ -139,62 +170,74 @@ namespace Alien_Attack
             //Displays data for all users
         private void displayData() {
             yCoordToWriteText = 300;
-            numOfRecords = listToDisplay.Count();
-            
-            if(numOfRecords > 10) {
-                buttonPressed = ui.drawNewPages();
-                if (buttonPressed == "next") {
-                    numRecordToStartAt += 10;
-                }
-                if (buttonPressed == "previous") {
-                    numRecordToStartAt -= 10;
-                }
-                if (numRecordToStartAt > numOfRecords) {
-                    numRecordToStartAt -= 10;
-                }
-
-                if (numOfRecords - numRecordToStartAt > 10)
+            numOfRecordsTotal = recordList.Count();
+            buttonPressed = ui.drawNewPages();
+                //Makes sure that only 10 records at a time are viewed and that what 10 those are can be changed
+            if (numOfRecordsTotal > 10) {
+                if (displayListChanged)
                 {
-                    listToDisplay.RemoveRange(numRecordToStartAt + 10, numOfRecords-numRecordToStartAt-11);
+                    if ((numOfRecordsTotal - numRecordToStartAt) > 10)
+                    {
+                        listToDisplay.RemoveRange(numRecordToStartAt + 10, (numOfRecordsTotal - (numRecordToStartAt+10)));
+                    }
+                    if (numRecordToStartAt >= 10)
+                    {
+                        listToDisplay.RemoveRange(0, numRecordToStartAt);
+                    }
                 }
-                else if(numOfRecords - numRecordToStartAt < 10 && numOfRecords - numRecordToStartAt < 0){
-                    listToDisplay.RemoveRange(numRecordToStartAt + (numOfRecords - numRecordToStartAt), numOfRecords - 1);
-                }
+                displayListChanged = false;
             }
-
+                //Writes all of the data to be displayed onto the screen
             foreach (playerTableFormat Record in listToDisplay)
             {
-                ui.drawText(truncate(Record.username), new Vector2(75, yCoordToWriteText));
+                ui.drawText(truncate(Record.username, true), new Vector2(75, yCoordToWriteText));
                 ui.drawText(Record.highestLevel.ToString(), new Vector2(265, yCoordToWriteText));
-                ui.drawText(Record.longestSurvived, new Vector2(395, yCoordToWriteText));
+                ui.drawText(truncate(Record.longestSurvived, false, 11), new Vector2(395, yCoordToWriteText));
                 ui.drawText(Record.highScore.ToString(), new Vector2(585, yCoordToWriteText));
                 yCoordToWriteText += 50;
             }
         }
-            //Displays data for specific users
-        private void displayData(string username) { 
-        
-        }
-
-        private string truncate(string stringToShorten) {
-            if (stringToShorten.Length > 10) {
+            //Methods for shortening data names to prevent any overlapping with other data
+        private string truncate(string stringToShorten, bool useDots) {
+            if (stringToShorten.Length > 10)
+            {
                 stringToShorten = stringToShorten.Remove(10);
-                stringToShorten += "..."; }
+                if (useDots)
+                {
+                    stringToShorten += "...";
+                }
+            }
             return stringToShorten;
         }
 
+        private string truncate(string stringToShorten, bool useDots, int shortenBy)
+        {
+            if (stringToShorten.Length > shortenBy)
+            {
+                stringToShorten = stringToShorten.Remove(shortenBy);
+                if (useDots)
+                {
+                    stringToShorten += "...";
+                }
+            }
+            return stringToShorten;
+        }
+            
         public void initialiseLeaderboard() {
-            listToDisplay = readDataFromPlayerFile();
+                //Run on start up
+            readDataFromPlayerFile();
+            listToDisplay = recordList;
             lastModified = getDateTimeModified();
             numRecordToStartAt = 0;
         }
 
         public void clearFileAndWriteHeaders() {
-            //Clears all text from the file and writes headers
+                //Clears all text from the file and writes headers
             using (StreamWriter clearAllText = new StreamWriter("Content/playerTable.csv", false))
             using (CsvWriter writeHeaders = new CsvWriter(clearAllText, CultureInfo.InvariantCulture))
             {
                 writeHeaders.WriteHeader<playerTableFormat>();
+                writeHeaders.NextRecord();
             }
         }
 
@@ -206,6 +249,7 @@ namespace Alien_Attack
             using (CsvWriter csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
             {
                 csv.WriteRecord(record);
+                csv.NextRecord();
             }
         }
 
@@ -235,6 +279,7 @@ namespace Alien_Attack
 
         private List<Double> merge(List<Double> left, List<Double> right)
         {
+                //The sorting part of the merge sort
             List<Double> merged = new List<Double>();
             //Merges the first item each time round
             while (left.Count() != 0 && right.Count() != 0)

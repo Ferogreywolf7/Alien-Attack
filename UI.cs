@@ -5,8 +5,6 @@ using Alien_Attack;
 using System.Diagnostics;
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Diagnostics.Tracing;
 
 public class UI
 {
@@ -32,6 +30,7 @@ public class UI
     private bool cont;
     private Controls controls;
     private Stopwatch timer;
+    private Stopwatch pausedTimer;
     private string timeTaken;
     private double currentTime;
     private static int level;
@@ -48,9 +47,11 @@ public class UI
     private Rectangle leaderboardBoxMiddleRight;
     private Rectangle leaderboardBoxRight;
     private string text;
+    private Double buttonCooldownStartTime;
     public UI(SpriteBatch _spriteBatch, SpriteFont testFont, Texture2D textBorder, Texture2D lifeIcon, Texture2D backArrow, Controls control)
     {
         timer = new Stopwatch();
+        pausedTimer = new Stopwatch();
         controls = control;
         spriteBatch = _spriteBatch;
         font = testFont;
@@ -83,6 +84,7 @@ public class UI
         currentColour = 0;
         counter = 0;
         text = "loading";
+        buttonCooldownStartTime = 0.0;
     }
     public int getScore() {
         return score;
@@ -154,7 +156,6 @@ public class UI
         //Draw buttons and returns true when pressed
         getMouseState();
         isButtonPressed = false;
-
         spriteBatch.Begin();
         spriteBatch.Draw(boxTexture, destinationRectangle, Color.White);
         spriteBatch.End();
@@ -166,9 +167,10 @@ public class UI
         if (destinationRectangle.Intersects(new Rectangle(mouseX, mouseY, 1, 1)))
         { 
             spriteBatch.Draw(boxTexture, destinationRectangle, Color.Green);
-            if (mouseState.LeftButton == ButtonState.Pressed)
+            if (mouseState.LeftButton == ButtonState.Pressed && checkPauseCooldown(buttonCooldownStartTime, 0.2)) //Buttons have a cooldown so they cant be spammed
             {
                 isButtonPressed = true;
+                buttonCooldownStartTime = getPauseStopwatchTime();
             }
         }
         spriteBatch.End();
@@ -216,13 +218,12 @@ public class UI
 
 
     public string drawNewPages() {
-        if (drawButtons(arrow, new Rectangle(), "")) {
+        if (drawButtons(arrow, new Rectangle(200, 850, 100, 50), "")) {
             return "previous";
         }
-        if (drawButtons(arrow, new Rectangle(), "")) {
+        if (drawButtons(arrow, new Rectangle(600, 850, 100, 50), "")) {
             return "next";
         }
-
         return "";
     }
 
@@ -243,7 +244,6 @@ public class UI
     {
 
         timer.Start();
-        Debug.WriteLine("Timer started");
     }
 
     public void stopStopwatch()
@@ -267,8 +267,8 @@ public class UI
     public void resetStopwatch() {
         timer.Reset();
     }
-        //Checks to see if the cooldown has elapsed by minusing the start time from the current time and checking to see if it is greater than the cooldown time. It then returns true if that is the case as the cooldown has ended
-    public bool checkCooldown(double startTime, double cooldownTime) {
+    public bool checkCooldown(double startTime, double cooldownTime)
+    {
         currentTime = Convert.ToDouble(getStopwatchTime().Replace(":", ""));
         if ((currentTime - startTime) >= cooldownTime)
         {
@@ -276,6 +276,31 @@ public class UI
         }
         return false;
     }
+        //Code for stopwatch during menu for button cooldown
+    public void startPauseStopwatch()
+    {
+        pausedTimer.Start();
+    }
+
+    public void stopPauseStopwatch() {
+        pausedTimer.Stop();
+    }
+
+    public Double getPauseStopwatchTime() { 
+        return Convert.ToDouble(pausedTimer.Elapsed.ToString(@"mm\:ss\.ff").Replace(":", ""));
+    }
+    public bool checkPauseCooldown(double startTime, double cooldownTime)
+    {
+        currentTime = getPauseStopwatchTime();
+        if ((currentTime - startTime) >= cooldownTime)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    //Checks to see if the cooldown has elapsed by minusing the start time from the current time and checking to see if it is greater than the cooldown time. It then returns true if that is the case as the cooldown has ended
+
 
     public static int getLevel() {
         return level;
@@ -289,6 +314,9 @@ public class UI
         drawText("Level: " + level, new Vector2(200, 920));
     }
 
+    public void resetLevel() {
+        level = 0;
+    }
     public void drawCustomiseMenu(Texture2D texture)
     {
         
@@ -309,11 +337,11 @@ public class UI
 
         //Asks the user if they want to save their score in the database
     public string checkIfUserWantsToSave() {
-        if (drawButtons(textBox, upperBoxLeft, "I want to save my score"))
+        if (drawButtons(textBox, upperBoxLeft, "Save my score"))
         {
             return "save";
         }
-        if (drawButtons(textBox, upperBoxRight, "I dont want to save my score")) {
+        if (drawButtons(textBox, upperBoxRight, "Dont `save my score")) {
             return "dont save";
         }
         return "";
@@ -351,7 +379,7 @@ public class UI
     }
 
     //Adds characters to word based on what keys are being pressed
-    public (bool, List<string>) enterText(KeyboardState currentKeyState, KeyboardState previousKeyState, List<string> word)
+    public (bool cont, List<string> word) enterText(KeyboardState currentKeyState, KeyboardState previousKeyState, List<string> word)
     {
         cont = true;
         if (currentKeyState.GetPressedKeyCount() >= 1)
@@ -454,7 +482,7 @@ public class UI
         spriteBatch.End();
     }
 
-    public void loadingScreen(Texture2D loadingSpriteSheet) {
+    public void loadingScreen(Texture2D loadingSpriteSheet, Vector2 coords) {
         if (counter > 250) {
             counter = 0;
             text = "loading";
@@ -465,7 +493,7 @@ public class UI
             text += ".";
         }
         spriteBatch.Begin();
-        spriteBatch.Draw(loadingSpriteSheet, new Rectangle(500, 100, 40, 40), sourceRectangle, Color.White);
+        spriteBatch.Draw(loadingSpriteSheet, new Rectangle((int)coords.X, (int)coords.Y, 40, 40), sourceRectangle, Color.White);
         spriteBatch.End();
         drawText(text, new Vector2(497-counter/50, 145));
         counter++;

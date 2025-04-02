@@ -1,11 +1,5 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.Xna.Framework.Input;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Alien_Attack
 {
@@ -18,7 +12,6 @@ namespace Alien_Attack
         private Keys pause;
         private bool keyInput;
         private KeyboardState _keyboard;
-
         private bool keyAccepted;
         private bool isKeyInput;
         private string tempGetNewKeybindOf;
@@ -64,10 +57,8 @@ namespace Alien_Attack
         public bool setLeft(KeyboardState currentKeyState)
         {
             keyInput = false;
-            //Doesn't work apart from the exact instant it checks yet it get stuck in the while loop
             _keyboard = currentKeyState;
-            Debug.WriteLine(string.Join(' ', _keyboard.GetPressedKeys()));
-            //When one key is pressed, get that key and put it into the left variable
+                //When one key is pressed, get that key and put it into the left variable
             if (_keyboard.GetPressedKeyCount() == 1)
             {
                 Debug.WriteLine("pressed");
@@ -82,7 +73,6 @@ namespace Alien_Attack
         {
             keyInput = false;
             _keyboard = currentKeyState;
-            //Doesn't work apart from the exact instant it checks yet it get stuck in the while loop
             getKeyboardState();
             if (_keyboard.GetPressedKeyCount() == 1)
             {
@@ -96,7 +86,6 @@ namespace Alien_Attack
         {
             keyInput = false;
             _keyboard = currentKeyState;
-            //Doesn't work apart from the exact instant it checks yet it get stuck in the while loop
             if (_keyboard.GetPressedKeyCount() == 1)
             {
                 fire = _keyboard.GetPressedKeys()[0];
@@ -135,7 +124,7 @@ namespace Alien_Attack
         {
             if (!keyAccepted && !isKeyInput)
             {
-                //There is a temporary variable to make sure the keyboard check is repeated
+                    //There is a temporary variable to make sure the keyboard check is repeated
                 if (tempGetNewKeybindOf != "")
                 {
                     getNewKeybindOf = tempGetNewKeybindOf;

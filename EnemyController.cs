@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Transactions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 
 namespace Alien_Attack
@@ -20,7 +16,6 @@ namespace Alien_Attack
         private Vector2 startPos;
         private Vector2 currentPos;
         private static List<mediumEnemy> enemies;
-        private int numOfEnemies;
         private int rows;
         private int columns;
         private int num;
@@ -29,8 +24,6 @@ namespace Alien_Attack
         private int collisionCount;
         private int lowestCount;
         private int lowestCoord;
-        private int timesSpawnedEnemies;
-        private Rectangle enemyHitbox;
         private bool isCollision;
         private bool spawnedOnThisTurn;
         private string gameMode;
@@ -54,7 +47,6 @@ namespace Alien_Attack
             currentSpeed = 0.5f + level/3;
             lowestCoord = 0;
             spawnedOnThisTurn = true;
-            timesSpawnedEnemies = 1;
             explosion = explosionSheet;
             bulletTexture = enemyBulletTexture;
         }
@@ -73,7 +65,6 @@ namespace Alien_Attack
                 {
                     currentPos.X += enemySpacing;
                     enemies.Add(new mediumEnemy(enemyTexture, spriteBatch, currentPos, currentSpeed, explosion, bulletTexture));
-                    numOfEnemies++;
                 }
                 currentPos.X = startPos.X;
             }
@@ -101,10 +92,9 @@ namespace Alien_Attack
                 if (xPos >= 60 && gameMode == "Endless" && !spawnedOnThisTurn)
                 {
                     currentPos.X = startPos.X - enemySpacing;
-                    currentPos.Y = startPos.Y - enemySpacing;//*timesSpawnedEnemies;
+                    currentPos.Y = startPos.Y - enemySpacing;
                     spawnEnemies(0, columns);
                     spawnedOnThisTurn = true;
-                    timesSpawnedEnemies++;
                 }
                     num++;
 

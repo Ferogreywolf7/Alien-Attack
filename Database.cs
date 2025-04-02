@@ -1,12 +1,8 @@
 ﻿using Npgsql;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 //Where the connection to the database will be established
-
 
 namespace Alien_Attack
 {
@@ -20,12 +16,10 @@ namespace Alien_Attack
         private string longestSurvived;
         private int highScore;
         private Leaderboard leaderboard;
-        private int index;
+            //var used when the datatype doesnt need to be named and can just be implied based off of other areas
         public Database(Leaderboard leaderboard) {
              connectionString = "Host=192.168.1.163;Username=user07;Password=d4T4b4S37;Database=AlienAttack";       //Local
-            //***REMOVED***    //Global
             this.leaderboard = leaderboard;
-            index = 0;
         }
 
         public bool tryConnectToDatabase() {
@@ -58,18 +52,15 @@ namespace Alien_Attack
             }
         }
 
-            //Not done async as we need the results from this one
+            //Runs a select command and certain parts will run based on whether or not the user exists
         public bool checkIfUserExists(string username) {
-            Debug.WriteLine("Starting check");
              using var command = dataSource.CreateCommand("SELECT username FROM Players WHERE username = '" + username + "'");
              using var reader =  command.ExecuteReader();
-                //Code inside the while loop only runs when data is found so there must be a username corresponding to this
             while ( reader.Read())
             {
-                Debug.WriteLine("Username must exist as it goes into this loop");
+                    //Code inside the while loop only runs when data is found so there must be a username corresponding to this
                 return true;
             }
-            Debug.WriteLine("Username doesn't exist");
             return false;
         }
 
@@ -86,7 +77,7 @@ namespace Alien_Attack
         }
 
         public async Task insertGameValues(int userid, int score, string gameMode, string timesurvived, int level) {
-            //Runs SQL command to insert a games data into the database
+                //Runs SQL command to insert a games data into the database
             DateTime dateofplay = DateTime.Now;
             await using (var cmd = dataSource.CreateCommand("INSERT INTO Games (userid, score, gamemode, timesurvived, dateofplay, level) VALUES ("+userid+", "+score+", '"+gameMode+"', '"+timesurvived+"', '"+dateofplay+"', "+level+");"))
             {
@@ -98,46 +89,19 @@ namespace Alien_Attack
         public async Task getLeaderboardData() { 
         await using var command = dataSource.CreateCommand("SELECT (username, highestlevel, longestsurvived, highScore) FROM Players;");
             await using var reader = await command.ExecuteReaderAsync();
-            //Gets all of the data
+            
             leaderboard.clearFileAndWriteHeaders();
             while (await reader.ReadAsync())
             {
                 using var lineReader = reader.GetData(0);
-                    //Prints all of the data
+                    //Gets all of the data
                 while (lineReader.Read()) {
                     username = lineReader.GetFieldValue<string>(0);
                     highestLevel = lineReader.GetFieldValue<int>(1);
                     longestSurvived = lineReader.GetFieldValue<TimeSpan>(2).ToString();
                     highScore = lineReader.GetFieldValue<int>(3);
-                    Debug.WriteLine(username+highestLevel+longestSurvived+highScore);
                     leaderboard.writeDataToPlayerFile(username, highestLevel, longestSurvived, highScore);
-                }
-            }
-        }
-
-        public void getGameData() { 
-        
-        }
-
-        public void getGameData(string username) { 
-        
-        }
-
-            //Only here for demo purposes:  Remove later
-        public async Task testSelection() {
-                //Runs SELECT command
-            await using var command = dataSource.CreateCommand("SELECT (userid, username, highestlevel, longestsurvived) FROM Players ");
-            await using var reader = await command.ExecuteReaderAsync();
-                //Gets all of the data
-            while (await reader.ReadAsync())
-            {
-                using var lineReader = reader.GetData(0);
-                    //Prints all of the data
-                while (lineReader.Read()) {
-                    Debug.WriteLine("id: " + lineReader.GetFieldValue<int>(0));
-                    Debug.WriteLine("username: " + lineReader.GetFieldValue<string>(1));
-                    Debug.WriteLine("highestLevel: " + lineReader.GetFieldValue<int>(2));
-                    Debug.WriteLine("longestSurvived: " + lineReader.GetFieldValue<TimeSpan>(3).ToString());
+                    leaderboard.initialiseLeaderboard();
                 }
             }
         }

@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using System.Diagnostics;
 
 namespace Alien_Attack
 {
@@ -39,16 +38,19 @@ namespace Alien_Attack
         public int getDestructionCount() {
             return destructionCount;
         }
-            //Gets the hitbox for the bunker part
+            
         public Rectangle getBunkerHitbox() {
+                //Gets the hitbox for the bunker part
             return destinationRectangle;
         }
-            //Damages the part of the bunker
+            
         public void partHit() {
+                //Damages the part of the bunker
             destructionCount += 1;
         }
-            //Checks if the hitbox has collided with this specific part of the bunker and if so, damages the part
+            
         public bool bulletCollision(Rectangle hitbox) {
+                //Checks if the hitbox has collided with this specific part of the bunker and if so, damages the part
             collision = false;
             if (hitbox.Intersects(getBunkerHitbox())) {
                 partHit();

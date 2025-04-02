@@ -1,15 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Runtime.Intrinsics.X86;
-using System.Text;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
-
-//Implement pixel based collision and delete pixels that are touched + surrounding?
 
 namespace Alien_Attack
 {
@@ -63,6 +55,7 @@ namespace Alien_Attack
             
         }
         private void createBunkers() {
+                //Placing parts of the bunker in certain positions
             level = UI.getLevel();
             bunkerAmount -= level/5;
             if (bunkerNo <= bunkerAmount)
@@ -90,16 +83,17 @@ namespace Alien_Attack
             }
             bunkerNo = 1;
         }
+
         private void removeBunkerPiece(int pieceNum) {
             bunkerPieces.RemoveAt(pieceNum);
         }
-            //
+
         public List<BunkerPart> GetBunkerParts() {
             return bunkerPieces;
         }
-
-            //Check if the bullets hitbox has hit a part of the bunker and returns true if so so that the bullet can be deleted
+            
         public bool checkBunkerCollision(Rectangle hitbox) {
+                //Check if the bullets hitbox has hit a part of the bunker and returns true if so so that the bullet can be deleted
             bulletHitbox = hitbox;
             foreach (BunkerPart part in bunkerPieces) {
                 isBunkerCollision = part.bulletCollision(bulletHitbox);

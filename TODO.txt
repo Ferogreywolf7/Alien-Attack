@@ -10,17 +10,14 @@ Add quicker less damage bullets along with current
 Get value from database and merge sort them when a button is pressed - by default no sorting is done and is just in the order of the userID
 Add leaderboard - buttons along the top and for usernames in order to see specific users games or to sort by a certain value ascending or descending
 
-In the entering of text method in the ui class, make it so if the text entered is a letter (check using regex), pass to a seperate method where it gets the lowercase letter, then do a .upper
+In the entering of text method in the ui class, make it so if the text entered is a letter (check using regex), pass to a separate method where it gets the lowercase letter, then do a .upper
 
 //In database
 
-Reset player and game IDs using ALTER SEQUENCE idName RESTART WITH 0;
-
-Copy the new function to update it in the database
 //In writeup
 
 Write up why I decided to make variables/methods as private in technical solution section
-In techincal, show examples of high level techniques, write why you have used them
+In technical, show examples of high level techniques, write why you have used them
 
 make project summary better
 Explanation of why doing game, end user, how is it different to others. Add images of other games for references etc
@@ -43,13 +40,13 @@ Using documents from year 12 fpcloud:
 
 Analysis:
 Identify end users
-Introductory paragraph to the project: Talk about what the game is, what you want to achieve, how it is working
+Introductory paragraph to the project: Intention of project and how to complete it. Talk about complexity (what high level things were included)
 Summaries needs of end user/project
-Describe any constrainst/limitations
+Describe any constraints/limitations
 Need ERD diagram of existing systems, screenshots of existing games in modelling
 Move human computer interaction into modelling section. Shows how menus will look. What I wanted it to look like
 Why using different colour schemes under the modelling section.
-Better objectives
+Better objectives (Enumerate) - link client interview to objectives
 Talk about what software using and why
 
 Design:

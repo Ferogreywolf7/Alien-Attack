@@ -2,17 +2,12 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Content;
-using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.Diagnostics;
-
 
 namespace Alien_Attack
 {
     abstract class Enemies
     {
-        //Instance variables
+            //Protected to allow any inheriting classes access to them
         protected Vector2 position;
         protected Vector2 originalPosition;
         protected KeyboardState currentKeyboardState;

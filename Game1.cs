@@ -1,12 +1,9 @@
-﻿using Alien_Attack;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 
 
 namespace Alien_Attack
@@ -50,9 +47,7 @@ namespace Alien_Attack
         private int noOfLives;
         private int enemyRows;
         private int enemyCollums;
-        private int level;
         private Rectangle partHitbox;
-        private Rectangle backgroundBox;
         private string tempGetNewKeybindOf;
         private string option;
         private string gameMode;
@@ -74,8 +69,8 @@ namespace Alien_Attack
         private int counter;
         private string leaderboardChoice;
         private bool scoreSaved;
-        private bool doesntExistError;
-
+        private bool userDoesntExistError;
+        private bool userExistsError;
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -94,7 +89,6 @@ namespace Alien_Attack
             _graphics.PreferredBackBufferWidth = 800;
             _graphics.PreferredBackBufferHeight = 1000;
             _graphics.ApplyChanges();
-            backgroundBox = new Rectangle(0, 0, 800, 1000);
             base.Initialize();
         }
 
@@ -119,6 +113,7 @@ namespace Alien_Attack
             controls = new Controls();
             getControls();
             ui = new UI(_spriteBatch, font, textBorder, lifeIcon, backArrow, controls);
+            ui.startPauseStopwatch();
             leaderboard = new Leaderboard(ui);
             database = new Database(leaderboard);
             databaseOnline = database.tryConnectToDatabase();
@@ -133,7 +128,7 @@ namespace Alien_Attack
             bunkers = new Bunkers(bunkerAtlas, 2);
             enemies = new EnemyController(_spriteBatch, enemyTexture, enemyStartPos, gameMode, explosionSpriteSheet, enemyBulletTexture);
             enemies.spawnEnemies(enemyRows, enemyCollums);
-            if (noOfLives == 0) { noOfLives = 0; }
+            if (noOfLives == 0) { noOfLives = 5; }
             else { noOfLives++; }
             gameStarted = true;
             gamePaused = false;
@@ -141,6 +136,7 @@ namespace Alien_Attack
             gameOver = false;
             gameWon = false;
             ui.startStopwatch();
+            ui.stopPauseStopwatch();
             wantsToSave = "";
             createNewUser = "";
             username = new List<string>();
@@ -150,7 +146,7 @@ namespace Alien_Attack
             counter = 0;
             cooldownEnded = true;
             scoreSaved = false;
-            doesntExistError = false;
+            userDoesntExistError = false;
             leaderboardChoice = "";
         }
 
@@ -240,6 +236,7 @@ namespace Alien_Attack
                         {
                             gamePaused = false;
                             ui.startStopwatch();
+                            ui.stopPauseStopwatch();
                             getControls();
                             player1.getControls();
                         }
@@ -287,7 +284,6 @@ namespace Alien_Attack
             cooldownEnded = ui.checkCooldown(timeCooldownStarted, invulnerableCooldown);
             if (playerHit && cooldownEnded) {
                 noOfLives -= 1;
-                Debug.WriteLine("Player hit");
                 explosionDestinationRectangle = new Rectangle((int) player1.getPosition().X, (int) player1.getPosition().Y-30, 75, 75);
                 getCooldownStartTime();
                 cooldownEnded = false;
@@ -298,7 +294,6 @@ namespace Alien_Attack
         private void getCooldownStartTime()
         {
             timeCooldownStarted = Convert.ToDouble(ui.getStopwatchTime().Replace(":", ""));
-            Debug.WriteLine("Cooldown started at :" + timeCooldownStarted);
         }
 
         private void drawPlayerExplosionAnimation() {
@@ -322,6 +317,7 @@ namespace Alien_Attack
                 if (!gamePaused)
                 {
                     gamePaused = true;
+                    ui.startPauseStopwatch();
                     ui.stopStopwatch();
                     ui.getStopwatchTime();
                 }
@@ -329,6 +325,7 @@ namespace Alien_Attack
                 else if (gamePaused)
                 {
                     ui.startStopwatch();
+                    ui.stopPauseStopwatch();
                     gamePaused = false;
                     getControls();
                     player1.getControls();
@@ -363,6 +360,7 @@ namespace Alien_Attack
             if (gameOver)
             {
                 ui.stopStopwatch();
+                ui.startPauseStopwatch();
                 gamePaused = true;
                 noMenu = true;
                 gameStarted = false;
@@ -388,7 +386,6 @@ namespace Alien_Attack
                 
                 if (wantsToSave == "dont save")
                 {
-                    ui.loadingScreen(bunkerAtlas);  //Placeholder to check if the loading aimation works
                     if (leaderboardChoice == "") {
                         leaderboardChoice = ui.checkIfLeaderboardShown();
                     }
@@ -396,7 +393,6 @@ namespace Alien_Attack
                     if (leaderboardChoice == "display") {
                         if (scoreSaved) {
                             database.getLeaderboardData();
-                            leaderboard.initialiseLeaderboard();
                             scoreSaved = false;
                         }
                         leaderboard.drawLeaderboard();
@@ -413,7 +409,7 @@ namespace Alien_Attack
                         if (mouseState.LeftButton == ButtonState.Pressed)
                         {
                             ui.resetStopwatch();
-                            level = 0;
+                            ui.resetLevel();
                             gameOver = false;
                             noMenu = false;
                         }
@@ -423,9 +419,12 @@ namespace Alien_Attack
         }
 
         private void databaseAdding(){
-            if (doesntExistError)
+            if (userDoesntExistError)
             {
                 ui.drawText("User doesn't exist!", new Vector2(300, 200), Color.Purple);
+            }
+            if (userExistsError) {
+                ui.drawText("User already exists!", new Vector2(300, 200), Color.Purple);
             }
            if (createNewUser == "") {
                 createNewUser = ui.checkIfNewUserToBeMade();
@@ -434,22 +433,31 @@ namespace Alien_Attack
                 //Creates a new username based off of text inputted
             if (createNewUser == "create")
             {
-                doesntExistError = false;
+                userExistsError = false;
+                userDoesntExistError = false;
                     //Inputs text and shows it on screen
-                (bool, List<string>) outputs = ui.enterText(currentKeyState, previousKeyState, username);
+                var outputs = ui.enterText(currentKeyState, previousKeyState, username);
                     //if continuing text input
-                if (outputs.Item1)
+                if (outputs.cont)
                 {
                         //Writes the text that the user is entering onto the screen
-                    username = outputs.Item2;
-                    Debug.WriteLine(String.Join(" ", username));
+                    username = outputs.word;
                     ui.drawText("Enter Username: (press enter to submit)", new Vector2(300, 250), Color.LightBlue);
                     ui.drawText(String.Join(" ", username), new Vector2(20, 300));
                 }
                     //User has finished entering text
                 else
                 {
+                    if (database.checkIfUserExists(String.Join("", username))){
+                        userExistsError = true;
+                        createNewUser = "";
+                    }
                     database.addUser(String.Join("", username));
+                    //Waits until user has been added to the database
+                    while (database.checkIfUserExists(String.Join("", username)) == false)
+                    {
+                        ui.loadingScreen(bunkerAtlas, new Vector2(350, 250)); //Incase of bad connection 
+                    }
                     userID = database.getUserID(String.Join("", username));
                     database.insertGameValues(userID, ui.getScore(), gameMode, ui.getStopwatchTime(), UI.getLevel());
                     scoreSaved = true;
@@ -458,13 +466,13 @@ namespace Alien_Attack
             }
             if (createNewUser == "login")
             {
-                doesntExistError = false;
+                userDoesntExistError = false;
+                userExistsError = false;
                 //Inputs text and shows it on screen
-                (bool, List<string>) outputs = ui.enterText(currentKeyState, previousKeyState, username);
-                if (outputs.Item1)
+                var outputs = ui.enterText(currentKeyState, previousKeyState, username);
+                if (outputs.cont)
                 {
-                    username = outputs.Item2;
-                    //Debug.WriteLine(String.Join(" ", username));
+                    username = outputs.word;
                     ui.drawText("Enter an existing username: (press enter to submit)", new Vector2(220, 250), Color.LightBlue);
                     ui.drawText(String.Join(" ", username), new Vector2(20, 300));
                 }
@@ -481,7 +489,7 @@ namespace Alien_Attack
                     }
                     else {
                         //User doesnt exist
-                        doesntExistError = true;
+                        userDoesntExistError = true;
                         createNewUser = "";
                     }   
                 }
@@ -494,6 +502,7 @@ namespace Alien_Attack
             //Code to go to a new level
         private void checkIfGameWon() {
             if (gameWon) {
+                ui.startPauseStopwatch();
                 ui.stopStopwatch();
                 gamePaused = true;
                 noMenu = true;

@@ -1,12 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection.Metadata;
-using System.Net;
 
 namespace Alien_Attack
 {
@@ -49,7 +42,6 @@ namespace Alien_Attack
         public Rectangle getHitbox() {
             return destinationRectangle;
         }
-
 
         public Vector2 getBulletPos() {
             return position;
