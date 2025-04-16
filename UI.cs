@@ -13,7 +13,8 @@ public class UI
     private SpriteFont font;
     private Texture2D textBox;
     private Texture2D heart;
-    private Texture2D arrow;
+    private Texture2D backArrow;
+    private Texture2D forwardArrow;
     private Rectangle topBox;
     private Rectangle upperBox;
     private Rectangle lowerBox;
@@ -48,7 +49,7 @@ public class UI
     private Rectangle leaderboardBoxRight;
     private string text;
     private Double buttonCooldownStartTime;
-    public UI(SpriteBatch _spriteBatch, SpriteFont testFont, Texture2D textBorder, Texture2D lifeIcon, Texture2D backArrow, Controls control)
+    public UI(SpriteBatch _spriteBatch, SpriteFont testFont, Texture2D textBorder, Texture2D lifeIcon, Texture2D backArrow, Texture2D forwardArrow, Controls control)
     {
         timer = new Stopwatch();
         pausedTimer = new Stopwatch();
@@ -57,7 +58,8 @@ public class UI
         font = testFont;
         textBox = textBorder;
         heart = lifeIcon;
-        arrow = backArrow;
+        this.backArrow = backArrow;
+        this.forwardArrow = forwardArrow;
         getControls();
         //General box layout
         topBox = new Rectangle(295, 140, 160, 40);
@@ -90,12 +92,20 @@ public class UI
         return score;
     }
 
+    public void resetScore() {
+        score = 0;
+    }
+
     public static void increaseScore(int increase)
     {
         score += increase * level / 10;
     }
 
     public void drawScore() {
+        drawText("Score: " + score, new Vector2(420,920));
+    }
+
+    public void drawScoreEnd() {
         drawText("Your score is " + score, new Vector2(295, 140));
     }
 
@@ -135,8 +145,8 @@ public class UI
             return "Pause";
 
         }
-            //For arrow going back to main menu
-        if (drawButtons(arrow, new Rectangle(50, 50, 100, 50), "")) {
+            //For backArrow going back to main menu
+        if (drawButtons(backArrow, new Rectangle(50, 50, 100, 50), "")) {
             return "Back";
         }
 
@@ -218,10 +228,10 @@ public class UI
 
 
     public string drawNewPages() {
-        if (drawButtons(arrow, new Rectangle(200, 850, 100, 50), "")) {
+        if (drawButtons(backArrow, new Rectangle(200, 850, 100, 50), "")) {
             return "previous";
         }
-        if (drawButtons(arrow, new Rectangle(600, 850, 100, 50), "")) {
+        if (drawButtons(forwardArrow, new Rectangle(400, 850, 100, 50), "")) {
             return "next";
         }
         return "";
@@ -242,13 +252,14 @@ public class UI
     //Uses c# timespan as a timer that only runs when the game is unpaused
     public void startStopwatch()
     {
-
         timer.Start();
+        stopPauseStopwatch();
     }
 
     public void stopStopwatch()
     {
         timer.Stop();
+        startPauseStopwatch();
     }
 
     public string getStopwatchTime()
@@ -282,14 +293,14 @@ public class UI
         pausedTimer.Start();
     }
 
-    public void stopPauseStopwatch() {
+    private void stopPauseStopwatch() {
         pausedTimer.Stop();
     }
 
-    public Double getPauseStopwatchTime() { 
+    private Double getPauseStopwatchTime() { 
         return Convert.ToDouble(pausedTimer.Elapsed.ToString(@"mm\:ss\.ff").Replace(":", ""));
     }
-    public bool checkPauseCooldown(double startTime, double cooldownTime)
+    private bool checkPauseCooldown(double startTime, double cooldownTime)
     {
         currentTime = getPauseStopwatchTime();
         if ((currentTime - startTime) >= cooldownTime)
@@ -315,7 +326,7 @@ public class UI
     }
 
     public void resetLevel() {
-        level = 0;
+        level = 1;
     }
     public void drawCustomiseMenu(Texture2D texture)
     {
@@ -341,7 +352,7 @@ public class UI
         {
             return "save";
         }
-        if (drawButtons(textBox, upperBoxRight, "Dont `save my score")) {
+        if (drawButtons(textBox, upperBoxRight, "Don't save my score")) {
             return "dont save";
         }
         return "";
@@ -358,7 +369,7 @@ public class UI
         {
             return "create";
         }
-        if (drawButtons(arrow, new Rectangle(50, 50, 100, 50), ""))
+        if (drawButtons(backArrow, new Rectangle(50, 50, 100, 50), ""))
         {
             return "back";
         }
@@ -499,6 +510,5 @@ public class UI
         counter++;
         
     }
-
 }
 

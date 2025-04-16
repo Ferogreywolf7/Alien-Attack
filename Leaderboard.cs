@@ -24,6 +24,9 @@ namespace Alien_Attack
         private string buttonPressed;
         private int numOfRecordsTotal;
         private bool displayListChanged;
+        private List<Double> leftHalf;
+        private List<Double> rightHalf;
+        private List<double> partMerged;
         public Leaderboard(UI ui) {
                 //Makes it so the name of the variable types doesnt have to match the headings by case
             config = new CsvConfiguration(CultureInfo.InvariantCulture)
@@ -114,7 +117,7 @@ namespace Alien_Attack
         }
             //Sorts by the specific data when the button is pressed
         public void drawLeaderboard() {
-            sort = ui.drawPlayerDataNames();
+            
                 //System for showing the next/previous 10 data
             if (buttonPressed == "next")
             {
@@ -158,10 +161,10 @@ namespace Alien_Attack
                     displayListChanged = true;
                     lastSort = sort;
                     break;
-
             }
             ui.drawText("Last updated: " + lastModified, new Vector2(550, 850));
             displayData();
+            sort = ui.drawPlayerDataNames();
         }
 
         private void reverseRecords() {
@@ -229,6 +232,7 @@ namespace Alien_Attack
             listToDisplay = recordList;
             lastModified = getDateTimeModified();
             numRecordToStartAt = 0;
+            sort = "sortLevel";
         }
 
         public void clearFileAndWriteHeaders() {
@@ -262,18 +266,15 @@ namespace Alien_Attack
         public List<Double> breakdownList(List<Double> toSort)
         {
             int midpoint = toSort.Count / 2;
-            List<Double> leftHalf = toSort;
-            List<Double> rightHalf = toSort;
-
             if (toSort.Count > 1)
             {
-                leftHalf = leftHalf.GetRange(0, midpoint);
-                rightHalf = rightHalf.GetRange(midpoint, toSort.Count() - midpoint);
+                leftHalf = toSort.GetRange(0, midpoint);
+                rightHalf = toSort.GetRange(midpoint, toSort.Count() - midpoint);
                 //Continues breaking down the list until only one part remains, then it goes back out to when two remains and sorts those two
                 leftHalf = breakdownList(leftHalf);
                 rightHalf = breakdownList(rightHalf);
             }
-            List<double> partMerged = merge(leftHalf, rightHalf);
+            partMerged = merge(leftHalf, rightHalf);
             return partMerged;
         }
 

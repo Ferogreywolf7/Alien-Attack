@@ -28,6 +28,7 @@ namespace Alien_Attack
         private Texture2D bunkerAtlas;
         private Texture2D lifeIcon;
         private Texture2D backArrow;
+        private Texture2D forwardArrow;
         private Texture2D playerSpritSheet;
         private Texture2D explosionSpriteSheet;
         private Texture2D playerExplosionSpriteSheet;
@@ -102,6 +103,7 @@ namespace Alien_Attack
             bunkerAtlas = Content.Load<Texture2D>("combinedBlocks");
             lifeIcon = Content.Load<Texture2D>("playerHeartPlaceholder");
             backArrow = Content.Load<Texture2D>("backArrow");
+            forwardArrow = Content.Load<Texture2D>("forwardArrow");
             reloadBar = Content.Load<Texture2D>("reloadBar");
             font = Content.Load<SpriteFont>("testFont");
 
@@ -112,11 +114,11 @@ namespace Alien_Attack
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             controls = new Controls();
             getControls();
-            ui = new UI(_spriteBatch, font, textBorder, lifeIcon, backArrow, controls);
-            ui.startPauseStopwatch();
+            ui = new UI(_spriteBatch, font, textBorder, lifeIcon, backArrow, forwardArrow, controls);
             leaderboard = new Leaderboard(ui);
             database = new Database(leaderboard);
             databaseOnline = database.tryConnectToDatabase();
+            ui.startPauseStopwatch();
         }
 
         public void startNewGame() {
@@ -129,14 +131,13 @@ namespace Alien_Attack
             enemies = new EnemyController(_spriteBatch, enemyTexture, enemyStartPos, gameMode, explosionSpriteSheet, enemyBulletTexture);
             enemies.spawnEnemies(enemyRows, enemyCollums);
             if (noOfLives == 0) { noOfLives = 5; }
-            else { noOfLives++; }
+            else if (!(noOfLives == 5)) { noOfLives++; }
             gameStarted = true;
             gamePaused = false;
             noMenu = false;
             gameOver = false;
             gameWon = false;
             ui.startStopwatch();
-            ui.stopPauseStopwatch();
             wantsToSave = "";
             createNewUser = "";
             username = new List<string>();
@@ -177,6 +178,7 @@ namespace Alien_Attack
             }
             base.Update(gameTime);
         }
+     
         //Draws all textures in the game
         protected override void Draw(GameTime gameTime)
         {
@@ -187,6 +189,7 @@ namespace Alien_Attack
             checkIfGameWon();
             ui.drawStopwatchTime();
             ui.drawLevel();
+            ui.drawScore();
 
                  //prevents any game processes from advance if the game is paused
             if (!gamePaused)
@@ -202,7 +205,7 @@ namespace Alien_Attack
             }
                 //Shows that the game is paused
             if (gamePaused && !noMenu) {
-                ui.drawText("Game paused", new Vector2(320, 100), Color.Red);
+                ui.drawText("Game paused", new Vector2(320, 100), Color.OrangeRed);
             }
 
                 //Handles all methods for the controls menu, allowing for keybinds to be changed
@@ -215,7 +218,6 @@ namespace Alien_Attack
                 {
                     inControlsMenu = false;
                 }
-
             }
             else if (gamePaused && inCustomiseMenu) {
                 ui.drawCustomiseMenu(playerSpritSheet);
@@ -224,6 +226,9 @@ namespace Alien_Attack
             //Handles all methods in the main menu when the game is paused
             else if (gamePaused && !noMenu)
             {
+                if (!databaseOnline) {
+                    ui.drawText("Can't connect to the database, your score will not be saved. Try reloading the game!", new Vector2(110,60), Color.Orange);
+                }
                 option = ui.drawPauseMenu();
                 switch (option)
                 {
@@ -236,7 +241,6 @@ namespace Alien_Attack
                         {
                             gamePaused = false;
                             ui.startStopwatch();
-                            ui.stopPauseStopwatch();
                             getControls();
                             player1.getControls();
                         }
@@ -263,7 +267,6 @@ namespace Alien_Attack
         private void checkCollisions() { 
             player1.checkplayerBulletCollision(enemies, bunkers);
             checkEnemyBulletCollision();
-
         }
 
 
@@ -289,8 +292,8 @@ namespace Alien_Attack
                 cooldownEnded = false;
                 topLeftOfFrame = 0;
             }
-
         }
+
         private void getCooldownStartTime()
         {
             timeCooldownStarted = Convert.ToDouble(ui.getStopwatchTime().Replace(":", ""));
@@ -317,7 +320,6 @@ namespace Alien_Attack
                 if (!gamePaused)
                 {
                     gamePaused = true;
-                    ui.startPauseStopwatch();
                     ui.stopStopwatch();
                     ui.getStopwatchTime();
                 }
@@ -325,7 +327,6 @@ namespace Alien_Attack
                 else if (gamePaused)
                 {
                     ui.startStopwatch();
-                    ui.stopPauseStopwatch();
                     gamePaused = false;
                     getControls();
                     player1.getControls();
@@ -351,7 +352,6 @@ namespace Alien_Attack
             {
                 gameWon = true;
             }
-
         }
 
             //Code to run when the player either wins or loses a game
@@ -360,13 +360,12 @@ namespace Alien_Attack
             if (gameOver)
             {
                 ui.stopStopwatch();
-                ui.startPauseStopwatch();
                 gamePaused = true;
                 noMenu = true;
                 gameStarted = false;
                 ui.drawText("Game Over", new Vector2(295, 90));
                 ui.drawText(deathReason, new Vector2(295, 120));
-                ui.drawScore();
+                ui.drawScoreEnd();
                 if (!databaseOnline)
                 {
                     ui.drawText("Can't connect to database", new Vector2(295, 200), Color.Red);
@@ -382,7 +381,6 @@ namespace Alien_Attack
                     {
                         databaseAdding();
                     }
-                    
                 
                 if (wantsToSave == "dont save")
                 {
@@ -410,6 +408,7 @@ namespace Alien_Attack
                         {
                             ui.resetStopwatch();
                             ui.resetLevel();
+                            ui.resetScore();
                             gameOver = false;
                             noMenu = false;
                         }
@@ -428,81 +427,91 @@ namespace Alien_Attack
             }
            if (createNewUser == "") {
                 createNewUser = ui.checkIfNewUserToBeMade();
-                Debug.WriteLineIf(createNewUser != "","create new user = " + createNewUser);
            }
                 //Creates a new username based off of text inputted
             if (createNewUser == "create")
             {
-                userExistsError = false;
-                userDoesntExistError = false;
-                    //Inputs text and shows it on screen
-                var outputs = ui.enterText(currentKeyState, previousKeyState, username);
-                    //if continuing text input
-                if (outputs.cont)
-                {
-                        //Writes the text that the user is entering onto the screen
-                    username = outputs.word;
-                    ui.drawText("Enter Username: (press enter to submit)", new Vector2(300, 250), Color.LightBlue);
-                    ui.drawText(String.Join(" ", username), new Vector2(20, 300));
-                }
-                    //User has finished entering text
-                else
-                {
-                    if (database.checkIfUserExists(String.Join("", username))){
-                        userExistsError = true;
-                        createNewUser = "";
-                    }
-                    database.addUser(String.Join("", username));
-                    //Waits until user has been added to the database
-                    while (database.checkIfUserExists(String.Join("", username)) == false)
-                    {
-                        ui.loadingScreen(bunkerAtlas, new Vector2(350, 250)); //Incase of bad connection 
-                    }
-                    userID = database.getUserID(String.Join("", username));
-                    database.insertGameValues(userID, ui.getScore(), gameMode, ui.getStopwatchTime(), UI.getLevel());
-                    scoreSaved = true;
-                    wantsToSave = "dont save";
-                }
+                createUser();
             }
             if (createNewUser == "login")
             {
-                userDoesntExistError = false;
-                userExistsError = false;
-                //Inputs text and shows it on screen
-                var outputs = ui.enterText(currentKeyState, previousKeyState, username);
-                if (outputs.cont)
-                {
-                    username = outputs.word;
-                    ui.drawText("Enter an existing username: (press enter to submit)", new Vector2(220, 250), Color.LightBlue);
-                    ui.drawText(String.Join(" ", username), new Vector2(20, 300));
-                }
-                else
-                {
-                        //Checks if the user exists in the database
-                    if (database.checkIfUserExists(String.Join("", username)))
-                    {
-                        //User exists
-                        userID = database.getUserID(string.Join("", username));
-                        database.insertGameValues(userID, ui.getScore(), gameMode, ui.getStopwatchTime(), UI.getLevel());
-                        scoreSaved = true;
-                        wantsToSave = "dont save"; //Goes back to click to continue screen
-                    }
-                    else {
-                        //User doesnt exist
-                        userDoesntExistError = true;
-                        createNewUser = "";
-                    }   
-                }
+                loginUser();
             }
             if (createNewUser == "back")
             {
                 wantsToSave = "";
             }
         }
+
+        private void createUser()
+        {
+            userDoesntExistError = false;
+                //Inputs text and shows it on screen
+            var outputs = ui.enterText(currentKeyState, previousKeyState, username);
+                //if continuing text input
+            if (outputs.cont)
+            {
+                    //Writes the text that the user is entering onto the screen
+                username = outputs.word;
+                ui.drawText("Enter Username: (press enter to submit)", new Vector2(300, 250), Color.LightBlue);
+                ui.drawText(String.Join(" ", username), new Vector2(20, 300));
+            }
+                //User has finished entering text
+            else
+            {
+                if (database.checkIfUserExists(String.Join("", username))){
+                    userExistsError = true;
+                    createNewUser = "";
+                }
+                database.addUser(String.Join("", username));
+                //Waits until user has been added to the database
+                while (database.checkIfUserExists(String.Join("", username)) == false)
+                {
+                    ui.loadingScreen(bunkerAtlas, new Vector2(350, 250)); //Incase of bad connection 
+                }
+                userID = database.getUserID(String.Join("", username));
+                Console.WriteLine(userID);
+                database.insertGameValues(userID, ui.getScore(), gameMode, ui.getStopwatchTime(), UI.getLevel());
+                scoreSaved = true;
+                wantsToSave = "dont save";
+            }
+    }
+
+
+        private void loginUser() {
+            userDoesntExistError = false;
+            userExistsError = false;
+            //Inputs text and shows it on screen
+            var outputs = ui.enterText(currentKeyState, previousKeyState, username);
+            if (outputs.cont)
+            {
+                username = outputs.word;
+                ui.drawText("Enter an existing username: (press enter to submit)", new Vector2(220, 250), Color.LightBlue);
+                ui.drawText(String.Join(" ", username), new Vector2(20, 300));
+            }
+            else
+            {
+                //Checks if the user exists in the database
+                if (database.checkIfUserExists(String.Join("", username)))
+                {
+                    //User exists
+                    userID = database.getUserID(string.Join("", username));
+                    database.insertGameValues(userID, ui.getScore(), gameMode, ui.getStopwatchTime(), UI.getLevel());
+                    scoreSaved = true;
+                    wantsToSave = "dont save"; //Goes back to click to continue screen
+                }
+                else
+                {
+                    //User doesnt exist
+                    userDoesntExistError = true;
+                    createNewUser = "";
+                }
+            }
+        }
+
             //Code to go to a new level
         private void checkIfGameWon() {
             if (gameWon) {
-                ui.startPauseStopwatch();
                 ui.stopStopwatch();
                 gamePaused = true;
                 noMenu = true;
@@ -515,7 +524,6 @@ namespace Alien_Attack
                     startNewGame();
                 }
             }
-        }
-        
+        }    
     }
 }

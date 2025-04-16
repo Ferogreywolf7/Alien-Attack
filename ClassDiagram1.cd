@@ -45,7 +45,7 @@
   <Class Name="Alien_Attack.Game1">
     <Position X="12" Y="1.75" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>iEYoQCAEACJSG0lZHAgIHM0AJIAADSEDhY4AQUooIYQ=</HashCode>
+      <HashCode>iEYoQCAEACJSG0lZHAgIHM0AJIAADSEDhY4BQUooIYQ=</HashCode>
       <FileName>Game1.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -73,7 +73,7 @@
   <Class Name="UI">
     <Position X="20.5" Y="9.75" Width="8" />
     <TypeIdentifier>
-      <HashCode>0A4B0lQAAYMKAAkSGAEcgWATQAkcgSmMhOQAMAQIuAE=</HashCode>
+      <HashCode>0A4B0nQAAYMKEAkSGAEcgWATQAkcgSmMhOQAMAQAuQE=</HashCode>
       <FileName>UI.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -95,8 +95,22 @@
       </Class>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AAAGIAAAIEACEAAAEQQQAgAAEAAFAgQIAgGCAAEAQkA=</HashCode>
+      <HashCode>BAAGIAAAoEACEAAAEQQQAgAAECAFAgQIAgGCAAEAQkA=</HashCode>
       <FileName>Leaderboard.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Alien_Attack.Database">
+    <Position X="3.25" Y="15.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAACAAACCgAAgAAAIAAAEAYAAAAgAAgAAAIAgAAgA=</HashCode>
+      <FileName>Database.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Alien_Attack.firstTimeDatabseSetup">
+    <Position X="8.25" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAAAIAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>firstTimeDatabseSetup.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />

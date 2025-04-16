@@ -36,6 +36,8 @@ Talk about how I got feedback from players for a prototype version and implement
 
 Move gameplay flow chart into design and update
 
+Talk about how designed the csv file and that it is a position that doesnt use a specific path 
+
 Using documents from year 12 fpcloud:
 
 Analysis:
@@ -46,8 +48,9 @@ Describe any constraints/limitations
 Need ERD diagram of existing systems, screenshots of existing games in modelling
 Move human computer interaction into modelling section. Shows how menus will look. What I wanted it to look like
 Why using different colour schemes under the modelling section.
-Better objectives (Enumerate) - link client interview to objectives
+Better objectives (Enumerate) - link client interview to objectives.  (Secure database (see evaluation document ), user can easily understand how to play the game)
 Talk about what software using and why
+Put questionnaire under Appendix
 
 Design:
 ERD
@@ -59,11 +62,12 @@ Hardware selection (what hardware is it being used on)
 Security and integrity of data 
 
 
-Technical solution: (Worth most marks)
+Technical solution:
 commenting code to explain full method and areas broken down
 Evidence of user interface which is annotated to show what specific areas are
 Put code under an appendix and point it out as examples. Show where classes are started in the appendix. 
 Mention where you have used certain techniques and relate to specific index as well as screenshot. 
+Mention where polymorphism was used
 Evidence of variables
 Evidence of tables created
 
@@ -79,7 +83,5 @@ Mention that file paths are parameterised
 Mention all defensive programming
 
 
-Testing:
-Create an unlisted youtube video where everything is shown testing
-Reference timing in youtube video to explain how objectives are completed
+Test
 
