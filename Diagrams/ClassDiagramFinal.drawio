@@ -201,7 +201,7 @@
           <mxGeometry y="138" width="280" height="162" as="geometry" />
         </mxCell>
         <mxCell id="UGUPDbR0L_baaCXphhtI-5" value="Enemies.cs" style="swimlane;fontStyle=2;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeLast=0;collapsible=1;marginBottom=0;rounded=0;shadow=0;strokeWidth=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="-260" y="1050" width="280" height="660" as="geometry">
+          <mxGeometry x="-260" y="1050" width="280" height="640" as="geometry">
             <mxRectangle x="230" y="140" width="160" height="26" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
@@ -211,8 +211,8 @@
         <mxCell id="UGUPDbR0L_baaCXphhtI-7" value="" style="line;html=1;strokeWidth=1;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="UGUPDbR0L_baaCXphhtI-5">
           <mxGeometry y="360" width="280" height="8" as="geometry" />
         </mxCell>
-        <mxCell id="UGUPDbR0L_baaCXphhtI-8" value="Methods:&#xa;&#xa;+bulletCollision(hitbox : Rectangle) : bool&#xa;+drawBullet()+drawEnemy()&#xa;+Enemies()&#xa;+explode()&#xa;+getExploded()&#xa;+getHitbox(out destinationRectangle) : Rectangle&#xa;+getPosition(out position) : Vector2&#xa;+increaseSpeed()&#xa;+isBulletAlive(bulletSpawned) : bool&#xa;+isEnemyDead(out exploded) : bool&#xa;+killEnemy()&#xa;#moveEnemy()&#xa;+moveEnemyDown()&#xa;+randomBulletFire()&#xa;+updateBullet()+updateEnemy()&#xa;&#xa;" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="UGUPDbR0L_baaCXphhtI-5">
-          <mxGeometry y="368" width="280" height="292" as="geometry" />
+        <mxCell id="UGUPDbR0L_baaCXphhtI-8" value="Methods:&#xa;&#xa;+bulletCollision(hitbox : Rectangle) : bool&#xa;+drawBullet()+drawEnemy()&#xa;+Enemies()&#xa;+explode()&#xa;+getExploded()&#xa;+getHitbox(out destinationRectangle) : Rectangle&#xa;+getPosition(out position) : Vector2&#xa;+increaseSpeed()&#xa;+isBulletAlive(bulletSpawned) : bool&#xa;+isEnemyDead(out exploded) : bool&#xa;+killEnemy()&#xa;#moveEnemy()&#xa;+moveEnemyDown()&#xa;+randomBulletFire()&#xa;+updateBullet()&#xa;+updateEnemy()&#xa;" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="UGUPDbR0L_baaCXphhtI-5">
+          <mxGeometry y="368" width="280" height="262" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
