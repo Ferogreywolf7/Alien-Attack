@@ -155,7 +155,7 @@
         <mxCell id="6Az2789tN1aCk9sbKC3_-10" value="" style="line;html=1;strokeWidth=1;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="6Az2789tN1aCk9sbKC3_-8">
           <mxGeometry y="980" width="260" height="8" as="geometry" />
         </mxCell>
-        <mxCell id="6Az2789tN1aCk9sbKC3_-11" value="Methods:&#xa;-checkCollision()&#xa;-checkEnemyBulletCollision()&#xa;-checkForGameOverConditions()&#xa;-checkIfGameOver()&#xa;-checkIfGameWon()&#xa;-createUser()&#xa;-databaseAdding&#xa;-Draw(in gameTime : GameTime)" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="6Az2789tN1aCk9sbKC3_-8">
+        <mxCell id="6Az2789tN1aCk9sbKC3_-11" value="Methods:&#xa;-checkCollision()&#xa;-checkEnemyBulletCollision()&#xa;-checkForGameOverConditions()&#xa;-checkIfGameOver()&#xa;-checkIfGameWon()&#xa;-createUser()&#xa;-databaseAdding()&#xa;#Draw(in gameTime : GameTime)" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="6Az2789tN1aCk9sbKC3_-8">
           <mxGeometry y="988" width="260" height="192" as="geometry" />
         </mxCell>
       </root>
