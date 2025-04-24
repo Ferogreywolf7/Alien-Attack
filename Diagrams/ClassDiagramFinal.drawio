@@ -159,18 +159,18 @@
           <mxGeometry y="988" width="260" height="282" as="geometry" />
         </mxCell>
         <mxCell id="6Az2789tN1aCk9sbKC3_-16" value="Leaderboard.cs" style="swimlane;fontStyle=2;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeLast=0;collapsible=1;marginBottom=0;rounded=0;shadow=0;strokeWidth=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="120" y="790" width="230" height="256" as="geometry">
+          <mxGeometry x="120" y="790" width="330" height="510" as="geometry">
             <mxRectangle x="230" y="140" width="160" height="26" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="6Az2789tN1aCk9sbKC3_-17" value="Attributes:&#xa;-buttonPressed : string&#xa;-config : CsvConfiguration&#xa;-displayListChanged : bool&#xa;-lastModified : string&#xa;-lastSort : string&#xa;-leftHalf : List&lt;Double&gt;&#xa;-listToDisplay : List&lt;playerTableFormat&gt;" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="6Az2789tN1aCk9sbKC3_-16">
-          <mxGeometry y="26" width="230" height="164" as="geometry" />
+        <mxCell id="6Az2789tN1aCk9sbKC3_-17" value="Attributes:&#xa;-buttonPressed : string&#xa;-config : CsvConfiguration&#xa;-displayListChanged : bool&#xa;-lastModified : string&#xa;-lastSort : string&#xa;-leftHalf : List&lt;Double&gt;&#xa;-listToDisplay : List&lt;playerTableFormat&gt;&#xa;-numOfRecordsTotal : int&#xa;-numRecordToStartAt : int&#xa;-partMerged : List&lt;Double&gt;&#xa;-record : playerTableFormat&#xa;-rightHalf : List&lt;Double&gt;&#xa;-sort : string&#xa;-ui : UI&#xa;-yCoordToWriteText : int" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="6Az2789tN1aCk9sbKC3_-16">
+          <mxGeometry y="26" width="330" height="234" as="geometry" />
         </mxCell>
         <mxCell id="6Az2789tN1aCk9sbKC3_-18" value="" style="line;html=1;strokeWidth=1;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="6Az2789tN1aCk9sbKC3_-16">
-          <mxGeometry y="190" width="230" height="8" as="geometry" />
+          <mxGeometry y="260" width="330" height="8" as="geometry" />
         </mxCell>
-        <mxCell id="6Az2789tN1aCk9sbKC3_-19" value="Methods:" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="6Az2789tN1aCk9sbKC3_-16">
-          <mxGeometry y="198" width="230" height="58" as="geometry" />
+        <mxCell id="6Az2789tN1aCk9sbKC3_-19" value="Methods:&#xa;-breakdownList(in toSort, out partMerged) : List&lt;Double&gt;&#xa;+clearFileAndWriteHeaders()&#xa;-convertToPlayerFormat(in username : string, &#xa;in highestLevel : int, in longestSurvived : string, &#xa;in highScore : int) : playerTableFormat&#xa;-displayData()&#xa;-drawLeaderboard()&#xa;-getDateTimeModified()&#xa;-getSpecificData(in index : int, out listToSort) : List&lt;Double&gt;&#xa;+initialiseLeaderboard()&#xa;+Leaderboard(in ui : UI)&#xa;-merge(" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="6Az2789tN1aCk9sbKC3_-16">
+          <mxGeometry y="268" width="330" height="202" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
