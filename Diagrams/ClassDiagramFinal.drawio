@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0" version="26.2.14">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
-    <mxGraphModel dx="2864" dy="3422" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="2185" dy="3061" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-0" />
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-1" parent="WIyWlLk6GJQsqaUBKTNV-0" />
@@ -75,7 +75,7 @@
           <mxGeometry y="98" width="190" height="58" as="geometry" />
         </mxCell>
         <mxCell id="puJlVjGl2N-9wqyJ1BMS-8" value="Database.cs" style="swimlane;fontStyle=2;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeLast=0;collapsible=1;marginBottom=0;rounded=0;shadow=0;strokeWidth=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
-          <mxGeometry x="-820" y="200" width="320" height="370" as="geometry">
+          <mxGeometry x="-820" y="200" width="320" height="320" as="geometry">
             <mxRectangle x="230" y="140" width="160" height="26" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
@@ -86,7 +86,7 @@
           <mxGeometry y="160" width="320" height="8" as="geometry" />
         </mxCell>
         <mxCell id="puJlVjGl2N-9wqyJ1BMS-11" value="Methods:&#xa;+addUser(in username : string)&#xa;+checkIfUserExists(in username : string) : bool&#xa;+connectToDatabase()&#xa;+Database(in leaderboard : Leaderboard)&#xa;+getLeaderboardData()&#xa;+getUserID(in username : string, out userid) : int&#xa;+insertGameValues(in userid : int, in score : int,&#xa; in gameMode : string, in timesurvived : string, in level : int)&#xa;+tryConnectToDatabase() : bool" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="puJlVjGl2N-9wqyJ1BMS-8" vertex="1">
-          <mxGeometry y="168" width="320" height="202" as="geometry" />
+          <mxGeometry y="168" width="320" height="152" as="geometry" />
         </mxCell>
         <mxCell id="puJlVjGl2N-9wqyJ1BMS-13" value="Player.cs" style="swimlane;fontStyle=2;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeLast=0;collapsible=1;marginBottom=0;rounded=0;shadow=0;strokeWidth=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="-720" y="-1160" width="470" height="720" as="geometry">
@@ -131,7 +131,7 @@
           <mxGeometry y="158" width="310" height="92" as="geometry" />
         </mxCell>
         <mxCell id="6Az2789tN1aCk9sbKC3_-4" value="EnemyController.cs" style="swimlane;fontStyle=2;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeLast=0;collapsible=1;marginBottom=0;rounded=0;shadow=0;strokeWidth=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
-          <mxGeometry x="-490" y="30" width="310" height="630" as="geometry">
+          <mxGeometry x="-490" y="30" width="310" height="590" as="geometry">
             <mxRectangle x="230" y="140" width="160" height="26" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
@@ -142,7 +142,7 @@
           <mxGeometry y="360" width="310" height="8" as="geometry" />
         </mxCell>
         <mxCell id="6Az2789tN1aCk9sbKC3_-7" value="Methods:&#xa;+checkBulletCollision(in playerHitbox : Rectangle) : bool&#xa;+checkCollsion(bulletHitbox : Rectangle) : bool&#xa;+checkIfDelete()&#xa;+deleteEnemy(in enemyNum : int)&#xa;+EnemyController(in spriteBatch : spriteBatch, &#xa;in texture : Texture2D, in startPos : Vector2D, &#xa;in gameMode : string, in explosionSheet : Texture2D,&#xa; in enemyBulletTexture : Texture2D)&#xa;+getLowestEnemy(out lowestCoord) : int&#xa;+getNumberOfEnemies() : int&#xa;-increaseAllSpeed()&#xa;-moveAllDown()&#xa;+spawnEnemies(in rows : int, in columns : int)&#xa;+updateAllEnemies()" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="6Az2789tN1aCk9sbKC3_-4" vertex="1">
-          <mxGeometry y="368" width="310" height="262" as="geometry" />
+          <mxGeometry y="368" width="310" height="222" as="geometry" />
         </mxCell>
         <mxCell id="6Az2789tN1aCk9sbKC3_-8" value="Game1.cs" style="swimlane;fontStyle=2;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeLast=0;collapsible=1;marginBottom=0;rounded=0;shadow=0;strokeWidth=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="670" y="-70" width="260" height="1230" as="geometry">
