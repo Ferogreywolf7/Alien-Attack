@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0" version="26.2.14">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
-    <mxGraphModel dx="2015" dy="1802" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="1924" dy="1753" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-0" />
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-1" parent="WIyWlLk6GJQsqaUBKTNV-0" />
@@ -201,18 +201,18 @@
           <mxGeometry y="138" width="280" height="162" as="geometry" />
         </mxCell>
         <mxCell id="UGUPDbR0L_baaCXphhtI-5" value="Enemies.cs" style="swimlane;fontStyle=2;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeLast=0;collapsible=1;marginBottom=0;rounded=0;shadow=0;strokeWidth=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
-          <mxGeometry x="-260" y="1050" width="160" height="236" as="geometry">
+          <mxGeometry x="-260" y="1050" width="250" height="520" as="geometry">
             <mxRectangle x="230" y="140" width="160" height="26" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="UGUPDbR0L_baaCXphhtI-6" value="Attributes:&#xa;#bullet : Bullets&#xa;#buletSpawned : bool&#xa;-counter : int" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="UGUPDbR0L_baaCXphhtI-5">
-          <mxGeometry y="26" width="160" height="144" as="geometry" />
+        <mxCell id="UGUPDbR0L_baaCXphhtI-6" value="Attributes:&#xa;#bullet : Bullets&#xa;#buletSpawned : bool&#xa;-counter : int&#xa;#currentKeyboardState  : KeyboardState&#xa;#destinationRectangle : Rectangle&#xa;#drawCount : int&#xa;#exploded : bool&#xa;-explosionDestinationRectangle : Rectangle&#xa;-explosionSourceRectangle : Rectangle&#xa;#explosionSpriteSheet : Texture&#xa;#isDead : bool&#xa;#moveType : string&#xa;#oldKeyboardState : KeyboardState&#xa;#originalPosition : Vector2&#xa;#position : Vector2&#xa;#rand : Random&#xa;#randomNum : int&#xa;#spriteBatch : SpriteBatch&#xa;#steps : float&#xa;#texture : Texture2D&#xa;-topLeft : int&#xa;#updateCount : int" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="UGUPDbR0L_baaCXphhtI-5">
+          <mxGeometry y="26" width="250" height="334" as="geometry" />
         </mxCell>
         <mxCell id="UGUPDbR0L_baaCXphhtI-7" value="" style="line;html=1;strokeWidth=1;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="UGUPDbR0L_baaCXphhtI-5">
-          <mxGeometry y="170" width="160" height="8" as="geometry" />
+          <mxGeometry y="360" width="250" height="8" as="geometry" />
         </mxCell>
-        <mxCell id="UGUPDbR0L_baaCXphhtI-8" value="Methods:" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="UGUPDbR0L_baaCXphhtI-5">
-          <mxGeometry y="178" width="160" height="58" as="geometry" />
+        <mxCell id="UGUPDbR0L_baaCXphhtI-8" value="Methods:&#xa;&#xa;+bulletCollision(hitbox : Rectangle) : bool+drawBullet()&#xa;+drawEnemy()&#xa;+mediumEnemy(in medEnemyTexture : Texture2D,&#xa; in spriteBatch : SpriteBatch, in startPos : Vector2,&#xa;in speed : float, in explosionTexture : Texture2D, &#xa;in bulletTexture : Texture2D)&#xa;+randomBulletFire()&#xa;+updateBullet()&#xa;&#xa;&#xa;" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="UGUPDbR0L_baaCXphhtI-5">
+          <mxGeometry y="368" width="250" height="152" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
