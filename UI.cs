@@ -49,12 +49,12 @@ public class UI
     private Rectangle leaderboardBoxRight;
     private string text;
     private Double buttonCooldownStartTime;
-    public UI(SpriteBatch _spriteBatch, SpriteFont testFont, Texture2D textBorder, Texture2D lifeIcon, Texture2D backArrow, Texture2D forwardArrow, Controls control)
+    public UI(SpriteBatch spriteBatch, SpriteFont testFont, Texture2D textBorder, Texture2D lifeIcon, Texture2D backArrow, Texture2D forwardArrow, Controls control)
     {
         timer = new Stopwatch();
         pausedTimer = new Stopwatch();
         controls = control;
-        spriteBatch = _spriteBatch;
+        this.spriteBatch = spriteBatch;
         font = testFont;
         textBox = textBorder;
         heart = lifeIcon;
@@ -66,28 +66,25 @@ public class UI
         upperBox = new Rectangle(295, 190, 160, 40);
         lowerBox = new Rectangle(295, 240, 160, 40);
         bottomBox = new Rectangle(295, 290, 160, 40);
-
         upperBoxLeft = upperBox;
         upperBoxLeft.Offset(-200, 0);
         upperBoxRight = upperBox;
         upperBoxRight.Offset(200, 0);
-
         lowerBoxLeft = lowerBox;
         lowerBoxLeft.Offset(-200, 0);
         lowerBoxRight = lowerBox;
         lowerBoxRight.Offset(200, 0);
-
         leaderboardBoxLeft = new Rectangle(205, 240, 130, 40);
         leaderboardBoxMiddleLeft = new Rectangle(365, 240, 130, 40);
         leaderboardBoxMiddleRight = new Rectangle(525, 240, 130, 40);
         leaderboardBoxRight = new Rectangle(685, 240, 130, 40);
-
         level = 1;
         currentColour = 0;
         counter = 0;
         text = "loading";
         buttonCooldownStartTime = 0.0;
     }
+
     public int getScore() {
         return score;
     }
@@ -118,7 +115,7 @@ public class UI
     }
 
     public string drawControlsMenu() {
-        drawText("Click on a box and enter a key to edit it's keybind", new Vector2(270, 120), Color.Brown);
+        drawText("Click on a box and enter a key to edit it's keybind", new Vector2(270, 120), Color.Yellow);
 
         getControls();
         //Calls the drawing for the buttons
@@ -135,21 +132,18 @@ public class UI
 
         if (drawButtons(textBox, lowerBox, "Shoot - " + fire))
         {
-            return "Shoot";
-
+			return "Shoot";
         }
-
+		
         //for pause control changing
         if (drawButtons(textBox, bottomBox, "Pause - " + pause))
         {
             return "Pause";
-
         }
             //For backArrow going back to main menu
         if (drawButtons(backArrow, new Rectangle(50, 50, 100, 50), "")) {
             return "Back";
         }
-
         return "";
     }
 
@@ -196,11 +190,6 @@ public class UI
         {
             return "Controls menu";
         }
-
-        /*if (drawButtons(textBox, lowerBox, "Customise")) {
-            return "Customise";
-        }*/
-
         return "";
     }
 
@@ -248,6 +237,7 @@ public class UI
             drawLives(noOfLives);
         }
     }
+	
     //Stopwatch functions
     //Uses c# timespan as a timer that only runs when the game is unpaused
     public void startStopwatch()
@@ -356,7 +346,6 @@ public class UI
             return "dont save";
         }
         return "";
-        
     }
 
     public string checkIfNewUserToBeMade()
@@ -374,7 +363,6 @@ public class UI
             return "back";
         }
         return "";
-
     }
 
     public string checkIfLeaderboardShown() {
@@ -508,7 +496,5 @@ public class UI
         spriteBatch.End();
         drawText(text, new Vector2(497-counter/50, 145));
         counter++;
-        
     }
 }
-

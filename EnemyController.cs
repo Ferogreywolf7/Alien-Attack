@@ -3,14 +3,13 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-
 namespace Alien_Attack
 {
     internal class EnemyController
     {
         private const int enemySpacing = 60;
         private Texture2D enemyTexture;
-        private Texture2D explosion;
+        private Texture2D explosionTexture;
         private Texture2D bulletTexture;
         private SpriteBatch spriteBatch;
         private Vector2 startPos;
@@ -31,11 +30,9 @@ namespace Alien_Attack
         private int level;
         private int xPos;
 
-        //Will only spawn in the regular enemies for now
-
-        public EnemyController(SpriteBatch _spriteBatch, Texture2D texture, Vector2 startPos, string gameMode, Texture2D explosionSheet, Texture2D enemyBulletTexture)
+        public EnemyController(SpriteBatch spriteBatch, Texture2D texture, Vector2 startPos, string gameMode, Texture2D explosionSheet, Texture2D enemyBulletTexture)
         {
-            spriteBatch = _spriteBatch;
+            this.spriteBatch = spriteBatch;
             this.startPos = startPos;
             this.gameMode = gameMode;
             currentPos = startPos;
@@ -47,7 +44,7 @@ namespace Alien_Attack
             currentSpeed = 0.5f + level/3;
             lowestCoord = 0;
             spawnedOnThisTurn = true;
-            explosion = explosionSheet;
+            explosionTexture = explosionSheet;
             bulletTexture = enemyBulletTexture;
         }
 
@@ -64,7 +61,7 @@ namespace Alien_Attack
                 for (int column = 0; column <= this.columns; column++)
                 {
                     currentPos.X += enemySpacing;
-                    enemies.Add(new mediumEnemy(enemyTexture, spriteBatch, currentPos, currentSpeed, explosion, bulletTexture));
+                    enemies.Add(new mediumEnemy(enemyTexture, spriteBatch, currentPos, currentSpeed, explosionTexture, bulletTexture));
                 }
                 currentPos.X = startPos.X;
             }
@@ -97,12 +94,9 @@ namespace Alien_Attack
                     spawnedOnThisTurn = true;
                 }
                     num++;
-
-                    updateAllEnemies();
-                
+                    updateAllEnemies();   
             }
-            else { num = 0; }
-            
+            else { num = 0; }   
         }
         
         public void drawAllEnemies() {
@@ -153,7 +147,7 @@ namespace Alien_Attack
             return lowestCoord;
         }
 
-            //Keeps the enemy alive if the bullet hasn't been destroyed yet or explosion animation cycle hasn't completed
+            //Keeps the enemy alive if the bullet hasn't been destroyed yet or explosionTexture animation cycle hasn't completed
         public void checkIfDelete()
         {
             foreach (mediumEnemy enemy in enemies.ToList())
@@ -165,7 +159,6 @@ namespace Alien_Attack
                         deleteEnemy(collisionCount);
                     }
                 }
-                
                 collisionCount++;
             }
             collisionCount = 0;
@@ -197,8 +190,7 @@ namespace Alien_Attack
         public bool checkCollision(Rectangle bulletHitbox) {
             //Loops through each enemy, getting their hitbox and checking if it is in the bullets hitbox, then deleting the enemy if so
             foreach (mediumEnemy enemy2 in enemies)
-            {
-                
+            { 
                 if (enemy2.checkCollision(bulletHitbox) && !enemy2.isEnemyDead())
                 {
                     enemy2.killEnemy();
@@ -208,11 +200,11 @@ namespace Alien_Attack
             return false;
         }
 
-        public bool checkBulletCollision(Rectangle playerHitBox) {
+        public bool checkBulletCollision(Rectangle playerHitbox) {
                 //Checks for the collision between enemy bullets and the player
             foreach (mediumEnemy enemy3 in enemies)
             {
-                isCollision = enemy3.bulletCollision(playerHitBox);
+                isCollision = enemy3.bulletCollision(playerHitbox);
                 if (isCollision)
                 {
                     return true;

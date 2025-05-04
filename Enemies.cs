@@ -100,6 +100,7 @@ namespace Alien_Attack
                     break;
             } 
         }
+		
             //Enemies get slightly faster when you kill them
         public void increaseSpeed() {
             steps += (float) 0.04;
@@ -117,7 +118,6 @@ namespace Alien_Attack
         }
 
         //Explosion mechanics for all enemies
-
         public void explode() {
             if (!exploded)
             {

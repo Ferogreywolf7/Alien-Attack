@@ -1,12 +1,11 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
-
+using System.Collections.Generic;
 namespace Alien_Attack
 {
     internal class BunkerPart
     {
         private int destructionCount;
-        private SpriteBatch spriteBatch;
         private Texture2D textureAtlas;
         private const int partWidth = 40;
         private const int partHeight = 40;
@@ -28,8 +27,7 @@ namespace Alien_Attack
           sourceRectangle = new Rectangle(200 * destructionCount, 0, 200, 200);
         }
 
-        public void drawBunkerPart(SpriteBatch _spriteBatch) {
-            spriteBatch = _spriteBatch;
+        public void drawBunkerPart(SpriteBatch spriteBatch) {
             spriteBatch.Begin();
             spriteBatch.Draw(textureAtlas, destinationRectangle, sourceRectangle, Color.White);
             spriteBatch.End();

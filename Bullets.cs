@@ -36,7 +36,6 @@ namespace Alien_Attack
             spriteBatch.Begin();
             spriteBatch.Draw(bulletTexture, destinationRectangle, Color.White);
             spriteBatch.End();
-
         }
 
         public Rectangle getHitbox() {
@@ -46,6 +45,5 @@ namespace Alien_Attack
         public Vector2 getBulletPos() {
             return position;
         }
-
     }
 }

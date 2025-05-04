@@ -9,36 +9,31 @@ namespace Alien_Attack
 {
     class Player
     {
-        private int steps;
+        private const int steps = 5;
         private Vector2 position;
         Rectangle destinationRectangle;
         SpriteBatch spriteBatch;
-
         KeyboardState currentKeyboardState;
-
         private Keys moveLeft;
         private Keys moveRight;
         private Keys shoot;
         Controls controls;
-        private int playerWidth;
-
+        private const int playerWidth = 90;
             //Bullet related variables
         private List<Bullets> bullets;
         private Texture2D bulletTexture;
         private Rectangle bulletHitbox;
         private bool bunkerHit;
         private int extraXCoord;
-
             //Cooldown related variables
         private bool timeElapsed;
         private double startTime;
-        private double bulletCooldown;
+        private const double bulletCooldown = 1.5;
         private UI ui;
-
         private static Texture2D playerAnimated;
         private int topLeft;
         private int counter;
-
+            //reloadBar related variables
         private Vector2 barPosition;
         private bool startReload;
         private Texture2D reloadBarTexture;
@@ -48,12 +43,9 @@ namespace Alien_Attack
 
         public Player(Texture2D playerSpriteSheet, Texture2D bulletTexture, Texture2D reloadBarTexture, Texture2D reloadBorderTexture, Vector2 player1StartPos, Controls control, UI ui) {
             this.ui = ui;
-            steps = 5;
             position = player1StartPos;
             this.bulletTexture = bulletTexture;
-            bulletCooldown = 1.5;
             bullets = new List<Bullets> { };
-            playerWidth = 90;
             controls = control;
             getControls();
             timeElapsed = true;
@@ -81,7 +73,6 @@ namespace Alien_Attack
 
         
         public void drawPlayer(SpriteBatch _spriteBatch) {
-            
             spriteBatch = _spriteBatch;
             destinationRectangle = new Rectangle((int)position.X, (int)position.Y, 90, playerWidth);
             Rectangle sourceRectangle = new Rectangle(topLeft, 0, 250, 330);
@@ -90,14 +81,7 @@ namespace Alien_Attack
             spriteBatch.Draw(playerAnimated, destinationRectangle, sourceRectangle, Color.White);
             playerReloadBar();
             spriteBatch.End();
-
-
-            //.ToList is used to make a unique and unmodifiable copy of the bullets list to prevent changes during the foreach loop
-            foreach (Bullets bullet in bullets.ToList())
-            {
-                bullet.drawBullets(_spriteBatch);
-            }
-
+            
                 //Code for switching animation states for the player by moving the coordinates responsible for grabbing the image off of the sprite sheet
             counter++;
             if (counter == 10)
@@ -109,7 +93,11 @@ namespace Alien_Attack
                 topLeft = 0;
             }
 
-            
+            //.ToList is used to make a unique and unmodifiable copy of the bullets list to prevent changes during the foreach loop
+            foreach (Bullets bullet in bullets.ToList())
+            {
+                bullet.drawBullets(_spriteBatch);
+            }
         }
 
         public Vector2 getPosition() {
@@ -136,7 +124,6 @@ namespace Alien_Attack
             if (currentKeyboardState.IsKeyDown(moveLeft)    ) {
                 movePlayerLeft();
             }
-
             if (currentKeyboardState.IsKeyDown(moveRight)) {
                 movePlayerRight();
             }
@@ -184,7 +171,6 @@ namespace Alien_Attack
 
         public void checkplayerBulletCollision(EnemyController enemies, Bunkers bunkers)
         {
-
             foreach (Bullets bullet in bullets.ToList())
             {
                 bulletHitbox = bullet.getHitbox();
@@ -219,7 +205,6 @@ namespace Alien_Attack
                     barWidth++;
                 }
                 counter2++;
-
                 spriteBatch.Draw(reloadBarTexture, new Rectangle((int)barPosition.X + playerWidth / 4, (int)barPosition.Y + 102, barWidth, 15), Color.White);
                 spriteBatch.Draw(reloadBorderTexture, new Rectangle((int)barPosition.X + playerWidth / 4, (int)barPosition.Y + 100, 50, 20), Color.White);
             }

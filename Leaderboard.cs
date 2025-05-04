@@ -37,7 +37,7 @@ namespace Alien_Attack
             initialiseLeaderboard();
         }
 
-        public string getDateTimeModified() {
+        private string getDateTimeModified() {
             var lastModifiedDateTime = File.GetLastAccessTime("Content/playerTable.csv");
             return lastModifiedDateTime.ToString("dd/mm/yy hh:mm:ss");
         }
@@ -57,8 +57,7 @@ namespace Alien_Attack
         }
         
             //Uses default file reader to get text in the csv file and then uses the csv reader to parse it into usable data
-        public void readDataFromPlayerFile() {
-
+        private void readDataFromPlayerFile() {
             using (StreamReader reader = new StreamReader("Content/playerTable.csv"))
             using (CsvReader csv = new CsvReader(reader, config))
             {
@@ -67,6 +66,7 @@ namespace Alien_Attack
             }
             
         }
+		
             //Gets the specific data from the list
         private List<double> getSpecificData(int index) {
             List<double> listToSort = new List<double>();
@@ -115,9 +115,9 @@ namespace Alien_Attack
             }
             return reorganised;
         }
+		
             //Sorts by the specific data when the button is pressed
         public void drawLeaderboard() {
-            
                 //System for showing the next/previous 10 data
             if (buttonPressed == "next")
             {
@@ -170,6 +170,7 @@ namespace Alien_Attack
         private void reverseRecords() {
                 listToDisplay.Reverse();
         }
+		
             //Displays data for all users
         private void displayData() {
             yCoordToWriteText = 300;
@@ -246,7 +247,6 @@ namespace Alien_Attack
         }
 
         public void writeDataToPlayerFile(string username, int highestLevel, string longestSurvived, int highScore) {
-
             record = convertToPlayerFormat(username, highestLevel, longestSurvived, highScore);
                 //Using only creates these variables for specifically now
             using (StreamWriter writer = new StreamWriter("Content/playerTable.csv", true))
@@ -258,12 +258,11 @@ namespace Alien_Attack
         }
 
         private playerTableFormat convertToPlayerFormat(string username, int highestLevel, string longestSurvived, int highScore) {
-
             return new playerTableFormat { username = username, highestLevel = highestLevel, longestSurvived = longestSurvived, highScore = highScore };
         }
 
         //merge sort code
-        public List<Double> breakdownList(List<Double> toSort)
+        private List<Double> breakdownList(List<Double> toSort)
         {
             int midpoint = toSort.Count / 2;
             if (toSort.Count > 1)

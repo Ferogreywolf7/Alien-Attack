@@ -3,8 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-
 
 namespace Alien_Attack
 {
@@ -29,7 +27,7 @@ namespace Alien_Attack
         private Texture2D lifeIcon;
         private Texture2D backArrow;
         private Texture2D forwardArrow;
-        private Texture2D playerSpritSheet;
+        private Texture2D playerSpriteSheet;
         private Texture2D explosionSpriteSheet;
         private Texture2D playerExplosionSpriteSheet;
         private Texture2D enemyBulletTexture;
@@ -72,6 +70,7 @@ namespace Alien_Attack
         private bool scoreSaved;
         private bool userDoesntExistError;
         private bool userExistsError;
+		
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -106,11 +105,10 @@ namespace Alien_Attack
             forwardArrow = Content.Load<Texture2D>("forwardArrow");
             reloadBar = Content.Load<Texture2D>("reloadBar");
             font = Content.Load<SpriteFont>("testFont");
-
-            playerSpritSheet = Content.Load<Texture2D>("playerAnimationSpriteSheet");
+            playerSpriteSheet = Content.Load<Texture2D>("playerAnimationSpriteSheet");
             explosionSpriteSheet = Content.Load<Texture2D>("explosionAnimationSpriteSheet");
             playerExplosionSpriteSheet = Content.Load<Texture2D>("playerExplosion");
-
+			
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             controls = new Controls();
             getControls();
@@ -121,12 +119,12 @@ namespace Alien_Attack
             ui.startPauseStopwatch();
         }
 
-        public void startNewGame() {
+        private void startNewGame() {
             gameMode = "Classic";
             deathReason = "";
             player1StartPos = new Vector2(50, 800);
             enemyStartPos = new Vector2(11, 50);
-            player1 = new Player(playerSpritSheet, playerBulletTexture, reloadBar, textBorder, player1StartPos, controls, ui);
+            player1 = new Player(playerSpriteSheet, playerBulletTexture, reloadBar, textBorder, player1StartPos, controls, ui);
             bunkers = new Bunkers(bunkerAtlas, 2);
             enemies = new EnemyController(_spriteBatch, enemyTexture, enemyStartPos, gameMode, explosionSpriteSheet, enemyBulletTexture);
             enemies.spawnEnemies(enemyRows, enemyCollums);
@@ -166,9 +164,7 @@ namespace Alien_Attack
                 player1.updatePlayer(currentKeyState, previousKeyState);
                 enemies.updateAllEnemies();
                 bunkers.updateBunkers();
-
                 checkCollisions();
-
             }
 
             //All logic for changing keybinds while game is paused. In this class due to monogame restrictions
@@ -220,7 +216,7 @@ namespace Alien_Attack
                 }
             }
             else if (gamePaused && inCustomiseMenu) {
-                ui.drawCustomiseMenu(playerSpritSheet);
+                ui.drawCustomiseMenu(playerSpriteSheet);
             }
 
             //Handles all methods in the main menu when the game is paused
@@ -281,7 +277,7 @@ namespace Alien_Attack
                     part.partHit();
                 }
             }
-            //Checks to see if the enemy bullets have hit the player and if so, reduces number of lives
+				//Checks to see if the enemy bullets have hit the player and if so, reduces number of lives
             playerHit = enemies.checkBulletCollision(player1.getPlayerHitbox());
                 //Player can only be hit again when the cooldown has ended
             cooldownEnded = ui.checkCooldown(timeCooldownStarted, invulnerableCooldown);
@@ -290,7 +286,7 @@ namespace Alien_Attack
                 explosionDestinationRectangle = new Rectangle((int) player1.getPosition().X, (int) player1.getPosition().Y-30, 75, 75);
                 getCooldownStartTime();
                 cooldownEnded = false;
-                topLeftOfFrame = 0;
+                
             }
         }
 
@@ -300,7 +296,11 @@ namespace Alien_Attack
         }
 
         private void drawPlayerExplosionAnimation() {
-            explosionFrameRectangle = new Rectangle(topLeftOfFrame, 0, 175, 175);
+            if (topLeftOfFrame > 1750)
+            {
+                topLeftOfFrame = 0;
+            }
+                explosionFrameRectangle = new Rectangle(topLeftOfFrame, 0, 175, 175);
             _spriteBatch.Begin();
             _spriteBatch.Draw(playerExplosionSpriteSheet, explosionDestinationRectangle ,explosionFrameRectangle ,Color.White);
             _spriteBatch.End();
@@ -309,6 +309,7 @@ namespace Alien_Attack
                 topLeftOfFrame += 175;
                 counter = 0;
             }
+            
         }
 
 
@@ -355,8 +356,7 @@ namespace Alien_Attack
         }
 
             //Code to run when the player either wins or loses a game
-        private void checkIfGameOver()
-        {
+        private void checkIfGameOver(){
             if (gameOver)
             {
                 ui.stopStopwatch();
@@ -427,7 +427,7 @@ namespace Alien_Attack
             }
            if (createNewUser == "") {
                 createNewUser = ui.checkIfNewUserToBeMade();
-           }
+			}
                 //Creates a new username based off of text inputted
             if (createNewUser == "create")
             {
@@ -443,8 +443,7 @@ namespace Alien_Attack
             }
         }
 
-        private void createUser()
-        {
+        private void createUser(){
             userDoesntExistError = false;
                 //Inputs text and shows it on screen
             var outputs = ui.enterText(currentKeyState, previousKeyState, username);
@@ -475,7 +474,7 @@ namespace Alien_Attack
                 scoreSaved = true;
                 wantsToSave = "dont save";
             }
-    }
+		}
 
 
         private void loginUser() {

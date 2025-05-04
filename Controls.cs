@@ -82,7 +82,7 @@ namespace Alien_Attack
             return keyInput;
         }
 
-        public bool setShoot(KeyboardState currentKeyState)
+        public bool setFire(KeyboardState currentKeyState)
         {
             keyInput = false;
             _keyboard = currentKeyState;
@@ -138,14 +138,13 @@ namespace Alien_Attack
                         isKeyInput = setRight(currentKeyState);
                         break;
                     case "Shoot":
-                        isKeyInput = setShoot(currentKeyState);
+                        isKeyInput = setFire(currentKeyState);
                         break;
                     case "Pause":
                         isKeyInput = setPause(currentKeyState);
                         break;
                 }
             }
-
         }
     }
 }

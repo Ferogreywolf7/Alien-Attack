@@ -3,12 +3,12 @@ using System.Diagnostics;
 
 namespace Alien_Attack
 {
-    internal class firstTimeDatabseSetup
+    internal class FirstTimeDatabaseSetup
     {
         private string connectionString;
         private NpgsqlDataSource dataSource;
 
-        public firstTimeDatabseSetup(){
+        public FirstTimeDatabaseSetup(){
             connectionString = "Host=192.168.1.163;Username=Admin;Password=Tru3N4s7;Database=AlienAttack";
             dataSource = NpgsqlDataSource.Create(connectionString);
             try
@@ -18,7 +18,6 @@ namespace Alien_Attack
                 cmd = dataSource.CreateCommand("CREATE TABLE Games( GameID SERIAL PRIMARY KEY NOT NULL, UserID int, score int NOT NULL, GameMode VarChar, TimeSurvived time, DateOfPlay date, score int, FOREIGN KEY (UserID) REFERENCES Players (UserID) );");
                 cmd.ExecuteReader();
                 Debug.WriteLine("Connected to database");
-                
             }
             catch {
                 Debug.WriteLine("Cant connect to database, need to rerun later");

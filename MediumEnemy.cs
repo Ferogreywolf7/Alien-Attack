@@ -5,18 +5,18 @@ namespace Alien_Attack
 {
     internal class mediumEnemy : Enemies
     {
-        private Rectangle hitbox;
+        private Rectangle hitBox;
         private Texture2D bulletTexture;
         private Vector2 bulletSpawnPos;
         private Rectangle sourceRectangle;
         private int counter;
         private int topLeft;
 
-        public mediumEnemy(Texture2D medEnemyTexture, SpriteBatch _spriteBatch, Vector2 startPos, float speed, Texture2D explosionTexture, Texture2D bulletTexture)
+        public mediumEnemy(Texture2D medEnemyTexture, SpriteBatch spriteBatch, Vector2 startPos, float speed, Texture2D explosionTexture, Texture2D bulletTexture)
         {
             steps = speed;
             texture = medEnemyTexture;
-            spriteBatch = _spriteBatch;
+            this.spriteBatch = spriteBatch;
             originalPosition = startPos;
             position = originalPosition;
             moveType = "right";
@@ -26,6 +26,7 @@ namespace Alien_Attack
             this.bulletTexture = bulletTexture;
         }
 
+            //Method for drawing an animated version of the enemy sprite    
         public override void drawEnemy()
         {
             if (counter % 10 == 0) {
@@ -42,6 +43,7 @@ namespace Alien_Attack
             counter++;
         }
 
+          //Method for having a random chance to fire a bullet which changes based on the level and number of enemies
         public override void randomBulletFire()
         {
             randomNum = rand.Next(1, 80+(EnemyController.getNumberOfEnemies()*20) - (UI.getLevel()*5));
@@ -58,12 +60,10 @@ namespace Alien_Attack
             {
                 bullet.updateBullets();
             }
-
             if (bullet.getBulletPos().Y >= 1000)
             {
                 bulletSpawned = false;
             }
-
         }
 
         public override void drawBullet() {
@@ -73,9 +73,9 @@ namespace Alien_Attack
             }
         }
 
-        public bool bulletCollision(Rectangle Hitbox){
-            hitbox = Hitbox;
-            if (bulletSpawned && bullet.getHitbox().Intersects(hitbox))
+        public bool bulletCollision(Rectangle hitbox){
+            hitBox = hitbox;
+            if (bulletSpawned && bullet.getHitbox().Intersects(hitBox))
             {
                 bulletSpawned = false;
                 return true;

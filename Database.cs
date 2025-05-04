@@ -2,7 +2,6 @@
 using System;
 using System.Threading.Tasks;
 using System.Diagnostics;
-//Where the connection to the database will be established
 
 namespace Alien_Attack
 {
@@ -16,9 +15,9 @@ namespace Alien_Attack
         private string longestSurvived;
         private int highScore;
         private Leaderboard leaderboard;
-            //var used when the datatype doesnt need to be named and can just be implied based off of other areas
+            //var is used when the datatype doesnt need to be named and can just be implied based off of other areas
         public Database(Leaderboard leaderboard) {
-             connectionString = "Host=192.168.1.163;Username=user07;Password=d4T4b4S37;Database=AlienAttack";       //Local
+             connectionString = "Host=192.168.1.163;Username=user07;Password=d4T4b4S37;Database=AlienAttack";
             this.leaderboard = leaderboard;
         }
 
@@ -37,7 +36,6 @@ namespace Alien_Attack
                 dataSource.Dispose();
                 return false;
             }
-            
         }
 
         public async Task connectToDatabase() {

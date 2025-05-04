@@ -12,8 +12,8 @@ namespace Alien_Attack
         private int screenWidth;
         private int pieceCount;
         private int bunkerNo;
-        private const int pieceHeight = 30;
-        private const int pieceWidth = 30;
+        private const int pieceHeight = 40;
+        private const int pieceWidth = 40;
         private SpriteBatch spriteBatch;
         private Rectangle bulletHitbox;
         private List<BunkerPart> bunkerPieces;
@@ -46,14 +46,14 @@ namespace Alien_Attack
             pieceCount = 0;
         }
 
-        public void drawBunkers(SpriteBatch _spriteBatch)
+        public void drawBunkers(SpriteBatch spriteBatch)
         {
-            spriteBatch = _spriteBatch;
+            this.spriteBatch = spriteBatch;
             foreach (BunkerPart part in bunkerPieces) {
-                part.drawBunkerPart(spriteBatch);
-            }
-            
+                part.drawBunkerPart(this.spriteBatch);
+            } 
         }
+		
         private void createBunkers() {
                 //Placing parts of the bunker in certain positions
             level = UI.getLevel();
