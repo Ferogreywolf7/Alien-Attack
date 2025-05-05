@@ -100,7 +100,7 @@ namespace Alien_Attack
             enemyTexture = Content.Load<Texture2D>("enemies");
             enemyBulletTexture = Content.Load<Texture2D>("enemyBullet");
             bunkerAtlas = Content.Load<Texture2D>("combinedBlocks");
-            lifeIcon = Content.Load<Texture2D>("playerHeartPlaceholder");
+            lifeIcon = Content.Load<Texture2D>("playerHeart");
             backArrow = Content.Load<Texture2D>("backArrow");
             forwardArrow = Content.Load<Texture2D>("forwardArrow");
             reloadBar = Content.Load<Texture2D>("reloadBar");
@@ -123,7 +123,7 @@ namespace Alien_Attack
             gameMode = "Classic";
             deathReason = "";
             player1StartPos = new Vector2(50, 800);
-            enemyStartPos = new Vector2(11, 50);
+            enemyStartPos = new Vector2(0, 50);
             player1 = new Player(playerSpriteSheet, playerBulletTexture, reloadBar, textBorder, player1StartPos, controls, ui);
             bunkers = new Bunkers(bunkerAtlas, 2);
             enemies = new EnemyController(_spriteBatch, enemyTexture, enemyStartPos, gameMode, explosionSpriteSheet, enemyBulletTexture);

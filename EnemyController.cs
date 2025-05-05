@@ -62,6 +62,7 @@ namespace Alien_Attack
                 {
                     currentPos.X += enemySpacing;
                     enemies.Add(new mediumEnemy(enemyTexture, spriteBatch, currentPos, currentSpeed, explosionTexture, bulletTexture));
+                    
                 }
                 currentPos.X = startPos.X;
             }
@@ -172,7 +173,7 @@ namespace Alien_Attack
             UI.increaseScore(100);
         }
 
-        private void increaseAllSpeed() {
+        public void increaseAllSpeed() {
             if (enemySpeedCount <= getNumberOfEnemies())
             {
                 enemies[enemySpeedCount].increaseSpeed();
